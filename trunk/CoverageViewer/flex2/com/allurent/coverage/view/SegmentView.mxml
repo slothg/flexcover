@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 
+ * Copyright (c) 2008 Allurent, Inc.
+ *
+ * Permission is hereby granted, free of charge, to any person
+ * obtaining a copy of this software and associated documentation
+ * files (the "Software"), to deal in the Software without restriction,
+ * including without limitation the rights to use, copy, modify,
+ * merge, publish, distribute, sublicense, and/or sell copies of the
+ * Software, and to permit persons to whom the Software is furnished
+ * to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+ * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+ * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+ * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+ * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
+ * OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ -->
+<mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml"
+    xmlns:view="com.allurent.coverage.view.*"
+>
+    
+    <mx:Script>
+        <![CDATA[
+            import mx.collections.ArrayCollection;
+            import com.allurent.coverage.view.SourceView;
+            import com.allurent.coverage.model.SegmentModel;
+            import com.allurent.coverage.model.FunctionModel;
+            import com.allurent.coverage.model.ClassModel;
+            import com.allurent.coverage.model.CoverageElement;
+            import com.allurent.coverage.Controller;
+
+            import mx.collections.HierarchicalData;
+            import mx.controls.Alert;
+            import mx.managers.PopUpManager;
+            
+            [Bindable]
+            public var controller:Controller;
+            
+            private var _segmentModel:SegmentModel;
+            private var _gridComplete:Boolean;
+            
+            [Bindable]
+            public function get segmentModel():SegmentModel
+            {
+                return _segmentModel;
+            } 
+            
+            public function set segmentModel(s:SegmentModel):void
+            {
+                _segmentModel = s;
+                coverageGrid.dataProvider = new HierarchicalData(new ArrayCollection([s]));
+                coverageGrid.validateNow();
+                coverageGrid.expandItem(s, true);
+            }
+            
+            private function showSource(selection:Object):void
+            {
+                if (selection is ClassModel)
+                {
+                    SourceView.show(controller.project, ClassModel(selection));
+                }
+                else if (selection is FunctionModel)
+                {
+                    SourceView.show(controller.project, FunctionModel(selection).classModel); 
+                }
+            }
+        ]]>
+    </mx:Script>
+    
+    <mx:AdvancedDataGrid id="coverageGrid" width="100%" height="100%"
+        doubleClickEnabled="true" doubleClick="showSource(coverageGrid.selectedItem)"> 
+        <mx:columns>
+            <mx:AdvancedDataGridColumn dataField="displayName" headerText="Name"/>
+            <mx:AdvancedDataGridColumn id="coverageColumn" dataField="coverage" headerText="Coverage Ratio">
+                <mx:formatter>
+                    <mx:NumberFormatter precision="2"/>
+                </mx:formatter>
+            </mx:AdvancedDataGridColumn>
+            
+            <mx:AdvancedDataGridColumn dataField="numLines" headerText="Line Count"/>
+            <mx:AdvancedDataGridColumn dataField="numCovered" headerText="Coverage Count"/>
+        </mx:columns>
+        <mx:rendererProviders>
+            <mx:AdvancedDataGridRendererProvider column="{coverageColumn}"
+                renderer="com.allurent.coverage.view.CoverageColumnRenderer"/>
+        </mx:rendererProviders>
+    </mx:AdvancedDataGrid>  
+
+</mx:VBox>

@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 
+ * Copyright (c) 2008 Allurent, Inc.
+ *
+ * Permission is hereby granted, free of charge, to any person
+ * obtaining a copy of this software and associated documentation
+ * files (the "Software"), to deal in the Software without restriction,
+ * including without limitation the rights to use, copy, modify,
+ * merge, publish, distribute, sublicense, and/or sell copies of the
+ * Software, and to permit persons to whom the Software is furnished
+ * to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+ * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+ * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+ * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+ * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
+ * OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ -->
+<mx:WindowedApplication xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute"
+    width="800" height="600"
+    xmlns:view="com.allurent.coverage.view.*"
+    applicationComplete="initializeApplication()"
+    close="onClose()">
+    
+    <!-- Main CoverageViewer MXML Application View -->
+    
+    <mx:Script>
+        <![CDATA[
+            import mx.controls.Alert;
+            import com.allurent.coverage.Controller;
+            
+            import flash.filesystem.File;
+            
+            // Top level Controller for the CoverageViewer application
+            [Bindable]
+            public var controller:Controller = new Controller();
+            
+            // Name of LocalConnection to use for receiving data
+            private var connectionName:String = "_flexcover";
+            
+            /**
+             * Initialize the application by listening for an Invoke event that will communicate
+             * command line options.  Also attach the LocalConnection to receive live coverage
+             * data.  
+             */
+            private function initializeApplication():void
+            {
+                nativeApplication.addEventListener(InvokeEvent.INVOKE, handleInvoke);
+            }
+            
+            /**
+             * When we get our invoke event, process options.  Only then can we attach
+             * the LocalConnection (since this is option-dependent). 
+             */
+            private function handleInvoke(e:InvokeEvent):void
+            {
+                processOptions(e.arguments);
+                controller.attachConnection(connectionName);
+            }
+            
+            /**
+             * When the main app window closes, exit the application after first cleaning up.
+             *  
+             */
+            private function onClose():void
+            {
+                controller.close();
+                exit();
+            }
+                
+            /**
+             * Process command line options prior to full startup. 
+             */
+            private function processOptions(args:Array):void
+            {
+                var option:String = null;
+                for each (var arg:String in args)
+                {
+                    if (arg.length > 0 && arg.charAt(0) == "-")
+                    {
+                        // Got an option, chuck it into a variable to affect subsequent non-option args.
+                        option = arg.substring(1);
+                    }
+                    else
+                    {
+                        // All non-option strings are treated as arguments to be processed in light
+                        // of the last option string that was seen.  There's no argument
+                        // that is not associated with some option.
+                        //
+                        switch(option)
+                        {
+                            case "coverage-metadata":
+                                controller.project.metadataFiles.addItem(arg);
+                                break;
+                                
+                            case "source-path":
+                                controller.project.sourcePath.addItem(new File(arg));
+                                break;
+                                
+                            case "coverage-output":
+                                // TODO: set up output filename for coverage data.
+                                break;
+                                
+                            case "connection-name":
+                                connectionName = arg;
+                                break;
+                            
+                            default:
+                                Alert.show("Unknown option: " + option);
+                        }
+                    }
+                }
+                
+                // After processing all options, load the models up from the project
+                // and display the top-level report view.
+                //
+                controller.loadProjectContents();
+                coverageView.segmentModel = controller.coverageModel;
+            }
+        ]]>
+    </mx:Script>
+
+    <!-- View of the coverage stats for the entire application -->
+    <view:SegmentView id="coverageView" width="100%" height="100%"
+        controller="{controller}"/>
+
+</mx:WindowedApplication>
