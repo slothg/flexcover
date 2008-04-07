@@ -46,8 +46,19 @@ package com.allurent.coverage
         [Bindable]
         public var coverageModel:CoverageModel = new CoverageModel();
         
+        public static var instance:Controller;
+        
         // LocalConnection open for receiving coverage data from live instrumented apps
         private var conn:LocalConnection;
+        
+        public function Controller()
+        {
+            if (instance != null)
+            {
+                throw new Error("Multiple Controller instances!");
+            }
+            instance = this;
+        }
         
         /**
          * Load an XML project definition file.
