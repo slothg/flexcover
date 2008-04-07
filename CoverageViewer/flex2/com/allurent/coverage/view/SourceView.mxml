@@ -196,7 +196,7 @@
     </mx:Script>
     
     <mx:VDividedBox width="100%" height="100%">
-        <view:SegmentView id="classView" width="100%"/>
+        <view:ClassCoverageView id="classView" width="100%"/>
         <mx:HTML id="htmlDisplay" width="100%" height="100%"/>
     </mx:VDividedBox>
 </mx:Window>
