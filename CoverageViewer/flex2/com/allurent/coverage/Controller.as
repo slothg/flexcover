@@ -25,8 +25,11 @@ package com.allurent.coverage
     import com.allurent.coverage.model.CoverageElement;
     import com.allurent.coverage.model.CoverageModel;
     import com.allurent.coverage.model.ProjectModel;
+    import com.allurent.coverage.parse.CoverageReportParser;
     import com.allurent.coverage.parse.MetadataParser;
+    import com.allurent.coverage.parse.TraceLogParser;
     
+    import flash.desktop.NativeApplication;
     import flash.filesystem.File;
     import flash.filesystem.FileMode;
     import flash.filesystem.FileStream;
@@ -45,6 +48,23 @@ package com.allurent.coverage
         
         [Bindable]
         public var coverageModel:CoverageModel = new CoverageModel();
+        
+        /**
+         * Flag indicating that application should exit when instrumented app is done.
+         * and all pending data has been written.
+         */ 
+        public var autoExit:Boolean = false;
+        
+        /**
+         * Flag indicating that coverage data should only be recorded internally for
+         * coverage elements possessing loaded metadata from compilation.
+         */
+        public var constrainToModel:Boolean = true;
+        
+        /**
+         * Output file to which coverage data should be written when application is done.
+         */
+        public var coverageOutputFile:File = null;
         
         public static var instance:Controller;
         
@@ -86,10 +106,41 @@ package com.allurent.coverage
         {
             for each (var metadataFile:String in project.metadataFiles)
             {
-                new MetadataParser(coverageModel, project).parseFile(new File(metadataFile));
+                loadMetadata(new File(metadataFile));
+            }
+
+            for each (var traceLog:String in project.traceLogs)
+            {
+                loadTraceLog(new File(traceLog));
             }
         }
-        
+
+        /**
+         * Load a metadata file into the project. 
+         */
+        public function loadMetadata(metadataFile:File):void
+        {
+            new MetadataParser(coverageModel, project).parseFile(metadataFile);
+        }     
+
+        /**
+         * Load a trace log file into the project. 
+         */
+        public function loadTraceLog(traceLog:File):void
+        {
+            new TraceLogParser(coverageModel, project).parseFile(traceLog);
+        }
+
+        /**
+         * Load a coverage report into the project. 
+         */
+        public function loadCoverageReport(report:File):void
+        {
+            var newCoverageModel:CoverageModel = new CoverageModel();
+            new CoverageReportParser(newCoverageModel, project).parseFile(report);
+            coverageModel = newCoverageModel;
+        }
+
         /**
          * Handle a map of coverage keys and execution counts received over our LocalConnection
          * from an instrumented application.
@@ -106,13 +157,37 @@ package com.allurent.coverage
                 if (element != null)
                 {
                     var count:uint = keyMap[key];
-                    coverageModel.recordCoverageElement(element, count);
+                    coverageModel.recordCoverageElement(element, count, constrainToModel);
                 }
             } 
         }
 
+        /**
+         * Handler called by instrumented program when coverage ends. 
+         */
+        public function coverageEnd():void
+        {
+            if (coverageOutputFile != null)
+            {
+                writeReport(coverageOutputFile);
+            }
+            if (autoExit)
+            {
+                NativeApplication.nativeApplication.exit();
+            }
+        }
+
+        /**
+         * Handle closure of the application. 
+         * 
+         */
         public function close():void
         {
+            if (coverageOutputFile != null)
+            {
+                writeReport(coverageOutputFile);
+            }
+            NativeApplication.nativeApplication.exit();
         }
 
         /**
@@ -133,6 +208,17 @@ package com.allurent.coverage
             {
                 Alert.show(error.message);
             }
+        }
+        
+        /**
+         * Write accumulated coverage data to an output file if specified. 
+         */
+        public function writeReport(f:File):void
+        {
+            var out:FileStream = new FileStream();
+            out.open(f, FileMode.WRITE);
+            out.writeUTFBytes(coverageModel.toXML().toXMLString());
+            out.close();
         }
     }
 }

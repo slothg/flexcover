@@ -36,6 +36,7 @@ package com.allurent.coverage.model
     public class ProjectModel
     {
         public var metadataFiles:ArrayCollection = new ArrayCollection();
+        public var traceLogs:ArrayCollection = new ArrayCollection();
         public var sourcePath:ArrayCollection = new ArrayCollection();
         public var excludeKeyRegexp:RegExp = /_bindingExprs@/;
         
@@ -47,6 +48,10 @@ package com.allurent.coverage.model
             for each (var metadata:XML in xml.metadata.file)
             {
                 metadataFiles.addItem(metadata.text().toString());
+            }
+            for each (var tracelog:XML in xml.tracelog.file)
+            {
+                traceLogs.addItem(tracelog.text().toString());
             }
             for each (var dir:XML in xml.sourcePath.directory)
             {
@@ -67,6 +72,13 @@ package com.allurent.coverage.model
                 metadataNode.appendChild(<file>{file}</file>);
             }
             project.appendChild(metadataNode);
+            
+            var tracelogNode:XML = <tracelog/>;
+            for each (var traceLog:String in traceLogs)
+            {
+                tracelogNode.appendChild(<file>{traceLog}</file>);
+            }
+            project.appendChild(tracelogNode);
             
             var sourcePathNode:XML = <sourcePath/>;
             for each (var dir:File in sourcePath)

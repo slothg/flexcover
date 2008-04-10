@@ -46,5 +46,10 @@ package com.allurent.coverage.model
         {
             return (name == "") ? "[top level]" : name;
         }
+
+        override protected function createXmlElement():XML
+        {
+            return <package/>;
+        }
     }
 }

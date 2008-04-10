@@ -23,53 +23,29 @@
 package com.allurent.coverage.model
 {
     import mx.collections.ArrayCollection;
-    
-    /**
-     * Model for a single function in the application.
-     */
-    [Bindable]
-    public class FunctionModel extends SegmentModel
+    import mx.collections.HierarchicalData;
+
+    public class CoverageData extends HierarchicalData
     {
-        /**
-         * Construct a new FunctionModel. 
-         */
-        public function FunctionModel()
+        public function CoverageData(model:SegmentModel)
         {
+            super(new ArrayCollection([model]));
         }
         
-        override public function addChild(child:SegmentModel):void
+        override public function canHaveChildren(node:Object):Boolean
         {
-            super.addChild(child);
-            classModel.lineModelMap[child.name] = child;
-        }
-        
-        public function get classModel():ClassModel
-        {
-            return ClassModel(parent);
-        } 
-
-        public function get coverageModel():CoverageModel
-        {
-            var p:SegmentModel = parent;
-            while (p != null)
+            if (!(node is SegmentModel))
             {
-                if (p is CoverageModel)
-                {
-                    return CoverageModel(p);
-                }
-                p = p.parent;
+                return false;
             }
-            return null;
-        } 
-
-        override public function createChild():SegmentModel
-        {
-            return new LineModel();
-        }
-        
-        override protected function createXmlElement():XML
-        {
-            return <function/>;
+            
+            var model:SegmentModel = node as SegmentModel;
+            if (model.children == null)
+            {
+                return false;
+            }
+            
+            return !(model is FunctionModel);
         }
     }
 }

@@ -125,22 +125,20 @@
     <!-- <allowBrowserInvocation></allowBrowserInvocation> -->
 
     <!-- Listing of file types for which the application can register. Optional. -->
-    <!-- <fileTypes> -->
+    <fileTypes>
 
-        <!-- Defines one file type. Optional. -->
-        <!-- <fileType> -->
-
+        <fileType>
             <!-- The name that the system displays for the registered file type. Required. -->
-            <!-- <name></name> -->
+            <name>flexcover.metadata</name>
 
             <!-- The extension to register. Required. -->
-            <!-- <extension></extension> -->
+            <extension>cvm</extension>
             
             <!-- The description of the file type. Optional. -->
-            <!-- <description></description> -->
+            <description>Flexcover Coverage Metadata</description>
             
             <!-- The MIME type. Optional. -->
-            <!-- <contentType></contentType> -->
+            <contentType>application/vnd.flexcover.metadata</contentType>
             
             <!-- The icon to display for the file type. Optional. -->
             <!-- <icon>
@@ -150,7 +148,7 @@
                 <image128x128></image128x128>
             </icon> -->
             
-        <!-- </fileType> -->
-    <!-- </fileTypes> -->
+        </fileType>
+    </fileTypes>
 
 </application>

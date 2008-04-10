@@ -2,13 +2,13 @@ package com.allurent.coverage.view
 {
     import com.allurent.coverage.Controller;
     import com.allurent.coverage.model.ClassModel;
+    import com.allurent.coverage.model.CoverageData;
     import com.allurent.coverage.model.FunctionModel;
     import com.allurent.coverage.model.SegmentModel;
     
     import flash.events.Event;
     
     import mx.collections.ArrayCollection;
-    import mx.collections.HierarchicalData;
     import mx.containers.VBox;
     import mx.controls.AdvancedDataGrid;
     import mx.events.FlexEvent;
@@ -48,7 +48,7 @@ package com.allurent.coverage.view
         
         private function initializeGrid():void
         {
-            coverageGrid.dataProvider = new HierarchicalData(new ArrayCollection([_segmentModel]));
+            coverageGrid.dataProvider = new CoverageData(_segmentModel);
             coverageGrid.validateNow();
             coverageGrid.expandItem(_segmentModel, true);
         }
@@ -58,10 +58,6 @@ package com.allurent.coverage.view
             if (selection is ClassModel)
             {
                 SourceView.show(controller.project, ClassModel(selection));
-            }
-            else if (selection is FunctionModel)
-            {
-                SourceView.show(controller.project, FunctionModel(selection).classModel); 
             }
         }
     }

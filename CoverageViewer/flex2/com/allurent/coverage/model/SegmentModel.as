@@ -133,6 +133,14 @@ package com.allurent.coverage.model
         }
         
         /**
+         * Remove all child elements
+         */
+        public function clear():void
+        {
+            children = null;
+        }
+        
+        /**
          * Resolve a child element by its name
          *  
          * @param pathElement a key for the child model element
@@ -230,6 +238,50 @@ package com.allurent.coverage.model
             {
                 parent.addCoverage(n);
             }
+        }
+        
+        public function toXML():XML
+        {
+            var element:XML = createXmlElement();
+            populateXmlElement(element);
+            for each (var child:SegmentModel in children)
+            {
+                element.appendChild(child.toXML());
+            }
+            return element;
+        }
+
+        public function fromXML(xml:XML):void
+        {
+            parseXmlElement(xml);
+            if (xml.children().length() > 0)
+            {
+                var childName:String = createChild().createXmlElement().name().toString();
+                for each (var childXml:XML in xml.elements(childName))
+                {
+                    var model:SegmentModel = createChild();
+                    model.name = childXml.@name;
+                    addChild(model); 
+                    model.fromXML(childXml);
+                }
+            }
+        }
+
+        protected function createXmlElement():XML
+        {
+            throw new Error("createXmlElement must be overridden.");
+        }
+        
+        protected function parseXmlElement(xml:XML):void
+        {
+        }
+
+        protected function populateXmlElement(xml:XML):void
+        {
+            xml.@name = name;
+            xml.@coverage = coverage.toPrecision(4);
+            xml.@coveredLines = numCovered;
+            xml.@lines = numLines;
         }
     }
 }

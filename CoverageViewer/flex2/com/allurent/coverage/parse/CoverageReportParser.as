@@ -20,56 +20,30 @@
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
  * OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package com.allurent.coverage.model
+package com.allurent.coverage.parse
 {
-    import mx.collections.ArrayCollection;
+    import com.allurent.coverage.model.CoverageElement;
+    import com.allurent.coverage.model.CoverageModel;
+    import com.allurent.coverage.model.ProjectModel;
+    import com.allurent.coverage.runtime.CoverageManager;
     
     /**
-     * Model for a single function in the application.
+     * This parser processes a coverage report XML file.
      */
-    [Bindable]
-    public class FunctionModel extends SegmentModel
+    public class CoverageReportParser extends Parser
     {
+        public function CoverageReportParser(coverageModel:CoverageModel, project:ProjectModel)
+        {
+            super(coverageModel, project);
+        }
+        
         /**
-         * Construct a new FunctionModel. 
+         * Parse coverage metadata. 
          */
-        public function FunctionModel()
+        override public function parseXML(xml:XML):void
         {
-        }
-        
-        override public function addChild(child:SegmentModel):void
-        {
-            super.addChild(child);
-            classModel.lineModelMap[child.name] = child;
-        }
-        
-        public function get classModel():ClassModel
-        {
-            return ClassModel(parent);
-        } 
-
-        public function get coverageModel():CoverageModel
-        {
-            var p:SegmentModel = parent;
-            while (p != null)
-            {
-                if (p is CoverageModel)
-                {
-                    return CoverageModel(p);
-                }
-                p = p.parent;
-            }
-            return null;
-        } 
-
-        override public function createChild():SegmentModel
-        {
-            return new LineModel();
-        }
-        
-        override protected function createXmlElement():XML
-        {
-            return <function/>;
+            coverageModel.clear();
+            coverageModel.fromXML(xml);
         }
     }
 }

@@ -33,7 +33,11 @@ package com.allurent.coverage.model
     [Bindable]
     public class LineModel extends SegmentModel
     {
+        /** Number of times that this line has been executed. */
         public var executionCount:uint = 0;
+        
+        /** reference to associated coverage element, if known. */
+        public var element:CoverageElement = null;
         
         public static const EXECUTION_COUNT_CHANGE:String = "executionCountChange";
         
@@ -63,6 +67,24 @@ package com.allurent.coverage.model
         {
             // Leaf model, don't permit more kids!
             throw new Error("Should never happen!");
+        }
+        
+        override protected function createXmlElement():XML
+        {
+            return <line/>;
+        }
+        
+        override protected function parseXmlElement(xml:XML):void
+        {
+            addLines(1);
+            addExecutionCount(xml.@count);
+        }
+
+        override protected function populateXmlElement(xml:XML):void
+        {
+            // We don't call super here because a LineModel is a leaf node and looks different
+            xml.@name = name;
+            xml.@count = executionCount;
         }
     }
 }

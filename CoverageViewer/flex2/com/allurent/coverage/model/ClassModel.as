@@ -61,5 +61,22 @@ package com.allurent.coverage.model
         {
             return ((packageName == "") ? "" : (packageName + ".")) + name;
         }
+        
+        override protected function createXmlElement():XML
+        {
+            return <class/>;
+        }
+        
+        override protected function parseXmlElement(xml:XML):void
+        {
+            super.parseXmlElement(xml);
+            pathname = xml.@pathname;
+        }
+
+        override protected function populateXmlElement(xml:XML):void
+        {
+            super.populateXmlElement(xml);
+            xml.@pathname = pathname;
+        }        
     }
 }
