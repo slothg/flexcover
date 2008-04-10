@@ -22,7 +22,7 @@
  */
 package com.allurent.coverage.model
 {
-    import flash.events.EventDispatcher;
+    import mx.collections.ArrayCollection;
     
     /**
      * Coverage model for an entire application. 
@@ -36,6 +36,12 @@ package com.allurent.coverage.model
         public function CoverageModel()
         {
             name = "[Application]";
+            
+            // Set our children to an empty array collection so that this node will be expandable
+            // from the get-go in a tree-style view.  The expectation is that if empty, it will be
+            // filled later.
+            //
+            children = new ArrayCollection();
         }
         
         override public function createChild():SegmentModel
@@ -48,11 +54,15 @@ package com.allurent.coverage.model
          * by bumping the execution count of a LineModel resolved from that element's path.
          * If the element couldn't be resolved, tough cookies.
          */
-        public function recordCoverageElement(element:CoverageElement, count:uint):void
+        public function recordCoverageElement(element:CoverageElement, count:uint, constrainToModel:Boolean):void
         {
-            var model:LineModel = resolvePath(element.path, false) as LineModel;
+            var model:LineModel = resolvePath(element.path, !constrainToModel) as LineModel;
             if (model != null)
             {
+                if (model.executionCount == 0)
+                {
+                    model.element = element;
+                }
                 model.addExecutionCount(count);
             }
         }
@@ -75,6 +85,11 @@ package com.allurent.coverage.model
                 var classModel:ClassModel = ClassModel(model.parent.parent);
                 classModel.pathname = element.pathname;
             }
+        }
+        
+        override protected function createXmlElement():XML
+        {
+            return <applicationCoverage/>;
         }
     }
 }

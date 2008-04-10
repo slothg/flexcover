@@ -102,6 +102,10 @@ package com.allurent.coverage.model
             {
                 ce.functionName = ce.functionName.substring(8);
             }
+            else if (ce.functionName.substring(0, 10) == "protected:")
+            {
+                ce.functionName = ce.functionName.substring(10);
+            }
             
             return ce;            
         }
