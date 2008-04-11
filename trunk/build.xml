@@ -1,4 +1,6 @@
 <project name="flexcover" default="build" basedir=".">
+    <property name="version" value="0.10"/>
+    <property name="dist.dir" value="flexcover-${version}"/>
 
     <import file="buildtools/build-master-targets.xml" />
     <import file="build-imports.xml" />
@@ -12,7 +14,19 @@
         <file name="CoverageTest"/>
     </filelist>
 
-    <target name="sdk-stage">
+    <target name="dist" depends="clean,build,stage-sdk">
+        <delete dir="../${dist.dir}"/>
+        <mkdir dir="../${dist.dir}"/>
+        <copy todir="../${dist.dir}">
+            <fileset dir="." excludes="**/.svn"/>
+        </copy>
+    </target>
+
+    <target name="zip">
+        <zip destfile="../flexcover-${version}.zip" basedir=".." includes="${dist.dir}/**"/>
+    </target>
+
+    <target name="stage-sdk">
         <delete dir="sdk"/>
         <mkdir dir="sdk"/>
         <copy todir="sdk">
