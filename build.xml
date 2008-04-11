@@ -1,0 +1,33 @@
+<project name="flexcover" default="build" basedir=".">
+
+    <import file="buildtools/build-master-targets.xml" />
+    <import file="build-imports.xml" />
+
+    <filelist id="children.filelist" dir=".">
+        <file name="CoverageViewer"/>
+        <file name="CoverageExample1"/>
+    </filelist>
+
+    <filelist id="testChildren.filelist" dir=".">
+        <file name="CoverageTest"/>
+    </filelist>
+
+    <target name="sdk-stage">
+        <delete dir="sdk"/>
+        <mkdir dir="sdk"/>
+        <copy todir="sdk">
+            <fileset dir="${flex.modified.sdk.dir}" includesfile="sdk-includes"/>
+        </copy>
+    </target>
+
+    <target name="modify-sdk">
+        <condition property="sdk-dest-ok">
+            <available file="${flex.dir}/lib/mxmlc.jar"/>
+        </condition>
+        <fail message="Cannot modify SDK: ${flex.dir}/lib/mxmlc.jar not found."
+              unless="sdk-dest-ok"/>
+        <copy todir="${flex.dir}">
+            <fileset dir="sdk"/>
+        </copy>
+    </target>
+</project>

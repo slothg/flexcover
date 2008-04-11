@@ -1,0 +1,20 @@
+<project name="CoverageViewer" default="build">
+
+    <!-- Project specific overrides -->
+
+    <!-- Common properties and targets -->
+    <import file="build-imports.xml"/>
+
+    <!-- Build path -->
+    <!-- NOTE: because the viewer makes use of AdvancedDataGrid, it requires a special pointer to an SDK
+         containing the Flex Data Visualization libraries. -->
+    <path id="flex.lib.path">
+        <pathelement location="${flex.datavisualization.sdk.dir}/frameworks/libs/datavisualization.swc"/>
+        <pathelement location="${flex.datavisualization.sdk.dir}/frameworks/locale/en_US/datavisualization_rb.swc"/>
+    </path>
+
+    <!-- Project specific targets -->
+    <target name="build" depends="init,air-application-stage"/>
+
+    <target name="launch" depends="air-launch"/>
+</project>

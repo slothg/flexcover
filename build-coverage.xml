@@ -1,0 +1,59 @@
+<project name="flexcover.coverage">
+    <macrodef name="coverage-viewer" description="Run CoverageViewer using the current project's metadata">
+        <attribute name="metadata" default="${build.stage.dir}" />
+        <attribute name="descriptor" default="${build.stage.dir}/${project.air.desc}" />
+        <attribute name="cvm" default=""/>
+        <attribute name="options" default=""/>
+
+        <sequential>
+            <exec executable="${air.adl}" dir="${CoverageViewer.dir}/stage">
+                <arg value="${CoverageViewer.app}"/>
+                <arg value="--" />
+                <arg line="@{cvm} @{options}"/>
+            </exec>
+        </sequential>
+    </macrodef>
+
+    <target name="view-coverage">
+        <coverage-viewer cvm="${basedir}/${build.dir}/${project.cvm}"/>
+    </target>
+
+    <target name="make-coverage-report">
+        <coverage-viewer cvm="${basedir}/${build.dir}/${project.cvm}"
+            options="-output ${basedir}/${build.dir}/coverage-report.xml"/>
+    </target>
+
+    <target name="view-coverage-report">
+        <coverage-viewer options="${basedir}/${build.dir}/coverage-report.xml"/>
+    </target>
+
+    <target name="flex-coverage">
+        <parallel>
+            <antcall target="view-coverage"/>
+            <sequential>
+                <sleep seconds="3"/>
+                <antcall target="flex-launch"/>
+            </sequential>
+        </parallel>
+    </target>
+
+    <target name="air-coverage">
+        <parallel>
+            <antcall target="view-coverage"/>
+            <sequential>
+                <sleep seconds="3"/>
+                <antcall target="air-launch"/>
+            </sequential>
+        </parallel>
+    </target>
+
+    <target name="air-report" depends="air-application-stage">
+        <parallel>
+            <antcall target="make-coverage-report"/>
+            <sequential>
+                <sleep seconds="3"/>
+                <antcall target="air-launch"/>
+            </sequential>
+        </parallel>
+    </target>
+</project>

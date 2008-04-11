@@ -1,0 +1,81 @@
+<applicationCoverage name="[Application]" coverage="0.7805" coveredLines="32" lines="41">
+  <package name="" coverage="0.7692" coveredLines="10" lines="13">
+    <class name="CoverageTest" coverage="0.7692" coveredLines="10" lines="13" pathname="C:\Source\flexcover\CoverageTest\src\CoverageTest.mxml">
+      <function name="___CoverageTest_WindowedApplication1_applicationComplete" coverage="1.000" coveredLines="1" lines="1">
+        <line name="3" count="2"/>
+      </function>
+      <function name="CoverageTest" coverage="1.000" coveredLines="2" lines="2">
+        <line name="2" count="1"/>
+        <line name="3" count="1"/>
+      </function>
+      <function name="foo/get" coverage="0.0000" coveredLines="0" lines="1">
+        <line name="10" count="0"/>
+      </function>
+      <function name="foo/set" coverage="0.0000" coveredLines="0" lines="1">
+        <line name="10" count="0"/>
+      </function>
+      <function name="runTest" coverage="0.8750" coveredLines="7" lines="8">
+        <line name="12" count="1"/>
+        <line name="14" count="1"/>
+        <line name="15" count="1"/>
+        <line name="16" count="1"/>
+        <line name="17" count="1"/>
+        <line name="18" count="1"/>
+        <line name="19" count="1"/>
+        <line name="20" count="0"/>
+      </function>
+    </class>
+  </package>
+  <package name="pkg" coverage="0.7857" coveredLines="22" lines="28">
+    <class name="TestClass" coverage="0.7857" coveredLines="22" lines="28" pathname="C:\Source\flexcover\CoverageTest\src\pkg\TestClass.as">
+      <function name="addEventListener" coverage="0.0000" coveredLines="0" lines="1">
+        <line name="6" count="0"/>
+      </function>
+      <function name="bindableVar/get" coverage="1.000" coveredLines="1" lines="1">
+        <line name="6" count="1"/>
+      </function>
+      <function name="bindableVar/set" coverage="1.000" coveredLines="1" lines="1">
+        <line name="6" count="1"/>
+      </function>
+      <function name="dispatchEvent" coverage="1.000" coveredLines="1" lines="1">
+        <line name="6" count="1"/>
+      </function>
+      <function name="hasEventListener" coverage="0.0000" coveredLines="0" lines="1">
+        <line name="6" count="0"/>
+      </function>
+      <function name="removeEventListener" coverage="0.0000" coveredLines="0" lines="1">
+        <line name="6" count="0"/>
+      </function>
+      <function name="staticFunction" coverage="1.000" coveredLines="3" lines="3">
+        <line name="41" count="1"/>
+        <line name="43" count="1"/>
+        <line name="44" count="1"/>
+      </function>
+      <function name="TestClass" coverage="1.000" coveredLines="6" lines="6">
+        <line name="10" count="1"/>
+        <line name="11" count="1"/>
+        <line name="12" count="1"/>
+        <line name="13" count="1"/>
+        <line name="14" count="1"/>
+        <line name="6" count="1"/>
+      </function>
+      <function name="testFunction" coverage="0.8333" coveredLines="10" lines="12">
+        <line name="16" count="3"/>
+        <line name="18" count="3"/>
+        <line name="19" count="3"/>
+        <line name="21" count="2"/>
+        <line name="25" count="1"/>
+        <line name="27" count="9"/>
+        <line name="29" count="6"/>
+        <line name="31" count="3"/>
+        <line name="33" count="3"/>
+        <line name="34" count="0"/>
+        <line name="35" count="0"/>
+        <line name="39" count="3"/>
+      </function>
+      <function name="willTrigger" coverage="0.0000" coveredLines="0" lines="1">
+        <line name="6" count="0"/>
+      </function>
+    </class>
+  </package>
+</applicationCoverage>
