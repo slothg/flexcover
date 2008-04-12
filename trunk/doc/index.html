@@ -200,9 +200,13 @@ application, without measuring its coverage:
 ant flex-launch
 </pre>
 
+<p>You'll see something like this:
+
+<p align="center"><img src="images/example1-app.png"/>
+
 <p>The application will come up in the standalone Flash player.  At
-this point, you may want to browse the source of the application --
-there's not very much to it!</p>
+this point, you may want to browse the source of the application in the <tt>src/</tt> directory --
+there's not very much to this example!</p>
 
 <p>(NOTE: if this doesn't launch properly, most likely you don't have
 the <tt>flex.standalone.player</tt> property correctly set in your
@@ -219,8 +223,11 @@ ant view-coverage
 
 <p>This will launch the CoverageViewer AIR application on the coverage
 metadata for CoverageExample1, previously placed by the compiler in
-<tt>bin/CoverageExample1.cvm</tt>.
-All the data will reflect zero coverage, which is hardly surprising
+<tt>bin/CoverageExample1.cvm</tt>:
+
+<p align="center"><img src="images/initial-coverage-view.png"/>
+
+<p>All the data will reflect zero coverage, which is hardly surprising
 since the application hasn't started yet!  However, even though no
 data has been collected, it's a good moment to explore the features of
 the CoverageViewer:
@@ -234,6 +241,9 @@ is an expandable row describing (in hierarchical order) the coverage for:
 <li>a class
 <li>a single function
 </ul>
+
+<p align="center"><img src="images/drill-down-coverage.png"/>
+
 
 <p><b>Data columns</b> include: 
 <ul>
@@ -261,12 +271,16 @@ times each line has been executed.  At this point all the counts will
 be zero, and all the executable lines will be highlighted in red to
 show that they have not been executed so far.
 
+<p align="center"><img src="images/source-viewer-initial.png"/>
+
 <h3>Collect code coverage statistics for CoverageExample1</h3>
 
 <p>Leaving the viewer up, now start the example app either with
 <tt>ant flex-launch</tt> or by otherwise launching <tt>bin/CoverageExample1.swf</tt>.  As you
 manipulate the application, the coverage statistics in the viewer will
 accumulate and the ratios will start climbing.
+
+<p align="center"><img src="images/emerging-coverage-view.png"/>
 
 <p>As an exercise, see if you can get the application's coverage to
 100% by using the source viewer and identifying what code hasn't been
@@ -318,6 +332,14 @@ in a special mode, in which which it automatically writes a report
 when the instrumented application signals that it is finished.  The
 same target launches the CoverageTest application a few seconds later;
 when the instrumented application quits, the report is written out.
+
+<h3>Sorting the display</h3>
+
+<p>Coverage entries in the table are displayed alphabetically by
+default, but clicking in the table headers permits the sort order to be changed.
+A particularly useful option is to sort by ascending code coverage, which allows
+one to methodically work through the areas with the worst coverage first and
+identify testing deficits.
 
 <h2>Reference Information</h2>
 
@@ -437,15 +459,35 @@ coverage data has been transmitted.
 <h2>Known issues and future development</h2>
 
 <ul>
-<li>Block and function coverage statistics are needed along with line coverage.  Additional compiler support is needed to identify conditional/loop code blocks and correlate them with the exact source code fragments (of which there are often more than one per line).
-<li>The UI is a placeholder and the user experience needs a great deal of attention.
+
+<li>Branch and function coverage statistics are needed along with line
+coverage.  Additional compiler support is needed to identify
+conditional/loop branches and correlate them with the exact source
+code fragments (of which there are often more than one per line).
+
+<li>The UI is a placeholder and the user experience needs a great deal
+of attention.  Alex Uhlmann of Adobe Consulting has been thinking
+about this problem for a while, and the two of us are planning to work
+together to combine our ideas about coverage data presentation and
+manipulation.
+
 <li>It's desirable to allow instrumented AIR applications to write
-coverage data directly to a file, to eliminate the inconvenience of running the CoverageViewer
-in parallel.
+coverage data directly to a file, to eliminate the inconvenience of
+running the CoverageViewer in parallel.
+
+<li>Although the compiler provides valuable information about the app
+not available at runtime (particularly in the area of branch
+coverage), it would be very convenient to instrument a SWF after it
+had already compiled.  There are undocumented hooks in the Flash
+Player which permit this, and we're looking into it.
+
 <li>The internal architecture of the coverage viewer needs much more
 work.
+
 <li>The graphical bar renderers sometimes misbehave and persist on the screen.
-<li>A clean integration with FlexUnit is highly desirable (e.g. run test suites in AIR, flush coverage data to filesystem at end of run).
+
+<li>A clean integration with FlexUnit is highly desirable (e.g. run
+test suites in AIR, flush coverage data to filesystem at end of run).
 </ul>
 
 </body>

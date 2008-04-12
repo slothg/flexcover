@@ -200,7 +200,6 @@
 
         <uptodate property="${project.swf}.compiled" targetfile="${build.mxmlc.dir}/${project.swf}">
             <srcfiles dir="${src.flex.dir}" includes="**/*" />
-            <srcfiles dir="${build.generated.dir}" includes="**/*" />
             <srcfiles dir="${uptodate.dir}" includes="${mxmlc.lib.files}" />
         </uptodate>
     </target>

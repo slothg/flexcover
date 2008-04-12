@@ -48,7 +48,7 @@
         <delete dir="../${dist.dir}"/>
         <mkdir dir="../${dist.dir}"/>
         <copy todir="../${dist.dir}">
-            <fileset dir="." excludes="**/.svn"/>
+            <fileset dir="." excludes="**/.svn,build-user.properties"/>
         </copy>
     </target>
 
