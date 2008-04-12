@@ -38,13 +38,10 @@
     -->
     <target name="init" description="Set up the project">
         <mkdir dir="${build.dir}" />
-        <mkdir dir="${build.generated.dir}" />
-        <mkdir dir="${build.javac.dir}" />
         <mkdir dir="${build.compc.dir}" />
         <mkdir dir="${build.mxmlc.dir}" />
         <mkdir dir="${build.asdoc.dir}" />
         <mkdir dir="${build.stage.dir}" />
-        <mkdir dir="${build.dist.dir}" />
     </target>
 
     <!--

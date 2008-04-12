@@ -27,7 +27,7 @@
         <coverage-viewer options="${basedir}/${build.dir}/coverage-report.xml"/>
     </target>
 
-    <target name="flex-coverage">
+    <target name="flex-coverage" depends="flex-application">
         <parallel>
             <antcall target="view-coverage"/>
             <sequential>
@@ -37,7 +37,7 @@
         </parallel>
     </target>
 
-    <target name="air-coverage">
+    <target name="air-coverage" depends="air-application-stage">
         <parallel>
             <antcall target="view-coverage"/>
             <sequential>
