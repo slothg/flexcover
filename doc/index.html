@@ -15,12 +15,16 @@ Allurent, Inc.</b></p>
 <h2>Introduction</h2>
 
 <p>Welcome to the experimental first release of Flexcover.  It isn't
-perfect, but it's a start!</p>
+perfect, but it's a start!  In the near future, Alex Uhlmann of Adobe
+Consulting and myself will be joining forces to make what we hope will
+be some very significant improvements.
+</p>
 
 <p>This document offers some general information about Flexcover,
 explains how to install it, and then walks through a quick tour of its
 features.  A concluding reference section describes the command
 options, file formats and APIs.</p>
+
            
 <h2>General information</h2>
 
@@ -80,6 +84,7 @@ Google Code that make it much friendlier and easier to use.
        build.xml                     (master build file)
        build-user.properties.mac     (Mac build properties template)
        build-user.properties.win     (Windows build properties template)
+       sdkpatches.diff               (diffs for modified SDK source)
 
        sdk/                          (customized files for 3.0 SDK)
            lib/
@@ -327,7 +332,7 @@ that is under test.
 
 <p>The <b>CoverageTest</b> AIR project in flexcover is set up to
 generate a code coverage report in just this manner.  Running the
-<tt>ant test</tt> target will automatically launch the CoverageViewer
+<tt>ant air-report</tt> target will automatically launch the CoverageViewer
 in a special mode, in which which it automatically writes a report
 when the instrumented application signals that it is finished.  The
 same target launches the CoverageTest application a few seconds later;
