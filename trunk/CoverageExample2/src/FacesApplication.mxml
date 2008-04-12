@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+    FacesApplication.mxml
+-->
+
+<mx:Application 
+    xmlns:mx="http://www.adobe.com/2006/mxml"
+    layout="vertical"
+    creationComplete="onCreationComplete()"
+    xmlns:model="faces.model.*"
+    xmlns:view="faces.view.*"
+    xmlns:controller="faces.controller.*"
+    xmlns:service="faces.service.*">
+
+    <mx:Script><![CDATA[
+        import faces.events.UIEvent;
+
+        public static const CONFIG_FILE_NAME_PARAM:String = "config";
+        private static const DEFAULT_CONFIG_FILE_NAME:String = "config.xml";
+
+        private function onCreationComplete():void
+        {
+            var configFileName:String = DEFAULT_CONFIG_FILE_NAME;
+            if (parameters[CONFIG_FILE_NAME_PARAM] != null)
+            {
+                configFileName = parameters[CONFIG_FILE_NAME_PARAM];
+            }
+
+            appController.startUp(configFileName);
+        }
+
+        private function addFacesView():void
+        {
+            // instantiate new MVC triplet
+            var controller:FacesController = new FacesController();
+            var model:FacesModel = new FacesModel();
+            var view:FacesView = new FacesView();
+            view.appModel = appModel;
+            
+            // initialize controller and view (model is empty)
+            controller.model = model;
+            controller.services = services;
+            controller.parentContainer = view;
+            view.model = model;
+            view.addEventListener(UIEvent.EVENT_TYPE, controller.handleUiEvent);
+            view.percentHeight = view.percentWidth = 100;
+            
+            // add view to application
+            appView.addChild(view);
+        }
+
+    ]]></mx:Script>
+
+    <!-- CSS style declaration -->
+    <mx:Style source="style.css"/>
+
+    <!-- ************************************** -->
+    <!-- *      Top-level UI components       * -->
+    <!-- ************************************** -->
+
+    <mx:Button label="Add New View" click="addFacesView()"/>
+
+    <view:AppView
+        id="appView"
+        width="100%" height="100%"
+        model="{appModel}"
+        uiEvent="appController.handleUiEvent(event)">
+        
+        <view:FacesView id="facesView"
+            width="100%" height="100%"
+            appModel="{appModel}"
+            model="{facesModel}"
+            uiEvent="facesController.handleUiEvent(event)" />
+
+    </view:AppView>
+
+    <!-- ************************************** -->
+    <!-- * Non-visual component configuration * -->
+    <!-- ************************************** -->
+
+    <!-- Application-level model and controller -->
+    <model:AppModel id="appModel"/>
+
+    <controller:AppController id="appController"
+        model="{appModel}"
+        services="{services}"
+        parentContainer="{appView}"
+        controlStateChange="popUpMediator.update()" />
+
+    <!-- Model and controller for initial FacesView -->
+    <model:FacesModel id="facesModel"/>
+
+    <controller:FacesController id="facesController"
+        model="{facesModel}"
+        services="{services}"
+        parentContainer="{facesView}"/>
+
+    <!-- Non-visual mediator to manage popup messages -->
+    <view:PopUpMediator id="popUpMediator" model="{appModel}" 
+        parentContainer="{this}" />
+
+    <service:ServiceLocator id="services">
+        <service:services>
+            <service:DocumentService/>
+        </service:services>
+    </service:ServiceLocator>
+
+</mx:Application>

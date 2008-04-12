@@ -8,21 +8,22 @@
     <filelist id="children.filelist" dir=".">
         <file name="CoverageViewer"/>
         <file name="CoverageExample1"/>
+        <file name="CoverageExample2"/>
     </filelist>
 
     <filelist id="testChildren.filelist" dir=".">
         <file name="CoverageTest"/>
     </filelist>
 
-    <target name="dist" depends="clean,build,stage-sdk">
+    <target name="dist" depends="build,stage-sdk">
         <delete dir="../${dist.dir}"/>
         <mkdir dir="../${dist.dir}"/>
-        <copy todir="../${dist.dir}">
+        <copy todir="../${dist.dir}" includeemptydirs="false">
             <fileset dir="." excludes="**/.svn"/>
         </copy>
     </target>
 
-    <target name="zip">
+    <target name="zip" depends="dist">
         <zip destfile="../flexcover-${version}.zip" basedir=".." includes="${dist.dir}/**"/>
     </target>
 

@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+    FacesView.mxml
+
+    Main view of the application.
+-->
+
+<mx:VBox
+    xmlns:mx="http://www.adobe.com/2006/mxml"
+    xmlns:model="faces.model.*" xmlns:view="faces.view.*">
+
+    <mx:Metadata>
+        [Event(name="uiEvent",type="faces.events.UIEvent")]
+    </mx:Metadata>
+
+    <mx:Script><![CDATA[
+        import faces.model.FacesSummaryEntry;
+        import faces.model.AppModel;
+        import faces.model.FacesModel;
+
+        [Bindable]
+        public var model:FacesModel;
+        
+        [Bindable]
+        public var appModel:AppModel;
+        
+        private function formatSummaryEntry(entry:FacesSummaryEntry):String
+        {
+            return (appModel.getCountryName(entry.countryCode) + ": " + entry.count);
+        }
+
+    ]]></mx:Script>
+
+    <!-- search bar to request new faces in model -->
+    <view:SearchBar width="100%"/>
+
+    <model:FacesSummaryAdapter id="summaryModel" facesModel="{model}"/>
+    <mx:List width="100%" fontSize="14" dataProvider="{summaryModel.summaryProvider}" labelFunction="formatSummaryEntry"/>
+
+    <!-- tiled view of Face objects in model -->
+    <mx:Canvas width="100%" height="100%">
+
+        <mx:Tile width="100%" height="100%"
+            paddingTop="5" paddingLeft="5" paddingRight="5"
+            backgroundColor="#ccffff">
+
+            <!-- Would prefer to use TileList, but had problems with styling -->
+            <mx:Repeater id="rep" dataProvider="{model.facesProvider}" 
+                recycleChildren="true"
+                repeatStart="openCloseMediator.closeAll()">
+
+                <view:SmallFaceView appModel="{appModel}" model="{rep.currentItem}" 
+                    open="openCloseMediator.handleOpenEvent(event)" />
+            </mx:Repeater>
+        </mx:Tile>
+
+        <!-- masks for transition effects -->
+        <mx:Canvas id="maskCanvas" width="100%" height="100%"
+            backgroundColor="#dddddd"
+            showEffect="{fadeIn}"
+            hideEffect="{fadeOut}"
+            visible="{openCloseMediator.open}" />
+
+        <mx:Canvas id="overlayCanvas" width="100%" height="100%" />
+    </mx:Canvas>
+
+    <!-- mediator object to manage views participating in face open/close -->
+    <view:FaceOpenCloseMediator id="openCloseMediator"
+        parentContainer="{overlayCanvas}" />
+
+    <mx:Fade id="fadeIn" alphaFrom="0" alphaTo="0.5" duration="1000"/>
+    <mx:Fade id="fadeOut" alphaTo="0" duration="200"/>
+    
+</mx:VBox>
