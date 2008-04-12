@@ -147,8 +147,8 @@ subdirectory.
 
 <h3>3. Set up the Ant build environment</h3>
 
-<p>Copy the appropriate build-user.properties.* file to a file named
-build-user.properties (without the .mac or .win suffix), and edit its
+<p>Copy the appropriate <tt>build-user.properties.*</tt> file to a file named
+<tt>build-user.properties</tt> (without the .mac or .win suffix), and edit its
 <tt>flex.dir</tt> property to point to the above custom SDK location.  Be sure
 to use forward slashes -- backslashes (and spaces) will need to be
 quoted with additional backslashes.
@@ -345,6 +345,30 @@ default, but clicking in the table headers permits the sort order to be changed.
 A particularly useful option is to sort by ascending code coverage, which allows
 one to methodically work through the areas with the worst coverage first and
 identify testing deficits.
+
+<h3>Launching the Coverage Viewer separately</h3>
+
+<p>To launch the viewer separately from any particular application,
+change to the <tt>CoverageViewer</tt> directory and invoke the command
+<tt>ant launch</tt>.  If you would like to launch the viewer without
+any use of Ant at all, run <tt>ant -v launch</tt> and take note of the
+command-line invocation of the <tt>adl</tt> tool that is used to run
+the viewer, then build an appropriate shell script, batch file, etc.
+Your mileage may vary depending on your OS and what type of shell you
+use.
+
+<p>A typical bash shell invocation might look like this:
+
+<pre>
+$FLEXCOVER_SDK/bin/adl
+        $FLEXCOVER_HOME/CoverageViewer/stage/CoverageViewer-app.xml
+        $FLEXCOVER_HOME/CoverageViewer/stage
+        -- &lt;other arguments...&gt;
+</pre>
+
+<p>Note that the Viewer does not install as a full-blown AIR application because this
+creates more installation steps and headaches, and the SDK is required anyway to use
+the tools so it's easier to just launch it with adl.
 
 <h2>Reference Information</h2>
 
