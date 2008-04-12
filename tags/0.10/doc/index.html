@@ -1,0 +1,523 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+ <title>Flexcover Manual</title>
+ <link type="text/css" rel="stylesheet" href="styles.css"/>
+</head>
+<body>
+<h1>Flexcover: A Code Coverage Tool for Flex and AS3</h1>
+
+<p><b>Joe Berkovitz<br>
+Allurent, Inc.</b></p>
+
+
+<h2>Introduction</h2>
+
+<p>Welcome to the experimental first release of Flexcover.  It isn't
+perfect, but it's a start!  In the near future, Alex Uhlmann of Adobe
+Consulting and myself will be joining forces to make what we hope will
+be some very significant improvements.
+</p>
+
+<p>This document offers some general information about Flexcover,
+explains how to install it, and then walks through a quick tour of its
+features.  A concluding reference section describes the command
+options, file formats and APIs.</p>
+
+           
+<h2>General information</h2>
+
+<p>Flexcover is a code coverage tool for Flex, AIR and AS3.  It
+incorporates a modified version of the AS3 compiler which inserts
+extra function calls in the code within the SWF or SWC output file.
+Applications produced by this modified compiler are called
+"instrumented", because the additional generated code acts like a
+measuring instrument which detects which lines in the application have
+executed, and how often.</p>
+
+<p>At runtime, these function calls send information on the application's
+code coverage to a separate tool via a LocalConnection.  The modified
+compiler also emits a separate "coverage metadata" file that describes
+all the possible packages, classes, functions, code blocks and lines
+in the code, as well as the names of the associated source code files.</p>
+
+<p>The companion to this modified compiler is an AIR application called
+CoverageViewer.  CoverageViewer works with the coverage data that is
+transmitted from an instrumented application running at the same time.
+It can:</p>
+
+<ul>
+<li>Load coverage metadata files that describe the codebase whose coverage will be measured.
+
+<li>View live code coverage statistics as an instrumented application is run.
+  Data from multiple test runs may be accumulated.
+
+<li>View source code annotated with code coverage information.
+
+<li>Save accumulated statistics in an XML report.
+
+<li>Automatically write a report and quit when a test suite indicates
+  that testing has concluded.
+
+<li>Load a previously written report and view its contents
+</ul>
+
+<p>Flexcover's modified compiler accepts special command line options
+that control its behavior, and CoverageViewer can be run using the
+<code>adl</code> AIR debug launcher (more convenient than having to install it
+from a .air file).
+
+<p>Anything that you want to do with Flexcover can be done on the command
+line with shell scripts or batch files.  However, it's much easier and
+more platform-independent to invoke Flexcover compilation and coverage
+viewing from Ant, so Flexcover also includes a set of powerful Ant
+macros and targets derived from the "Antennae" open source project on
+Google Code that make it much friendlier and easier to use.
+
+
+<h2>What you get with Flexcover</h2>
+
+<p>The installation directory structure looks like this:
+
+<pre>
+       build.xml                     (master build file)
+       build-user.properties.mac     (Mac build properties template)
+       build-user.properties.win     (Windows build properties template)
+       sdkpatches.diff               (diffs for modified SDK source)
+
+       sdk/                          (customized files for 3.0 SDK)
+           lib/
+           framework/
+               libs/
+               projects/utilities/src/
+
+       CoverageViewer/               (AIR app to view code coverage)
+           build.xml
+           src/
+           bin/
+
+       CoverageExample1/             (sample app #1)
+           build.xml
+           src/
+
+       CoverageExample2/             (sample app #2)
+           build.xml
+           src/
+
+       CoverageTest/                 (end-to-end test suite)
+           build.xml
+           src/
+
+       doc/                          (documentation)
+
+       buildtools/                   (Ant/Antennae build definitions)
+</pre>
+
+
+<h2>Installing Flexcover</h2>
+
+<h3>1. Software you will need</h3>
+
+<p>You need the following installed on your system:
+
+<ul>
+<li>Flex 3.0 SDK or Flex Builder plugin
+<li>Java J2SE 1.5+
+<li>Ant 1.5+
+</ul> 
+
+<h3>2. Create a custom SDK location</h3>
+
+<p>Flexcover uses a customized version of the Flex compiler and also
+requires a special library at runtime.  To use flexcover you must
+first create a version of the Flex 3 SDK that will be modified to use
+this compiler.
+
+<p>To do this, install a copy of the Flex 3.0 SDK somewhere in your
+filesystem that is distinct from any existing Flex SDK installation.
+("SDK" refers to the directory containing the libraries and
+command-line tools that make up Flex, with subdirectories bin/,
+frameworks/, and so on.)  For simplicity, you might want to just
+download a fresh SDK distribution from <a
+href="http://www.adobe.com/go/flex3_sdk">http://www.adobe.com/go/flex3_sdk</a>
+and do a fresh install somewhere.  If you have the Flex Builder
+Eclipse plugin installed, you can just make a copy of its <tt>sdks/3.0.0/</tt>
+subdirectory.
+
+<h3>3. Set up the Ant build environment</h3>
+
+<p>Copy the appropriate <tt>build-user.properties.*</tt> file to a file named
+<tt>build-user.properties</tt> (without the .mac or .win suffix), and edit its
+<tt>flex.dir</tt> property to point to the above custom SDK location.  Be sure
+to use forward slashes -- backslashes (and spaces) will need to be
+quoted with additional backslashes.
+
+<p>You also may need to modify the <tt>flex.standalone.player</tt>
+definition to describe the location the the Flash Player on your
+system.  On Windows you probably won't have to do this since the
+executable is packaged directly in the SDK.  On the Mac it gets a bit
+more complicated since the Player can be installed to various places
+depending on your setup.
+
+<h3>4. Modify your custom SDK to use the flexcover compilers and libraries.</h3>
+
+<p>In the main install directory, invoke this command:
+
+<pre>
+ant modify-sdk
+</pre>
+
+<p>If this command does not succeed, it is very likely because your
+build-user.properties file isn't pointing flex.dir at a valid SDK
+location.
+		
+
+<h2>A quick tour of Flexcover</h2>
+
+<p>If you've gotten this far, you're ready to try things out.  All the
+actions in this section will make use of Ant on the command line to build and run the
+various applications.  A later section explains the Ant targets in more detail.
+
+<h3>Build and run CoverageExample1</h3>
+
+<p>As a first step, build and run the first sample application.
+Change into the <tt>CoverageExample1/</tt> subdirectory and run this
+command:
+
+<pre>
+ant build
+</pre>
+
+<p>This command will build a specially instrumented version of a small
+sample Flex application.  Looking in the <tt>bin/</tt> subdirectory,
+you will find both <tt>CoverageExample1.swf</tt> and
+<tt>CoverageExample1.cvm</tt>.  This latter file is a <b>coverage
+metadata</b> file that is used to determine what executable lines
+actually exist in the source code, as a basis for coverage
+calculations.  If you peek inside this file, you'll see it's a text
+file; each line describes one executable fragment of the program.
+
+<p>The following command will run the instrumented CoverageExample1
+application, without measuring its coverage:
+
+<pre>
+ant flex-launch
+</pre>
+
+<p>You'll see something like this:
+
+<p align="center"><img src="images/example1-app.png"/>
+
+<p>The application will come up in the standalone Flash player.  At
+this point, you may want to browse the source of the application in the <tt>src/</tt> directory --
+there's not very much to this example!</p>
+
+<p>(NOTE: if this doesn't launch properly, most likely you don't have
+the <tt>flex.standalone.player</tt> property correctly set in your
+<tt>build-user.properties file</tt>.  In any case you can always hand-launch
+the <tt>bin/CoverageExample1.swf</tt> file from your desktop.)
+
+<h3>Start the Coverage Viewer for CoverageExample1's metadata</h3>
+
+<p>Run the code coverage viewer on CoverageExample1 as follows:
+
+<pre>
+ant view-coverage
+</pre>
+
+<p>This will launch the CoverageViewer AIR application on the coverage
+metadata for CoverageExample1, previously placed by the compiler in
+<tt>bin/CoverageExample1.cvm</tt>:
+
+<p align="center"><img src="images/initial-coverage-view.png"/>
+
+<p>All the data will reflect zero coverage, which is hardly surprising
+since the application hasn't started yet!  However, even though no
+data has been collected, it's a good moment to explore the features of
+the CoverageViewer:
+
+<p><b>Drill-down coverage statistics</b>.  Each line of the main view
+is an expandable row describing (in hierarchical order) the coverage for:
+
+<ul>
+<li>the entire application
+<li>a package within the application (these are not broken out hierarchically)
+<li>a class
+<li>a single function
+</ul>
+
+<p align="center"><img src="images/drill-down-coverage.png"/>
+
+
+<p><b>Data columns</b> include: 
+<ul>
+
+<li>Coverage Ratio: the percentage of code that has been executed in
+this section of the application.  A colored bar in these cells will
+change from red through a red/green combination to entirely green as
+the coverage ratio ranges from 0% to 100%.
+
+<li>Line Count: the total number of executable lines in this section
+of the app.
+
+<li>Coverage Count: the total number of lines in this section which
+have actually been executed.
+
+</ul>
+
+<p><b>Source Viewer</b> shows the source code for a class, annotated
+with coverage information.  For example, open up the package marked
+<tt>pkg</tt> and click the View button for TestClass.  A window named
+"TestClass" will open with a coverage breakdown of TestClass at the
+top, and a view of the source code below.  Lines are numbered and
+annotated with a colored <b>execution count</b> that shows how many
+times each line has been executed.  At this point all the counts will
+be zero, and all the executable lines will be highlighted in red to
+show that they have not been executed so far.
+
+<p align="center"><img src="images/source-viewer-initial.png"/>
+
+<h3>Collect code coverage statistics for CoverageExample1</h3>
+
+<p>Leaving the viewer up, now start the example app either with
+<tt>ant flex-launch</tt> or by otherwise launching <tt>bin/CoverageExample1.swf</tt>.  As you
+manipulate the application, the coverage statistics in the viewer will
+accumulate and the ratios will start climbing.
+
+<p align="center"><img src="images/emerging-coverage-view.png"/>
+
+<p>As an exercise, see if you can get the application's coverage to
+100% by using the source viewer and identifying what code hasn't been
+covered yet.  Note that MXML source files have code coverage, not just
+ActionScript sources: lines containing data bindings, Bindable
+variables or event scripts will count as code.
+
+<p>(Note: The convenient Ant target <tt>ant flex-coverage</tt> will
+launch the Coverage Viewer and, a few seconds later, the example
+application.)
+
+<p>For better performance, coverage data is buffered in memory and is
+only transmitted to the Coverage Viewer at 1-second intervals. You
+will notice a short delay between actions in the application and
+updates in the viewer.
+
+<h3>Saving and viewing code coverage reports</h3>
+
+<p>Click the <b>Save Report...</b> button at the top of the coverage
+viewer's main window.  You will be offered a dialog permitting you to
+save an XML coverage report.  Save this file with a <tt>.xml</tt>
+suffix and take a look at it -- you will see that it incorporates all
+the information in the drill-down coverage table.  Such a report can
+be easily formatted or otherwise rearranged with XSL stylesheets.
+These saved files can also be reloaded by the Coverage Viewer to view
+a report later, or accumulate more data from subsequent test runs.
+
+<p>To load a saved coverage report, use the <b>Load File...</b> button
+or simply drop the coverage report file into the application.
+
+<h3>Play with CoverageExample2</h3>
+
+<p>CoverageExample2 is set up exactly like CoverageExample1, only it is a 
+larger and richer application.
+
+<h3>Automatically generating code coverage reports</h3>
+
+<p>One of the most useful ways to work with code coverage information
+is to automatically generate it as part of a continuous build process,
+typically in conjunction with unit or integration test suites that
+exercise the code.  The coverage information then becomes a metric
+that indicates how successful the tests are at reaching all the code
+that is under test.
+
+<p>The <b>CoverageTest</b> AIR project in flexcover is set up to
+generate a code coverage report in just this manner.  Running the
+<tt>ant air-report</tt> target will automatically launch the CoverageViewer
+in a special mode, in which which it automatically writes a report
+when the instrumented application signals that it is finished.  The
+same target launches the CoverageTest application a few seconds later;
+when the instrumented application quits, the report is written out.
+
+<h3>Sorting the display</h3>
+
+<p>Coverage entries in the table are displayed alphabetically by
+default, but clicking in the table headers permits the sort order to be changed.
+A particularly useful option is to sort by ascending code coverage, which allows
+one to methodically work through the areas with the worst coverage first and
+identify testing deficits.
+
+<h3>Launching the Coverage Viewer separately</h3>
+
+<p>To launch the viewer separately from any particular application,
+change to the <tt>CoverageViewer</tt> directory and invoke the command
+<tt>ant launch</tt>.  If you would like to launch the viewer without
+any use of Ant at all, run <tt>ant -v launch</tt> and take note of the
+command-line invocation of the <tt>adl</tt> tool that is used to run
+the viewer, then build an appropriate shell script, batch file, etc.
+Your mileage may vary depending on your OS and what type of shell you
+use.
+
+<p>A typical bash shell invocation might look like this:
+
+<pre>
+$FLEXCOVER_SDK/bin/adl
+        $FLEXCOVER_HOME/CoverageViewer/stage/CoverageViewer-app.xml
+        $FLEXCOVER_HOME/CoverageViewer/stage
+        -- &lt;other arguments...&gt;
+</pre>
+
+<p>Note that the Viewer does not install as a full-blown AIR application because this
+creates more installation steps and headaches, and the SDK is required anyway to use
+the tools so it's easier to just launch it with adl.
+
+<h2>Reference Information</h2>
+
+<p>This section provides reference information on various aspects of
+Flexcover.  It's somewhat incomplete right now, but at least you've
+got the source code.
+
+<h3>Coverage compiler reference</h3>
+
+<p>The following special compiler options are supported by the
+modified Flexcover SDK's <tt>mxmlc</tt> and <tt>compc</tt> commands:
+
+<table border="1">
+<tr>
+<td valign="top" width="200"><tt>-coverage</tt></td>
+<td valign="top">Indicates that coverage instrumentation is to be placed into the generated bytecode of the SWF or SWC.</td>
+</tr>
+
+<tr>
+<td valign="top" width="200"><tt>-coverage-metadata=<i>metadata-filename.cvm</i></tt></td>
+<td valign="top">The name of a coverage metadata file to be output for subsequent use in the Coverage Viewer.  This file will only contain actual data if the <tt>-coverage</tt> option is also given.</td>
+</tr>
+</table>
+
+<p>Compiler configuration files in the <tt>flex-config.xml</tt> format
+may also contain the directive:
+
+<pre>
+&lt;coverage&gt;true&lt;/coverage&gt;
+</pre>
+
+<p>which has the same effect as the <tt>-coverage</tt> option.
+
+<p>NOTE: You can not run the modified compiler from Flex Builder 3 due
+to a Flex Builder bug which prevents custom compiler options from
+being invoked within Flex Builder.
+
+<h3>Coverage Viewer command-line options</h3>
+
+<p>One or more input files may be freely specified on the command
+line.  They are distinguished solely by their extensions.
+
+<p>Command line elements are as follows:
+
+<table border="1">
+<tr>
+<td valign="top" width="200"><tt>-output <i>report-filename.xml</i></tt></td>
+<td valign="top">The name of an XML report file to be written immediately when the instrumented application calls <tt>CoverageManager.exit()</tt>.  The viewer will exit as soon as the report is written.</td>
+</tr>
+
+<tr>
+<td valign="top" width="200"><tt>-source-path <i>source-directory</i></tt></td>
+<td valign="top">The name of a source directory to be searched for source files, if the path information in the coverage metadata does not apply to the environment in which the viewer is running.  More than one source-path directive may be given.</td>
+</tr>
+
+<tr>
+<td valign="top" width="200"><tt>-connection-name <i>conn</i></tt></td>
+<td valign="top">The name to be used for the LocalConnection between the viewer and the application; defaults to <tt>_flexcover</tt>.</td>
+</tr>
+
+<tr>
+<td valign="top" width="200"><tt><i>report-filename.xml</i></tt></td>
+<td valign="top">The name of an XML report file to be loaded..</td>
+</tr>
+
+<tr>
+<td valign="top" width="200"><tt><i>metadata-filename.cvm</i></tt></td>
+<td valign="top">The name of a coverage metadata file to be loaded..</td>
+</tr>
+
+</table>
+
+<h3>Coverage Manager API reference</h3>
+
+<p>Instrumented applications may make explicit calls to the
+<tt>com.allurent.coverage.runtime.CoverageManager</tt> class to
+control various instrumentation options.  See the source code in
+<tt>sdk/frameworks/projects/utilities/src</tt> for more details.
+
+<p>The <tt>CoverageManager</tt> class and the global function
+<tt>coverage()</tt> are linked from the <tt>utilities.swc</tt> file in
+the modified SDK.
+
+<h3>Data format reference</h3>
+
+<p><b>Coverage metadata (.cvm) files</b> are text files that contain a list of
+<b>coverage elements</b>, one element per line.  Each coverage element
+has this syntax:
+
+<pre>
+coverage-element ::=
+    package ":" class "/" function "@" line-number [";" source-path]
+</pre>
+
+<p>For instance take a look at this excerpt from CoverageExample1.cvm:
+
+<pre>
+pkg:TestClass/TestClass@9;C:\Source\flexcover\CoverageExample1\src\pkg\TestClass.as
+pkg:TestClass/testFunction@20
+pkg:TestClass/staticFunction@25
+pkg:TestClass/staticFunction@24
+pkg:TestClass/staticFunction@22;C:\Source\flexcover\CoverageExample1\src\pkg\TestClass.as
+</pre>
+
+<p>This data format is very inefficient, but it compresses well and is
+very easy to generate from within the modified compiler.
+
+<p><b>Coverage instrumentation data</b> transmitted over the
+LocalConnection from the instrumented application invokes two handler
+functions on the receiving end: <tt>coverageData(map:Object)</tt> and
+<tt>coverageEnd()</tt>.  The coverageData function will be passed an
+object whose keys are coverage elements and whose values are execution
+counts.  The coverageEnd function is called if the instrumented
+application has called CoverageManager.exit(), after all remaining
+coverage data has been transmitted.
+
+<h2>Known issues and future development</h2>
+
+<ul>
+
+<li>Branch and function coverage statistics are needed along with line
+coverage.  Additional compiler support is needed to identify
+conditional/loop branches and correlate them with the exact source
+code fragments (of which there are often more than one per line).
+
+<li>The UI is a placeholder and the user experience needs a great deal
+of attention.  Alex Uhlmann of Adobe Consulting has been thinking
+about this problem for a while, and the two of us are planning to work
+together to combine our ideas about coverage data presentation and
+manipulation.
+
+<li>It's desirable to allow instrumented AIR applications to write
+coverage data directly to a file, to eliminate the inconvenience of
+running the CoverageViewer in parallel.
+
+<li>Although the compiler provides valuable information about the app
+not available at runtime (particularly in the area of branch
+coverage), it would be very convenient to instrument a SWF after it
+had already compiled.  There are undocumented hooks in the Flash
+Player which permit this, and we're looking into it.
+
+<li>The internal architecture of the coverage viewer needs much more
+work.
+
+<li>The graphical bar renderers sometimes misbehave and persist on the screen.
+
+<li>A clean integration with FlexUnit is highly desirable (e.g. run
+test suites in AIR, flush coverage data to filesystem at end of run).
+</ul>
+
+</body>
+</html>

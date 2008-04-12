@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<mx:Canvas xmlns="*"
+    xmlns:mx="http://www.adobe.com/2006/mxml"
+    verticalScrollPolicy="off"
+    horizontalScrollPolicy="off"
+    currentState="shrunken"
+>
+
+    <mx:Metadata>
+        [Event(name="uiEvent",type="UIEvent")]
+        [Event(name="close",type="flash.events.Event")]
+    </mx:Metadata>
+
+    <mx:Script><![CDATA[
+        import faces.events.UIEvent;
+        import faces.events.UIEventKind;
+        import faces.model.Face;
+
+        public static const FULL_STATE:String = "full";
+        public static const SHRUNKEN_STATE:String = "shrunken";
+
+        [Bindable]
+        public var model:Face;
+
+        /**
+         * Update the description of this Face to match the edited
+         * description.
+         */
+        private function updateDescription():void
+        {
+            dispatchEvent(new UIEvent(UIEventKind.UPDATE, 
+                                      { id: model.id, 
+                                        description: descriptionEditor.text }));
+        }
+            
+    ]]></mx:Script>
+
+    <!-- STATES -->
+
+    <mx:states>
+        <mx:State name="{FULL_STATE}">
+            <mx:SetProperty name="alpha" value="1" />
+            <mx:SetProperty name="width" value="460"/>
+            <mx:SetProperty name="height" value="260"/>
+        </mx:State>
+
+        <mx:State name="{SHRUNKEN_STATE}">
+            <mx:SetProperty name="alpha" value="0" />
+            <mx:SetProperty target="{bodyCanvas}" name="alpha" value="0" />
+            <mx:SetProperty name="width" value="400"/>
+            <mx:SetProperty name="height" value="120"/>
+        </mx:State>
+    </mx:states>
+
+    <mx:transitions>
+        <mx:Transition fromState="{SHRUNKEN_STATE}" toState="{FULL_STATE}">
+            <mx:Sequence effectEnd="dispatchEvent(new Event('transitionDone'))">
+                <mx:Parallel>
+                    <mx:Resize target="{this}" duration="1000"/>
+                    <mx:Fade target="{this}" duration="1000"/>
+                </mx:Parallel>
+                <mx:Fade target="{bodyCanvas}" alphaTo="1" duration="300"/>
+            </mx:Sequence>
+        </mx:Transition>
+        <mx:Transition fromState="{FULL_STATE}" toState="{SHRUNKEN_STATE}">
+            <mx:Sequence effectEnd="dispatchEvent(new Event('transitionDone'))">
+                <mx:Fade target="{bodyCanvas}" alphaTo="0" duration="300"/>
+                <mx:Parallel>
+                    <mx:Resize target="{this}" duration="1000"/>
+                    <mx:Fade target="{this}" duration="1000"/>
+                </mx:Parallel>
+            </mx:Sequence>
+        </mx:Transition>
+    </mx:transitions>
+
+    <!-- EFFECTS -->
+
+    <mx:Fade id="fadeIn" duration="400" />
+    <mx:Fade id="fadeOut" duration="400" />
+
+    <!-- COMPONENTS -->
+
+    <mx:Image id="img" 
+        source="{model.source}" 
+        x="10" y="12" width="92" height="92"
+    />
+        
+    <mx:Label styleName="faceNameLabel"
+        text="{model.name}"
+        x="116" y="2" width="300"
+    />
+
+    <mx:Canvas id="bodyCanvas" width="100%" height="100%"
+        verticalScrollPolicy="off"
+        horizontalScrollPolicy="off"
+        showEffect="{fadeIn}"
+        hideEffect="{fadeOut}">
+
+        <mx:TextArea id="descriptionEditor"
+            styleName="faceDescriptionText"
+            text="{model.description}"
+            editable="true"
+            x="116" y="32" width="300" height="180"
+        />
+
+        <mx:Button label="Apply Change" x="116" y="222"
+            enabled="{descriptionEditor.text != model.description &amp;&amp;
+                      model.changeEnabled}"
+            click="updateDescription()"
+        />
+
+        <mx:Button label="Close" x="236" y="222"
+            click="dispatchEvent(new Event('close'))"
+        />
+
+    </mx:Canvas>
+
+    <mx:Binding source="data as Face" destination="model"/>
+    <mx:Binding source="model" destination="data"/>
+
+</mx:Canvas>
