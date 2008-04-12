@@ -182,7 +182,6 @@
             var lineModel:LineModel = e.target as LineModel;
             var lineNum:uint = parseInt(lineModel.name);
             var element:Object = htmlDisplay.htmlLoader.window.document.getElementById("line" + lineNum);
-            trace("element at",lineNum,element,"has count",lineModel.executionCount); 
             if (element != null)
             {
                 element.innerHTML = getLineHtml(lineNum, lineModel);
