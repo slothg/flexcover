@@ -11,6 +11,11 @@
 flex.dir=C:/Apps/Flex/flexcover
 
 #
+# location of stand alone debug player
+#
+flex.standalone.player=${flex.dir}/runtimes/player/win/FlashPlayer.exe
+
+#
 # location of Flex SDK containing licensed Data Visualization libraries
 #
 flex.datavisualization.sdk.dir=C:/Apps/Flex/FB3Plugin/sdks/3.0.0
@@ -19,11 +24,6 @@ flex.datavisualization.sdk.dir=C:/Apps/Flex/FB3Plugin/sdks/3.0.0
 # location of Tomcat webapps directory
 #
 tomcat.webapps.dir=C:/Apps/apache-tomcat-6.0.14/webapps
-
-#
-# location of stand alone debug player
-#
-flex.standalone.player=${flex.dir}/runtimes/player/win/FlashPlayer.exe
 
 #
 # location of the AIR certificate file

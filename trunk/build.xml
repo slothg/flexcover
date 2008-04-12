@@ -48,7 +48,7 @@
         <delete dir="../${dist.dir}"/>
         <mkdir dir="../${dist.dir}"/>
         <copy todir="../${dist.dir}">
-            <fileset dir="." excludes="**/.svn,build-user.properties"/>
+            <fileset dir="." excludes="**/.svn,build-user.properties,sdk-includes"/>
         </copy>
     </target>
 
@@ -79,7 +79,7 @@
         </condition>
         <fail message="Cannot modify SDK: ${flex.dir}/lib/mxmlc.jar not found."
               unless="sdk-dest-ok"/>
-        <copy todir="${flex.dir}">
+        <copy todir="${flex.dir}" overwrite="true" verbose="true">
             <fileset dir="sdk"/>
         </copy>
     </target>
