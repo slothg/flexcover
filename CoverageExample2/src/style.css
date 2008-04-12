@@ -1,0 +1,40 @@
+SearchBar {
+    padding-top: 3px;
+    padding-right: 3px;
+    background-color: white;
+}
+WaitView {
+    background-color: white;
+}
+LinkButton {
+    color: #448888;
+}
+SmallFaceView {
+    background-color: white;
+    border-style: solid;
+    border-color: white;
+    drop-shadow-color: #448888;
+    drop-shadow-enabled: true;
+    shadow-direction: right;
+    shadow-distance: 4;
+}
+ExpandedFaceView {
+    background-color: white;
+    border-style: solid;
+    border-color: #ccffff;
+}
+.faceNameLabel {
+    font-size: 18;
+    font-weight: bold;
+    color: #004444;
+}
+.faceCountryLabel {
+    font-size: 10;
+    font-weight: bold;
+    color: #004444;
+}
+.faceDescriptionText {
+    font-size: 10;
+    font-weight: normal;
+    text-align: left;
+}

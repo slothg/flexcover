@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+    AppView.mxml
+
+    Main view of the application.
+-->
+
+<mx:Panel xmlns="*" 
+    xmlns:mx="http://www.adobe.com/2006/mxml"
+    title="{model.title}"
+    status="{model.status}"
+>
+
+
+    <mx:Metadata>
+        [Event(name="uiEvent",type="faces.events.UIEvent")]
+    </mx:Metadata>
+
+    <mx:Script><![CDATA[
+        import faces.model.AppModel;
+
+        [Bindable]
+        public var model:AppModel;
+    
+    ]]></mx:Script>
+
+</mx:Panel>
