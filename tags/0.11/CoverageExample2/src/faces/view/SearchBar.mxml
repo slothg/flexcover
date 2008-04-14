@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+    SearchBar.mxml
+
+    Illustrate how UIEvents bubble up to root view.
+-->
+
+<mx:HBox xmlns="*" 
+    xmlns:mx="http://www.adobe.com/2006/mxml"
+    horizontalAlign="right"
+    defaultButton="{searchButton}"
+>
+
+    <mx:Metadata>
+        [Event(name="uiEvent",type="UIEvent")]
+    </mx:Metadata>
+
+    <mx:Script><![CDATA[
+        import faces.events.UIEventKind;
+        import faces.events.UIEvent;
+    ]]></mx:Script>
+
+    <mx:TextInput id="input" width="120"/>
+
+    <mx:Button id="searchButton" label="Add Search Results"
+        enabled="{input.text.length > 0}"
+        click="dispatchEvent(new UIEvent(UIEventKind.SEARCH, input.text))"
+    />
+
+    <mx:Spacer width="20"/>
+
+    <mx:Button label="Clear"
+        click="dispatchEvent(new UIEvent(UIEventKind.CLEAR))"
+    />
+</mx:HBox>
+

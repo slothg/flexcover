@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+    FatalErrorBox.mxml
+-->
+
+<mx:Panel xmlns="*" 
+    xmlns:mx="http://www.adobe.com/2006/mxml"
+    title="Oh, dear."
+    width="300"
+    height="200"
+    horizontalAlign="center" >
+
+    <mx:Script><![CDATA[
+
+        [Bindable]
+        public var message:String;
+
+        [Bindable]
+        public var fatal:Boolean = false;
+
+    ]]></mx:Script>
+
+    <mx:Text width="100%" height="100%" text="{message}"/>
+
+    <mx:Button label="OK" visible="{!fatal}" includeInLayout="{!fatal}" />
+
+</mx:Panel>
+

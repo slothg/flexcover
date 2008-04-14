@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:WindowedApplication xmlns:mx="http://www.adobe.com/2006/mxml" layout="vertical"
+    applicationComplete="runTest()">
+    <mx:Script>
+        <![CDATA[
+        import pkg.TestClass;
+        import com.allurent.coverage.runtime.CoverageManager;
+
+        [Bindable]
+        public var foo:String = "abc";
+
+        private function runTest():void
+        {
+            TestClass.staticFunction();
+            var tc:TestClass = new TestClass();
+            tc.testFunction(0);
+            tc.testFunction(1);
+            tc.testFunction(5);
+            CoverageManager.exit();
+        }
+        ]]>
+    </mx:Script>
+</mx:WindowedApplication>
