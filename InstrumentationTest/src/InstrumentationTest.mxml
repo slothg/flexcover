@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:WindowedApplication xmlns:mx="http://www.adobe.com/2006/mxml" layout="vertical"
+    applicationComplete="initializeApplication()">
+    <mx:Script>
+        <![CDATA[
+        import flash.filesystem.File;
+        import flash.filesystem.FileMode;
+        import flash.filesystem.FileStream;
+
+        import pkg.InstrumentedClass;
+        import coverage;
+
+        private function initializeApplication():void
+        {
+            nativeApplication.addEventListener(InvokeEvent.INVOKE, handleInvoke);
+        }
+
+        private function handleInvoke(e:InvokeEvent):void
+        {
+            runTest(e.arguments[0]);
+        }
+
+        private function runTest(fileName:String):void
+        {
+            coverage("Start test");
+            InstrumentedClass.staticFunction();
+            var ic:InstrumentedClass = new InstrumentedClass();
+            ic.bindableProperty = "bar";
+            ic.xxx = ic.xxx + 1;
+            ic.branchTest(0, 0);
+            ic.branchTest(1, 0);
+            ic.branchTest(2, 0);
+            ic.branchTest(3, 0);
+            ic.branchTest(4, 0);
+            ic.branchTest(2, 3);
+            coverage("End test");
+
+            var logResult:String = InstrumentedClass.log.join("\n") + "\n";
+            var f:File = new File(fileName);
+            var out:FileStream = new FileStream();
+            out.open(f, FileMode.WRITE);
+            out.writeUTFBytes(logResult);
+            out.close();
+
+            nativeApplication.exit();
+        }
+        ]]>
+    </mx:Script>
+</mx:WindowedApplication>

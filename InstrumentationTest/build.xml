@@ -1,0 +1,44 @@
+<project name="InstrumentationTest" default="build">
+
+    <!-- Project specific overrides -->
+    <property name="testlib.dir" value="testlib"/>
+    <property name="runtest.dir" location="stage"/>
+
+    <!-- Common properties and targets -->
+    <import file="../build-imports.xml"/>
+
+    <!-- Build paths -->
+    <path id="flex.lib.path">
+        <pathelement location="${testlib.dir}/bin/testlib.swc"/>
+    </path>
+
+    <path id="testlib.lib.path">
+    </path>
+
+    <!-- Project specific targets -->
+    <target name="build" depends="init,air-application-stage"/>
+
+    <target name="build-testlib">
+        <mkdir dir="${testlib.dir}/bin"/>
+        <compc src.dir="${testlib.dir}/src" dest="${testlib.dir}/bin/testlib.swc"
+               lib.path.id="testlib.lib.path"
+               cvm="${testlib.dir}/bin/testlib.cvm"
+               options="-coverage"/>
+    </target>
+
+    <target name="run-test" depends="air-application-stage">
+        <exec executable="${air.adl}" dir="stage">
+            <arg value="InstrumentationTest-app.xml"/>
+            <arg value="--" />
+            <arg value="${runtest.dir}/log.out"/>
+        </exec>
+    </target>
+
+    <target name="test" depends="run-test">
+        <condition property="InstrumentationTest.ok">
+            <filesmatch file1="bin/coverage-report.xml" file2="baseline/coverage-report.xml"/>
+        </condition>
+        <fail message="Instrumentation report failed to match baseline!" unless="InstrumentationTest.ok"/>
+    </target>
+
+</project>
