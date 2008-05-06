@@ -31,7 +31,7 @@
             ic.branchTest(1, 0);
             ic.branchTest(2, 0);
             ic.branchTest(3, 0);
-            ic.branchTest(4, 0);
+            ic.branchTest(4, 2);
             ic.branchTest(2, 3);
             coverage("End test");
 

@@ -25,36 +25,25 @@ package com.allurent.coverage.model
     import flash.events.EventDispatcher;
     
     /**
-     * Model of a package in the application for coverage purposes. 
+     * Represents a single element of branch coverage.
      */
-    [Bindable]
-    public class PackageModel extends SegmentModel
+    public class BranchCoverageElement extends CoverageElement
     {
+        public var location:String;
+        
         /**
-         * Construct a new PackageModel. 
+         * Get a "path" of names that can be used to resolve a LineModel for this CoverageElement
+         * within the model. 
          */
-        public function PackageModel()
+        override public function get path():Array
         {
-        }
-        
-        override public function createChild(element:CoverageElement):SegmentModel
-        {
-            return new ClassModel();
-        }
-        
-        override public function createChildFromXml(childXml:XML):SegmentModel
-        {
-            return new ClassModel();
-        }
-        
-        override public function get displayName():String
-        {
-            return (name == "") ? "[top level]" : name;
+            return [packageName, className, functionName, location];
         }
 
-        override protected function createXmlElement():XML
+        override public function toString():String
         {
-            return <package/>;
+            return ((packageName == "") ? "" : (packageName + "."))
+                   + className + ":" + functionName + "@" + location;  
         }
     }
 }

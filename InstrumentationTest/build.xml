@@ -26,7 +26,7 @@
                options="-coverage"/>
     </target>
 
-    <target name="run-test" depends="air-application-stage">
+    <target name="run-test" depends="air-application-stage, build-testlib">
         <exec executable="${air.adl}" dir="stage">
             <arg value="InstrumentationTest-app.xml"/>
             <arg value="--" />
@@ -35,10 +35,14 @@
     </target>
 
     <target name="test" depends="run-test">
-        <condition property="InstrumentationTest.ok">
-            <filesmatch file1="bin/coverage-report.xml" file2="baseline/coverage-report.xml"/>
+        <condition property="InstrumentationTest.log.ok">
+            <filesmatch file1="stage/log.out" file2="baseline/log.out"/>
         </condition>
-        <fail message="Instrumentation report failed to match baseline!" unless="InstrumentationTest.ok"/>
+        <fail message="Instrumentation report failed to match baseline!" unless="InstrumentationTest.log.ok"/>
+        <condition property="InstrumentationTest.cvm.ok">
+            <filesmatch file1="testlib/bin/testlib.cvm" file2="baseline/testlib.cvm"/>
+        </condition>
+        <fail message="Coverage metadata failed to match baseline!" unless="InstrumentationTest.cvm.ok"/>
     </target>
 
 </project>

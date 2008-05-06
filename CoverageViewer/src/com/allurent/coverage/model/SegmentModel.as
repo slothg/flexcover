@@ -44,7 +44,15 @@ package com.allurent.coverage.model
         
         /** Number of covered lines at/below this segment. */
         [Bindable]
-        public var numCovered:Number = 0;
+        public var coveredLines:Number = 0;
+
+        /** Number of individual branches that are direct or indirect descendants of this one. */
+        [Bindable]
+        public var numBranches:Number = 0;
+        
+        /** Number of covered branches at/below this segment. */
+        [Bindable]
+        public var coveredBranches:Number = 0;
 
         /** Internal name. */
         [Bindable]
@@ -75,7 +83,16 @@ package com.allurent.coverage.model
          * Factory method to create a child of this SegmentModel.  Overridden by the various 
          * model subclasses to ensure that their children are of the correct type.
          */
-        public function createChild():SegmentModel
+        public function createChild(element:CoverageElement):SegmentModel
+        {
+            return new SegmentModel();
+        }
+        
+        /**
+         * Factory method to create a child of this SegmentModel.  Overridden by the various 
+         * model subclasses to ensure that their children are of the correct type.
+         */
+        public function createChildFromXml(childXml:XML):SegmentModel
         {
             return new SegmentModel();
         }
@@ -141,12 +158,19 @@ package com.allurent.coverage.model
         }
         
         /**
+         * Initialize this model once it has been attached to the coverage model tree. 
+         */
+        public function initialize():void
+        {
+        }
+        
+        /**
          * Resolve a child element by its name
          *  
          * @param pathElement a key for the child model element
          * @return the resolved element, or null if not found.
          */
-        public function resolvePathComponent(pathElement:String):SegmentModel
+        public function resolvePathComponent(element:CoverageElement, pathElement:String):SegmentModel
         {
             return childMap[pathElement] as SegmentModel;
         }
@@ -163,22 +187,23 @@ package com.allurent.coverage.model
          * @return the resolved SegmentModel, or null if it could not be found.
          * 
          */
-        public function resolvePath(path:Array, create:Boolean = false):SegmentModel
+        public function resolveCoverageElement(element:CoverageElement, create:Boolean = false):SegmentModel
         {
             var index:uint = 0;
             var model:SegmentModel = this;
             var isNew:Boolean = false;
+            var path:Array = element.path;
             
             while (index < path.length)
             {
-                var resolvedChild:SegmentModel = model.resolvePathComponent(path[index])
+                var resolvedChild:SegmentModel = model.resolvePathComponent(element, path[index])
                 if (resolvedChild == null)
                 {
                     if (!create)
                     {
                         return null;
                     }
-                    resolvedChild = model.createChild();  // concrete class may vary
+                    resolvedChild = model.createChild(element);  // concrete class may vary
                     resolvedChild.name = path[index];
                     isNew = true;
                     model.addChild(resolvedChild);
@@ -192,22 +217,35 @@ package com.allurent.coverage.model
                 // If the model at the end of the path is new, bump its element count
                 // (which also increments the element count of each of its ancestors).
                 //
-                model.addLines(1);
+                model.initialize();
             }
             return model;
         }
 
         /**
-         * The total coverage ratio for this segment.
+         * The total line coverage ratio for this segment.
          */
         [Bindable("coverageChange")]
-        public function get coverage():Number
+        public function get lineCoverage():Number
         {
             if (numLines == 0)
             {
                 return 0;
             }
-            return numCovered / numLines;
+            return coveredLines / numLines;
+        }
+        
+        /**
+         * The total line coverage ratio for this segment.
+         */
+        [Bindable("coverageChange")]
+        public function get branchCoverage():Number
+        {
+            if (numBranches == 0)
+            {
+                return 0;
+            }
+            return coveredBranches / numBranches;
         }
         
         /**
@@ -226,17 +264,47 @@ package com.allurent.coverage.model
         }
         
         /**
-         * Add a coverage count to this model, and by implication to all of its ancestors.
-         * The coverage count applies to lines at/below this model.
+         * Add some number of branches at or below this model, and by implication 
+         * to all of its ancestors.
          */
-        public function addCoverage(n:uint):void
+        public function addBranches(n:uint):void
         {
-            numCovered += n;
+            numBranches += n;
             dispatchEvent(new Event(COVERAGE_CHANGE));
             
             if (parent != null)
             {
-                parent.addCoverage(n);
+                parent.addBranches(n);
+            }
+        }
+        
+        /**
+         * Add a coverage count to this model, and by implication to all of its ancestors.
+         * The coverage count applies to lines at/below this model.
+         */
+        public function addLineCoverage(n:uint):void
+        {
+            coveredLines += n;
+            dispatchEvent(new Event(COVERAGE_CHANGE));
+            
+            if (parent != null)
+            {
+                parent.addLineCoverage(n);
+            }
+        }
+        
+        /**
+         * Add a coverage count to this model, and by implication to all of its ancestors.
+         * The coverage count applies to branches at/below this model.
+         */
+        public function addBranchCoverage(n:uint):void
+        {
+            coveredBranches += n;
+            dispatchEvent(new Event(COVERAGE_CHANGE));
+            
+            if (parent != null)
+            {
+                parent.addBranchCoverage(n);
             }
         }
         
@@ -256,15 +324,19 @@ package com.allurent.coverage.model
             parseXmlElement(xml);
             if (xml.children().length() > 0)
             {
-                var childName:String = createChild().createXmlElement().name().toString();
-                for each (var childXml:XML in xml.elements(childName))
+                for each (var childXml:XML in xml.children())
                 {
-                    var model:SegmentModel = createChild();
+                    var model:SegmentModel = createChildFromXml(childXml);
+                    if (model == null)
+                    {
+                        continue;
+                    }
                     model.name = childXml.@name;
                     addChild(model); 
                     model.fromXML(childXml);
                 }
             }
+            initialize();
         }
 
         protected function createXmlElement():XML
@@ -279,8 +351,8 @@ package com.allurent.coverage.model
         protected function populateXmlElement(xml:XML):void
         {
             xml.@name = name;
-            xml.@coverage = coverage.toPrecision(4);
-            xml.@coveredLines = numCovered;
+            xml.@lineCoverage = lineCoverage.toPrecision(4);
+            xml.@coveredLines = coveredLines;
             xml.@lines = numLines;
         }
     }

@@ -156,7 +156,8 @@
                 // After processing all options, load the models up from the project
                 // and display the top-level report view.
                 //
-                coverageView.segmentModel = controller.coverageModel;
+                lineCoverageView.segmentModel = controller.coverageModel;
+                branchCoverageView.segmentModel = controller.coverageModel;
             }
 
             private function processFileArgument(f:File):void
@@ -172,7 +173,8 @@
                 else if (f.name.match(/\.xml/))
                 {
                     controller.loadCoverageReport(f);
-                    coverageView.segmentModel = controller.coverageModel;
+                    lineCoverageView.segmentModel = controller.coverageModel;
+                    branchCoverageView.segmentModel = controller.coverageModel;
                 }
             }
             
@@ -212,7 +214,13 @@
         <mx:Button label="Save Report..." click="saveOutput()"/>
     </mx:HBox>
     <!-- View of the coverage stats for the entire application -->
-    <view:CoverageView id="coverageView" width="100%" height="100%"
-        controller="{controller}"/>
+    <mx:TabNavigator width="100%" height="100%" creationPolicy="all">
+        <view:BranchCoverageView id="branchCoverageView" width="100%" height="100%"
+            label="Branches"
+            controller="{controller}"/>
+        <view:LineCoverageView id="lineCoverageView" width="100%" height="100%"
+            label="Lines"
+            controller="{controller}"/>
+    </mx:TabNavigator>
 
 </mx:WindowedApplication>
