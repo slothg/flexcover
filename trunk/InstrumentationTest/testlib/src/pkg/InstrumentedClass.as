@@ -64,26 +64,28 @@ package pkg {
                     break;
             }
 
-            for (var i:int = 0; i < 10; i++)
+            for (var i:int = 0; i < n; i++)
             {
-                if (i == 5)
+                log.push("for loop start");
+                if (i == 1)
                 {
                     continue;
                 }
-                log.push("for loop: " + i);
+                log.push("for loop end: " + i);
             }
 
             var j:uint = n;
             while (j > 0)
             {
-                log.push("while loop: " + j);
+                log.push("while loop start: " + j);
                 if (j == 3)
                 {
                     break;
                 }
                 j--;
+                log.push("while loop end");
             }
-
+            log.push("after while");
             do
             {
                 log.push("do loop: " + k);
@@ -91,7 +93,9 @@ package pkg {
                 {
                     break;
                 }
-            } while (k > 0);
+                log.push("do loop end");
+            } while (k-- > 0);
+            log.push("after do");
         }
     }
 }

@@ -13,7 +13,7 @@
     <!-- Project specific targets -->
     <target name="build" depends="init,air-application-stage"/>
 
-    <target name="test" depends="air-report">
+    <target name="test" depends="build,air-report">
         <condition property="CoverageTest.ok">
             <filesmatch file1="bin/coverage-report.xml" file2="baseline/coverage-report.xml"/>
         </condition>

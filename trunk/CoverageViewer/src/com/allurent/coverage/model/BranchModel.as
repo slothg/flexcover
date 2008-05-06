@@ -22,39 +22,52 @@
  */
 package com.allurent.coverage.model
 {
-    import flash.events.EventDispatcher;
+    import flash.events.Event;
+
+    /** This event is dispatched if the execution count changes. */    
+    [Event(name="executionCountChange",type="flash.events.Event")]
     
     /**
-     * Model of a package in the application for coverage purposes. 
+     * Model for a single executable branch within the application. 
      */
     [Bindable]
-    public class PackageModel extends SegmentModel
+    public class BranchModel extends ElementModel
     {
+        public var symbol:String;
+        public var line:int;
+        public var column:int;
+        
         /**
-         * Construct a new PackageModel. 
+         * Construct a new BranchModel. 
          */
-        public function PackageModel()
+        public function BranchModel()
         {
-        }
-        
-        override public function createChild(element:CoverageElement):SegmentModel
-        {
-            return new ClassModel();
-        }
-        
-        override public function createChildFromXml(childXml:XML):SegmentModel
-        {
-            return new ClassModel();
-        }
-        
-        override public function get displayName():String
-        {
-            return (name == "") ? "[top level]" : name;
         }
 
+        override public function initialize():void
+        {
+            symbol = name.charAt(0);
+            var dotIndex:int = name.indexOf(".");
+            line = parseInt(name.substring(1, dotIndex));
+            column = parseInt(name.substring(dotIndex + 1));
+
+            super.initialize();
+            addBranches(1);
+        }
+        
+        override public function get elementId():String
+        {
+            return "line" + line;
+        }
+
+        override protected function addCoverage(n:uint):void
+        {
+            addBranchCoverage(n);
+        }
+        
         override protected function createXmlElement():XML
         {
-            return <package/>;
+            return <branch/>;
         }
     }
 }

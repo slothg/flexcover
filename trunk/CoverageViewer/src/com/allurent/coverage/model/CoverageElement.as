@@ -33,8 +33,6 @@ package com.allurent.coverage.model
         public var className:String;
         public var packageName:String;
         public var functionName:String;
-        public var line:int;
-        public var block:Boolean;    // This is currently not used
         public var pathname:String;  // This is optional
         
         /**
@@ -43,28 +41,29 @@ package com.allurent.coverage.model
          */
         public function get path():Array
         {
-            return [packageName, className, functionName, line.toString()];
+            return null;
         }
         
         /**
          * Construct a CoverageElement from an instrumentation or metadata string of this form:
          * 
-         *    PACKAGE:CLASS/FUNCTION@LINE
-         * or
-         *    PACKAGE:CLASS/FUNCTION@LINE;PATHNAME
-         *  
-         * Note that FUNCTION may itself contain slashes for getter and setter suffixes of
+         *    <package> ":" <class> "/" <function> "@" [ <line> | ("+" | "-") <line> ":" <column> ]
+         * 
+         * Note that <function> may itself contain slashes for getter and setter suffixes of
          * "/get" and "/set" respectively.
          * 
          */
         public static function fromString(s:String):CoverageElement
         {
-            var ce:CoverageElement = new CoverageElement();
+            var packageName:String;
+            var className:String;
+            var functionName:String;
+            var pathname:String;
             
             var firstSemi:int = s.indexOf(";");
             if (firstSemi >= 0)
             {
-                ce.pathname = s.substring(firstSemi+1);
+                pathname = s.substring(firstSemi+1);
                 s = s.substring(0, firstSemi);
             }
             
@@ -79,13 +78,13 @@ package com.allurent.coverage.model
                 var colon:int = fullClass.indexOf(":");
                 if (colon < 0)
                 { 
-                    ce.className = fullClass;
-                    ce.packageName = "";
+                    className = fullClass;
+                    packageName = "";
                 }
                 else
                 {
-                    ce.packageName = fullClass.substring(0, colon);
-                    ce.className = fullClass.substring(colon+1);
+                    packageName = fullClass.substring(0, colon);
+                    className = fullClass.substring(colon+1);
                 }
             }
             var lastAt:int = s.lastIndexOf("@");
@@ -94,26 +93,39 @@ package com.allurent.coverage.model
                 return null;
             }
 
-            ce.line = parseInt(s.substring(lastAt+1));
-            ce.functionName = s.substring(firstSlash+1, lastAt);
+            var location:String = s.substring(lastAt+1); 
+            functionName = s.substring(firstSlash+1, lastAt);
 
             // For some reason this gets stuck in by the compiler.
-            if (ce.functionName.substring(0, 8) == "private:")
+            if (functionName.substring(0, 8) == "private:")
             {
-                ce.functionName = ce.functionName.substring(8);
+                functionName = functionName.substring(8);
             }
-            else if (ce.functionName.substring(0, 10) == "protected:")
+            else if (functionName.substring(0, 10) == "protected:")
             {
-                ce.functionName = ce.functionName.substring(10);
+                functionName = functionName.substring(10);
             }
-            
-            return ce;            
-        }
-        
-        override public function toString():String
-        {
-            return ((packageName == "") ? "" : (packageName + "."))
-                   + className + ":" + functionName + "@" + line + (block ? "*" : "");  
+
+            if (location.charAt(0) == "+" || location.charAt(0) == '-')
+            {
+                var bce:BranchCoverageElement = new BranchCoverageElement();
+                bce.className = className;
+                bce.packageName = packageName;
+                bce.functionName = functionName;
+                bce.pathname = pathname;
+                bce.location = location;
+                return bce;
+            }
+            else
+            {
+                var lce:LineCoverageElement = new LineCoverageElement();
+                lce.className = className;
+                lce.packageName = packageName;
+                lce.functionName = functionName;
+                lce.pathname = pathname;
+                lce.line = parseInt(location);
+                return lce;
+            }
         }
     }
 }

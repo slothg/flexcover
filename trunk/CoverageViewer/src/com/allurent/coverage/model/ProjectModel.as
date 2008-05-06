@@ -113,14 +113,15 @@ package com.allurent.coverage.model
          *  
          */
 
-        public function findClass(c:ClassModel):File
+        public function findClass(c:ClassModel, transformed:Boolean):File
         {
             var f:File;
             
             // First try an explicit filename if one is known for this class.
-            if (c.pathname != null)
+            var pathname:String = transformed ? c.transformedPathname : c.pathname;
+            if (pathname != null)
             {
-                f = new File(c.pathname);
+                f = new File(pathname);
                 if (f.exists)
                 {
                     return f;

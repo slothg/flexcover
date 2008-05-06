@@ -31,60 +31,34 @@ package com.allurent.coverage.model
      * Model for a single executable line within the application. 
      */
     [Bindable]
-    public class LineModel extends SegmentModel
+    public class LineModel extends ElementModel
     {
-        /** Number of times that this line has been executed. */
-        public var executionCount:uint = 0;
-        
-        /** reference to associated coverage element, if known. */
-        public var element:CoverageElement = null;
-        
-        public static const EXECUTION_COUNT_CHANGE:String = "executionCountChange";
-        
         /**
-         * Construct a new FunctionModel. 
+         * Construct a new LineModel. 
          */
         public function LineModel()
         {
         }
         
-        /**
-         * Increment the execution count for this line, and also set its coverage
-         * to 1 if the execution count goes from zero to nonzero, which will ripple
-         * that coverage increment up through all the ancestors of this line.
-         */
-        public function addExecutionCount(n:uint):void
+        override public function initialize():void
         {
-            if (n > 0 && executionCount == 0)
-            {
-                addCoverage(1);
-            }
-            executionCount += n;
-            dispatchEvent(new Event("executionCountChange"));
+            super.initialize();
+            addLines(1);
         }
         
-        override public function createChild():SegmentModel
+        override public function get elementId():String
         {
-            // Leaf model, don't permit more kids!
-            throw new Error("Should never happen!");
+            return "line" + name;
+        }
+
+        override protected function addCoverage(n:uint):void
+        {
+            addLineCoverage(n);
         }
         
         override protected function createXmlElement():XML
         {
             return <line/>;
-        }
-        
-        override protected function parseXmlElement(xml:XML):void
-        {
-            addLines(1);
-            addExecutionCount(xml.@count);
-        }
-
-        override protected function populateXmlElement(xml:XML):void
-        {
-            // We don't call super here because a LineModel is a leaf node and looks different
-            xml.@name = name;
-            xml.@count = executionCount;
         }
     }
 }

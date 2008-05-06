@@ -44,11 +44,16 @@ package com.allurent.coverage.model
             children = new ArrayCollection();
         }
         
-        override public function createChild():SegmentModel
+        override public function createChild(element:CoverageElement):SegmentModel
         {
             return new PackageModel();
         }
         
+        override public function createChildFromXml(childXml:XML):SegmentModel
+        {
+            return new PackageModel();
+        }
+
         /**
          * Record the reception of a CoverageElement with an associated element count
          * by bumping the execution count of a LineModel resolved from that element's path.
@@ -56,13 +61,9 @@ package com.allurent.coverage.model
          */
         public function recordCoverageElement(element:CoverageElement, count:uint, constrainToModel:Boolean):void
         {
-            var model:LineModel = resolvePath(element.path, !constrainToModel) as LineModel;
+            var model:ElementModel = resolveCoverageElement(element, !constrainToModel) as ElementModel;
             if (model != null)
             {
-                if (model.executionCount == 0)
-                {
-                    model.element = element;
-                }
                 model.addExecutionCount(count);
             }
         }
@@ -73,17 +74,28 @@ package com.allurent.coverage.model
          */
         public function addCoverageElement(element:CoverageElement):void
         {
-            var model:SegmentModel = resolvePath(element.path, true);
+            var model:SegmentModel = resolveCoverageElement(element, true);
 
             // LineModels that have an associated pathname need to communicate
             // that pathname to the associated ClassModel.  Kind of a hack here
             // but needed because we don't get a clean class-to-pathname association
             // in the metadata.
             //
-            if (model is LineModel && element.pathname != null)
+            if (element.pathname != null)
             {
                 var classModel:ClassModel = ClassModel(model.parent.parent);
-                classModel.pathname = element.pathname;
+                if (element is LineCoverageElement)
+                {
+                    classModel.pathname = element.pathname;
+                    if (classModel.transformedPathname == null)
+                    {
+                        classModel.transformedPathname = element.pathname;
+                    }
+                }
+                else if (element is BranchCoverageElement)
+                {
+                    classModel.transformedPathname = element.pathname;
+                }
             }
         }
         

@@ -40,7 +40,6 @@ package com.allurent.coverage.model
         override public function addChild(child:SegmentModel):void
         {
             super.addChild(child);
-            classModel.lineModelMap[child.name] = child;
         }
         
         public function get classModel():ClassModel
@@ -62,11 +61,38 @@ package com.allurent.coverage.model
             return null;
         } 
 
-        override public function createChild():SegmentModel
+        override public function createChild(element:CoverageElement):SegmentModel
         {
-            return new LineModel();
+            if (element is LineCoverageElement)
+            {
+                return new LineModel();
+            }
+            else if (element is BranchCoverageElement)
+            {
+                return new BranchModel();
+            }
+            else
+            {
+                throw new Error("Unknown CoverageElement type: " + element);
+            }
         }
         
+        override public function createChildFromXml(childXml:XML):SegmentModel
+        {
+            if (childXml.name() == "line")
+            {
+                return new LineModel();
+            }
+            else if (childXml.name() == "branch")
+            {
+                return new BranchModel();
+            }
+            else
+            {
+                throw new Error("Unknown child type: " + childXml.name());
+            }
+        }
+
         override protected function createXmlElement():XML
         {
             return <function/>;

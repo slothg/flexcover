@@ -31,11 +31,17 @@ package com.allurent.coverage.model
     [Bindable]
     public class ClassModel extends SegmentModel
     {
-        /** Map from all line numbers in the program to individual LineModels, which are grandchildren. */
+        /** Map from all line numbers in the source to individual LineModels, which are grandchildren. */
         public var lineModelMap:Object = {};
+        
+        /** Map from all line numbers in the transformed source to arrays of BranchModels associated with that line. */
+        public var branchModelMap:Object = {};
         
         /** Pathname of the source file associated with this ClassModel, if gleaned from the metadata. */
         public var pathname:String;
+        
+        /** Pathname of the transformed source file associated with this ClassModel, if gleaned from the metadata. */
+        public var transformedPathname:String;
         
         /**
          * Construct a new ClassModel. 
@@ -44,7 +50,31 @@ package com.allurent.coverage.model
         {
         }
         
-        override public function createChild():SegmentModel
+        public function addElementModel(m:ElementModel):void
+        {
+            if (m is LineModel)
+            {
+                lineModelMap[m.name] = m;
+            }
+            else if (m is BranchModel)
+            {
+                var bm:BranchModel = m as BranchModel;
+                var lineEntry:Array = branchModelMap[bm.line]; 
+                if (lineEntry == null)
+                {
+                    lineEntry = [];
+                    branchModelMap[bm.line] = lineEntry;
+                }
+                lineEntry.push(bm);
+            }
+        }
+        
+        override public function createChild(element:CoverageElement):SegmentModel
+        {
+            return new FunctionModel();
+        }
+        
+        override public function createChildFromXml(childXml:XML):SegmentModel
         {
             return new FunctionModel();
         }
@@ -71,12 +101,14 @@ package com.allurent.coverage.model
         {
             super.parseXmlElement(xml);
             pathname = xml.@pathname;
+            transformedPathname = xml.@transformedPathname;
         }
 
         override protected function populateXmlElement(xml:XML):void
         {
             super.populateXmlElement(xml);
             xml.@pathname = pathname;
+            xml.@transformedPathname = transformedPathname;
         }        
     }
 }

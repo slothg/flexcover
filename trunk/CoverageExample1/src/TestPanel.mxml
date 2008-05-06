@@ -3,12 +3,16 @@
     title="Test Panel">
     <mx:Script>
         <![CDATA[
-        
+            import mx.controls.Alert;
             import pkg.TestClass;
             
             [Bindable]
             public var foo:String = "abc";
-            
+
+            private function showAlert():void
+            {
+                Alert.show('foo is def');
+            }
         ]]>
     </mx:Script>
     <mx:Label text="foo is {foo}"/>
@@ -18,4 +22,6 @@
                click="TestClass.staticFunction()"/>
     <mx:Button label="Modify foo"
                click="foo = 'def'"/>
+    <mx:Button label="Conditionally show an alert"
+               click="if (foo == 'def') showAlert()"/>
 </mx:Panel>
