@@ -33,9 +33,17 @@ package com.allurent.coverage.model
     [Bindable]
     public class BranchModel extends ElementModel
     {
+        /** Type of branch: "+" or "-" */
         public var symbol:String;
+        
+        /** Line number -- if a transformed file, this will be the original line. */
         public var line:int;
+        
+        /** Column number -- if a transformed file, this will always be -1. */
         public var column:int;
+        
+        /** sort key for sorting branches that occur at the same column. */
+        public var sortKey:Number;
         
         /**
          * Construct a new BranchModel. 
@@ -47,9 +55,37 @@ package com.allurent.coverage.model
         override public function initialize():void
         {
             symbol = name.charAt(0);
-            var dotIndex:int = name.indexOf(".");
-            line = parseInt(name.substring(1, dotIndex));
-            column = parseInt(name.substring(dotIndex + 1));
+
+            var hashIndex:int = name.indexOf("#");
+            var transformedLine:int = -1;
+            var lineColumn:String;
+            if (hashIndex >= 0)
+            {
+                transformedLine = parseInt(name.substring(1, hashIndex));
+                lineColumn = name.substring(hashIndex + 1);
+            }
+            else
+            {
+                lineColumn = name;
+            }
+            
+            var dotIndex:int = lineColumn.indexOf(".");
+            line = parseInt(lineColumn.substring(1, dotIndex));
+            column = parseInt(lineColumn.substring(dotIndex + 1));
+            
+            var symbolValue:Number = (symbol == "+") ? 0 : 0.5;
+            if (transformedLine >= 0)
+            {
+                // In a transformed file, the column appears to be 1, while the sortKey
+                // reflects the line and column in the original file. 
+                sortKey = (line * 1000) + column + symbolValue;
+                line = transformedLine;
+                column = -1;
+            }
+            else
+            {
+                sortKey = column + symbolValue;
+            }
 
             super.initialize();
             addBranches(1);

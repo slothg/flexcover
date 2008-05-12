@@ -9,9 +9,20 @@
         {
             return Number(value.branchCoverage);
         } 
+
+        override protected function getCount(value:Object):int
+        {
+            return Number(value.coveredBranches);
+        }
+        
+        override protected function getTotal(value:Object):int
+        {
+            return Number(value.numBranches);
+        }
+
         ]]>
     </mx:Script>
     
     <mx:Canvas id="greenBar" backgroundColor="#00FF00" height="100%"/> 
-    <mx:Label id="coverageLabel" width="100%" textAlign="center"/>
+    <mx:Label id="coverageLabel" fontWeight="bold" width="100%" textAlign="center"/>
 </view:CoverageColumnRenderer>

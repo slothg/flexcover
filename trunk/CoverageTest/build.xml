@@ -1,7 +1,7 @@
 <project name="CoverageTest" default="build">
 
     <!-- Project specific overrides -->
-    <property name="flex.mxmlc.options" value="-coverage"/>
+    <property name="flex.mxmlc.options" value="-coverage -keep"/>
 
     <!-- Common properties and targets -->
     <import file="../build-imports.xml"/>

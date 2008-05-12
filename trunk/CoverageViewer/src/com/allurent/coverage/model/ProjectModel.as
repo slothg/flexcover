@@ -38,7 +38,7 @@ package com.allurent.coverage.model
         public var metadataFiles:ArrayCollection = new ArrayCollection();
         public var traceLogs:ArrayCollection = new ArrayCollection();
         public var sourcePath:ArrayCollection = new ArrayCollection();
-        public var excludeKeyRegexp:RegExp = /_bindingExprs@/;
+        public var excludeKeyRegexp:RegExp = /_bindingExprs|_bindingsSetup/;
         
         /**
          * Parse some XML into this project model.
@@ -113,12 +113,12 @@ package com.allurent.coverage.model
          *  
          */
 
-        public function findClass(c:ClassModel, transformed:Boolean):File
+        public function findClass(c:ClassModel):File
         {
             var f:File;
             
             // First try an explicit filename if one is known for this class.
-            var pathname:String = transformed ? c.transformedPathname : c.pathname;
+            var pathname:String = c.pathname;
             if (pathname != null)
             {
                 f = new File(pathname);

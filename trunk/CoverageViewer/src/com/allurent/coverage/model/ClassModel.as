@@ -40,9 +40,6 @@ package com.allurent.coverage.model
         /** Pathname of the source file associated with this ClassModel, if gleaned from the metadata. */
         public var pathname:String;
         
-        /** Pathname of the transformed source file associated with this ClassModel, if gleaned from the metadata. */
-        public var transformedPathname:String;
-        
         /**
          * Construct a new ClassModel. 
          */
@@ -101,14 +98,12 @@ package com.allurent.coverage.model
         {
             super.parseXmlElement(xml);
             pathname = xml.@pathname;
-            transformedPathname = xml.@transformedPathname;
         }
 
         override protected function populateXmlElement(xml:XML):void
         {
             super.populateXmlElement(xml);
             xml.@pathname = pathname;
-            xml.@transformedPathname = transformedPathname;
         }        
     }
 }

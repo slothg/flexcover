@@ -22,7 +22,7 @@
  * OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  -->
 <mx:WindowedApplication xmlns:mx="http://www.adobe.com/2006/mxml" layout="vertical"
-    width="800" height="600"
+    width="950" height="700"
     xmlns:view="com.allurent.coverage.view.*"
     applicationComplete="initializeApplication()"
     close="onClose()"
@@ -35,6 +35,8 @@
     
     <mx:Script>
         <![CDATA[
+            import com.allurent.coverage.view.SourceCoverageView;
+            import com.allurent.coverage.event.SourceViewEvent;
             import mx.controls.Alert;
             import com.allurent.coverage.Controller;
             
@@ -55,6 +57,7 @@
             private function initializeApplication():void
             {
                 nativeApplication.addEventListener(InvokeEvent.INVOKE, handleInvoke);
+                this.addEventListener(SourceViewEvent.VIEW_CLASS, handleSourceView);
             }
             
             /**
@@ -65,6 +68,18 @@
             {
                 processOptions(e.arguments);
                 controller.attachConnection(connectionName);
+            }
+            
+            private function handleSourceView(e:SourceViewEvent):void
+            {
+                sourceViewCanvas.removeAllChildren();
+                if (e.classModel != null)
+                {
+                    var sourceView:SourceCoverageView = new SourceCoverageView();
+                    sourceView.percentWidth = sourceView.percentHeight = 100;
+                    sourceViewCanvas.addChild(sourceView);
+                    sourceView.show(controller.project, e.classModel);
+                }
             }
             
             private function handleDragIn(e:NativeDragEvent):void
@@ -209,18 +224,22 @@
         ]]>
     </mx:Script>
 
-    <mx:HBox>
+    <mx:HBox width="100%" horizontalAlign="left">
         <mx:Button label="Load File..." click="openInput()"/>
         <mx:Button label="Save Report..." click="saveOutput()"/>
     </mx:HBox>
+    
     <!-- View of the coverage stats for the entire application -->
-    <mx:TabNavigator width="100%" height="100%" creationPolicy="all">
-        <view:BranchCoverageView id="branchCoverageView" width="100%" height="100%"
-            label="Branches"
-            controller="{controller}"/>
-        <view:LineCoverageView id="lineCoverageView" width="100%" height="100%"
-            label="Lines"
-            controller="{controller}"/>
-    </mx:TabNavigator>
+    <mx:HDividedBox width="100%" height="100%">
+        <mx:TabNavigator width="350" height="100%" creationPolicy="all">
+            <view:BranchCoverageView id="branchCoverageView" width="100%" height="100%"
+                label="Branches"
+                controller="{controller}"/>
+            <view:LineCoverageView id="lineCoverageView" width="100%" height="100%"
+                label="Lines"
+                controller="{controller}"/>
+        </mx:TabNavigator>
+        <mx:Canvas id="sourceViewCanvas" width="100%" height="100%"/>
+    </mx:HDividedBox>
 
 </mx:WindowedApplication>

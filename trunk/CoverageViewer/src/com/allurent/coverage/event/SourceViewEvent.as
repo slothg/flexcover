@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- 
+/* 
  * Copyright (c) 2008 Allurent, Inc.
  *
  * Permission is hereby granted, free of charge, to any person
@@ -20,25 +19,28 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
  * OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- -->
-<view:SegmentView xmlns:mx="http://www.adobe.com/2006/mxml"
-    xmlns:view="com.allurent.coverage.view.*"
->
+ */
+package com.allurent.coverage.event
+{
+    import com.allurent.coverage.model.ClassModel;
     
-    <mx:AdvancedDataGrid id="coverageGrid" width="100%" height="100%"
-        change="showSource(coverageGrid.selectedItem)"> 
-        <mx:columns>
-            <mx:AdvancedDataGridColumn dataField="displayName" headerText="Name"/>
-            <mx:AdvancedDataGridColumn id="branchCoverageColumn" dataField="branchCoverage" headerText="Branch Coverage">
-                <mx:formatter>
-                    <mx:NumberFormatter precision="2"/>
-                </mx:formatter>
-            </mx:AdvancedDataGridColumn>
-        </mx:columns>
-        <mx:rendererProviders>
-            <mx:AdvancedDataGridRendererProvider column="{branchCoverageColumn}"
-                renderer="com.allurent.coverage.view.BranchCoverageColumnRenderer"/>
-        </mx:rendererProviders>
-    </mx:AdvancedDataGrid>  
+    import flash.events.Event;
 
-</view:SegmentView>
+    public class SourceViewEvent extends Event
+    {
+        public static const VIEW_CLASS:String = "viewClass";
+        
+        public var classModel:ClassModel;
+        
+        public function SourceViewEvent(type:String, classModel:ClassModel)
+        {
+            super(type, true);
+            this.classModel = classModel;
+        }
+        
+        override public function clone():Event
+        {
+            return new SourceViewEvent(type, classModel);
+        }
+    }
+}

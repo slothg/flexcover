@@ -23,6 +23,7 @@
     <!-- ======================================================== -->
     <filelist id="testChildren.filelist" dir=".">
         <file name="CoverageTest"/>
+        <file name="InstrumentationTest"/>
     </filelist>
 
     <!-- ======================================================== -->

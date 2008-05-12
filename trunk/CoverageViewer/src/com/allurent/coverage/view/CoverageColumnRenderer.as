@@ -36,9 +36,10 @@ package com.allurent.coverage.view
         [Bindable]
         public var coverageLabel:Label;
 
-        private static var formatter:NumberFormatter = createFormatter();
+        private static var percentFormatter:NumberFormatter = createPercentFormatter();
+        private static var formatter:NumberFormatter = new NumberFormatter();
         
-        private static function createFormatter():NumberFormatter
+        private static function createPercentFormatter():NumberFormatter
         {
             var f:NumberFormatter = new NumberFormatter();
             f.precision = 2;
@@ -50,14 +51,25 @@ package com.allurent.coverage.view
             throw new Error("getCoverage() not overridden");
         }        
         
+        protected function getCount(value:Object):int
+        {
+            throw new Error("getCount() not overridden");
+        }
+        
+        protected function getTotal(value:Object):int
+        {
+            throw new Error("getTotal() not overridden");
+        }
+
         override public function set data(value:Object):void
         {
             var coverage:Number = getCoverage(value);
-            var happyColor:uint = 0x00FF00 + ((1- coverage) * 0xFF) + (uint((1 - coverage) * 0xFF) << 16);
+            var happyColor:uint = 0x33FF33 + ((1- coverage) * 0xCC) + (uint((1 - coverage) * 0xCC) << 16);
             var warningColor:uint = 0xFF0000 + (coverage * 0xFF) + (uint(coverage * 0xFF) << 8)
             greenBar.setStyle("backgroundColor", happyColor);
             setStyle("backgroundColor", warningColor);
-            coverageLabel.text = formatter.format(coverage * 100) + "%";
+            coverageLabel.text = percentFormatter.format(coverage * 100) + "% ("
+                + formatter.format(getCount(value)) + "/" + formatter.format(getTotal(value)) + ")";
             greenBar.percentWidth = coverage * 100;
         }
         
