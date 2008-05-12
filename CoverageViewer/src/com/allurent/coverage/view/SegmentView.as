@@ -23,14 +23,13 @@
 package com.allurent.coverage.view
 {
     import com.allurent.coverage.Controller;
+    import com.allurent.coverage.event.SourceViewEvent;
     import com.allurent.coverage.model.ClassModel;
     import com.allurent.coverage.model.CoverageData;
-    import com.allurent.coverage.model.FunctionModel;
     import com.allurent.coverage.model.SegmentModel;
     
     import flash.events.Event;
     
-    import mx.collections.ArrayCollection;
     import mx.containers.VBox;
     import mx.controls.AdvancedDataGrid;
     import mx.events.FlexEvent;
@@ -75,12 +74,9 @@ package com.allurent.coverage.view
             coverageGrid.expandItem(_segmentModel, true);
         }
         
-        public function showSource(selection:Object, transformed:Boolean):void
+        public function showSource(selection:Object):void
         {
-            if (selection is ClassModel)
-            {
-                SourceView.show(controller.project, ClassModel(selection), transformed);
-            }
+            dispatchEvent(new SourceViewEvent(SourceViewEvent.VIEW_CLASS, selection as ClassModel));
         }
     }
 }

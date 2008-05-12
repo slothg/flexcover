@@ -9,9 +9,19 @@
         {
             return Number(value.lineCoverage);
         } 
+
+        override protected function getCount(value:Object):int
+        {
+            return Number(value.coveredLines);
+        }
+        
+        override protected function getTotal(value:Object):int
+        {
+            return Number(value.numLines);
+        }
         ]]>
     </mx:Script>
     
     <mx:Canvas id="greenBar" backgroundColor="#00FF00" height="100%"/> 
-    <mx:Label id="coverageLabel" width="100%" textAlign="center"/>
+    <mx:Label id="coverageLabel" fontWeight="bold" width="100%" textAlign="center"/>
 </view:CoverageColumnRenderer>

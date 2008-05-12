@@ -26,7 +26,7 @@
 >
     
     <mx:AdvancedDataGrid id="coverageGrid" width="100%" height="100%"
-        doubleClickEnabled="true" doubleClick="showSource(coverageGrid.selectedItem, false)"> 
+        change="showSource(coverageGrid.selectedItem)"> 
         <mx:columns>
             <mx:AdvancedDataGridColumn dataField="displayName" headerText="Name"/>
             <mx:AdvancedDataGridColumn id="lineCoverageColumn" dataField="lineCoverage" headerText="Line Coverage">
@@ -34,8 +34,6 @@
                     <mx:NumberFormatter precision="2"/>
                 </mx:formatter>
             </mx:AdvancedDataGridColumn>
-            <mx:AdvancedDataGridColumn dataField="numLines" headerText="Line Count"/>
-            <mx:AdvancedDataGridColumn dataField="coveredLines" headerText="Lines Covered"/>
         </mx:columns>
         <mx:rendererProviders>
             <mx:AdvancedDataGridRendererProvider column="{lineCoverageColumn}"

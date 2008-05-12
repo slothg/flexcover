@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- 
+/*
  * Copyright (c) 2008 Allurent, Inc.
  *
  * Permission is hereby granted, free of charge, to any person
@@ -20,82 +19,29 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
  * OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- -->
-<mx:Window xmlns:mx="http://www.adobe.com/2006/mxml" layout="vertical"
-    creationComplete="onCreationComplete()" xmlns:view="com.allurent.coverage.view.*">
-
-    <mx:Script>
-        <![CDATA[
-            import com.allurent.coverage.model.BranchModel;
-            import com.allurent.coverage.model.ElementModel;
-            import mx.events.AIREvent;
-            import com.allurent.coverage.model.SegmentModel;
-            import com.allurent.coverage.model.LineModel;
-            import com.allurent.coverage.model.ProjectModel;
-            import com.allurent.coverage.model.CoverageModel;
-        import com.allurent.coverage.model.ClassModel;
-        import mx.managers.PopUpManager;
-        import mx.core.Application;
-        import flash.filesystem.FileMode;
-        import flash.filesystem.FileStream;
-        import flash.filesystem.File;
-
+ */
+ package com.allurent.coverage.view
+ {
+    import com.allurent.coverage.model.BranchModel;
+    import com.allurent.coverage.model.ClassModel;
+    import com.allurent.coverage.model.ElementModel;
+    import com.allurent.coverage.model.LineModel;
+    import com.allurent.coverage.model.ProjectModel;
+    
+    import flash.events.Event;
+    import flash.filesystem.File;
+    import flash.filesystem.FileMode;
+    import flash.filesystem.FileStream;
+    
+    import mx.controls.HTML;
+    
+    public class SourceCoverageView extends HTML
+    { 
         public var project:ProjectModel;
         public var classModel:ClassModel;
         public var lines:Array;
-        public var transformed:Boolean;
-        
-        public static var viewMap:Object = {};
-        
-        public static function show(project:ProjectModel, c:ClassModel, transformed:Boolean):void
-        {
-            var window:SourceView = viewMap[c.qualifiedName];
-            if (window != null)
-            {
-                window.activate();
-                return;
-            }
-            
-            window = new SourceView();
 
-            // track this new window
-            viewMap[c.qualifiedName] = window;
-
-            window.project = project;
-            window.transformed = transformed;
-            window.width = 800; window.height = 800;
-            window.open();
-            window.navigate(c);
-        }
-        
-        public function handleClose(e:Event):void
-        {
-            delete viewMap[classModel.qualifiedName];
-        }
-        
-        public function navigate(c:ClassModel):void
-        {
-            classModel = c;
-            title = c.name;
-
-            nativeWindow.addEventListener(Event.CLOSE, handleClose);
-            
-            var f:File = project.findClass(c, transformed);
-
-            var fileContents:String;
-            if (f != null)
-            {
-                var input:FileStream = new FileStream();
-                input.open(f, FileMode.READ);
-                fileContents = input.readUTFBytes(input.bytesAvailable);
-                input.close();
-            }
-            else
-            {
-                fileContents = "[source file not found]";
-            }
-
-            var styles:Array = [
+        private static const STYLES:Array = [
             "pre {",
             "    background: #ffffff;",
             "    margin-top: 0px;",
@@ -130,24 +76,47 @@
             "}",
             ".goodBranch {",
             "    color: #009900;",
-            "    font-size: 16px;",
             "    font-weight: bold;",
             "}",
             ".badBranch {",
             "    color: #FF0000;",
-            "    font-size: 16px;",
             "    font-weight: bold;",
             "}",
             "pre.badSrc {",
             "    background: #f0c0c0;",
             "    margin-top: 0px;",
             "    margin-bottom: 0px;",
-            "}"];
+            "}"
+        ];
             
+        public function SourceCoverageView()
+        {
+        }
+        
+        public function show(project:ProjectModel, c:ClassModel):void
+        {
+            this.project = project;
+            classModel = c;
+
+            var f:File = project.findClass(c);
+
+            var fileContents:String;
+            if (f != null)
+            {
+                var input:FileStream = new FileStream();
+                input.open(f, FileMode.READ);
+                fileContents = input.readUTFBytes(input.bytesAvailable);
+                input.close();
+            }
+            else
+            {
+                fileContents = "[source file not found]";
+            }
+
             var html:XML =
                 <html>
                     <head>
-                       <style type="text/css">{styles.join(" ")}</style>
+                       <style type="text/css">{STYLES.join(" ")}</style>
                     </head>
                     <body>[BODY]</body>
                 </html>;
@@ -177,7 +146,7 @@
             var sourceText:String = '<table cellspacing="0" cellpadding="0" class="src">'
                     + newLines.join("\n") + '</table>';
 
-            htmlDisplay.htmlText = html.toXMLString().replace("[BODY]", sourceText);
+            htmlText = html.toXMLString().replace("[BODY]", sourceText);
         }
         
         private static const NO_ELEMENTS:int = 0;
@@ -188,49 +157,44 @@
         {
             var lineState:int = NO_ELEMENTS;
             
-            var lineModel:LineModel = null;
-            if ((!transformed) || classModel.pathname == classModel.transformedPathname)
+            var lineModel:LineModel = classModel.lineModelMap[lineNum];
+            if (lineModel != null)
             {
-                lineModel = classModel.lineModelMap[lineNum];
-                if (lineModel != null)
+                if (lineModel.executionCount == 0)
                 {
-                    if (lineModel.executionCount == 0)
-                    {
-                        // this is what we get as soon as we encounter an uncovered element
-                        lineState = UNCOVERED_ELEMENTS; 
-                    }
-                    else if (lineState == NO_ELEMENTS)
-                    {
-                        // but if the execution count is nonzero, the state can
-                        // go from NO_ELEMENTS to ALL_ELEMENTS_COVERED.
-                        lineState = ALL_ELEMENTS_COVERED;
-                    }
+                    // this is what we get as soon as we encounter an uncovered element
+                    lineState = UNCOVERED_ELEMENTS; 
+                }
+                else if (lineState == NO_ELEMENTS)
+                {
+                    // but if the execution count is nonzero, the state can
+                    // go from NO_ELEMENTS to ALL_ELEMENTS_COVERED.
+                    lineState = ALL_ELEMENTS_COVERED;
                 }
             }
 
             var branchModelsByOffset:Object = {};
-            if (transformed || classModel.pathname == classModel.transformedPathname)
+            for each (var bm1:BranchModel in classModel.branchModelMap[lineNum])
             {
-                for each (var bm1:BranchModel in classModel.branchModelMap[lineNum])
+                var offset:int = (bm1.column < 0) ? -1 : Math.max(0, bm1.column - 2);
+                var offsetEntry:Array = branchModelsByOffset[offset];
+                if (offsetEntry == null)
                 {
-                    var offsetEntry:Array = branchModelsByOffset[bm1.column];
-                    if (offsetEntry == null)
-                    {
-                        offsetEntry = [];
-                        branchModelsByOffset[bm1.column] = offsetEntry;
-                    }
-                    offsetEntry.push(bm1);
-                    if (bm1.executionCount == 0)
-                    {
-                        // this is what we get as soon as we encounter an uncovered element
-                        lineState = UNCOVERED_ELEMENTS; 
-                    }
-                    else if (lineState == NO_ELEMENTS)
-                    {
-                        // but if the execution count is nonzero, the state can
-                        // go from NO_ELEMENTS to ALL_ELEMENTS_COVERED.
-                        lineState = ALL_ELEMENTS_COVERED;
-                    }
+                    offsetEntry = [];
+                    branchModelsByOffset[offset] = offsetEntry;
+                }
+                offsetEntry.push(bm1);
+                offsetEntry.sortOn("sortKey", Array.NUMERIC);
+                if (bm1.executionCount == 0)
+                {
+                    // this is what we get as soon as we encounter an uncovered element
+                    lineState = UNCOVERED_ELEMENTS; 
+                }
+                else if (lineState == NO_ELEMENTS)
+                {
+                    // but if the execution count is nonzero, the state can
+                    // go from NO_ELEMENTS to ALL_ELEMENTS_COVERED.
+                    lineState = ALL_ELEMENTS_COVERED;
                 }
             }
 
@@ -238,16 +202,7 @@
             var line:String = "";
             for (var i:int = 0; i < originalLine.length; i++)
             {
-                if (i+2 in branchModelsByOffset)
-                {
-                    var bmList:Array = branchModelsByOffset[i+2];
-                    for each (var bm2:BranchModel in bmList)
-                    {
-                        line += '<span id="' + bm2.elementId + '"><sup class="'
-                                + ((bm2.executionCount > 0) ? "goodBranch" : "badBranch")
-                                + '">' + bm2.symbol + '</sup></span>';
-                    }
-                }
+                line += getBranchHtml(branchModelsByOffset, i);
 
                 var ch:String = originalLine.charAt(i);
                 switch (ch)
@@ -255,16 +210,25 @@
                 case "&":
                     line += "&amp;";
                     break;
+
                 case "<":
                     line += "&lt;";
                     break;
+
                 case ">":
                     line += "&gt;";
                     break;
+
+                case "\r":
+                case "\n":
+                    break;
+
                 default:
                     line += ch;
                 }
             }           
+            line += getBranchHtml(branchModelsByOffset, -1);
+
             var sourceTag:String = '<pre>';
 
             var countElement:String;
@@ -297,12 +261,28 @@
                    + countElement
                    + '<td>' + sourceTag + line + '</pre></td>';
         }
-        
+
+        private function getBranchHtml(branchModelsByOffset:Object, i:int):String
+        {
+            var line:String = ""
+            if (i in branchModelsByOffset)
+            {
+                var bmList:Array = branchModelsByOffset[i];
+                for each (var bm2:BranchModel in bmList)
+                {
+                    line += '<span id="' + bm2.elementId + '"><sup class="'
+                            + ((bm2.executionCount > 0) ? "goodBranch" : "badBranch")
+                            + '">' + bm2.symbol + bm2.executionCount + '</sup></span>';
+                }
+            }
+            return line;
+        }        
+
         private function handleLineCoverageChange(e:Event):void
         {
             var lineModel:LineModel = e.target as LineModel;
             var lineNum:uint = parseInt(lineModel.name);
-            var element:Object = htmlDisplay.htmlLoader.window.document.getElementById(lineModel.elementId);
+            var element:Object = htmlLoader.window.document.getElementById(lineModel.elementId);
             if (element != null)
             {
                 element.innerHTML = getLineHtml(lineNum);
@@ -312,7 +292,7 @@
         private function handleBranchCoverageChange(e:Event):void
         {
             var branchModel:BranchModel = e.target as BranchModel;
-            var element:Object = htmlDisplay.htmlLoader.window.document.getElementById(branchModel.elementId);
+            var element:Object = htmlLoader.window.document.getElementById(branchModel.elementId);
             if (element != null)
             {
                 element.innerHTML = getLineHtml(branchModel.line);
@@ -322,8 +302,5 @@
         private function onCreationComplete():void
         {
         }
-        ]]>
-    </mx:Script>
-    
-    <mx:HTML id="htmlDisplay" width="100%" height="100%"/>
-</mx:Window>
+    }
+}

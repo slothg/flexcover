@@ -1,20 +1,17 @@
-<applicationCoverage name="[Application]" lineCoverage="0.7805" coveredLines="32" lines="41">
-  <package name="" lineCoverage="0.7692" coveredLines="10" lines="13">
-    <class name="CoverageTest" lineCoverage="0.7692" coveredLines="10" lines="13" pathname="C:\Source\flexcover\CoverageTest\src\CoverageTest.mxml">
+<applicationCoverage name="[Application]" lineCoverage="0.9063" coveredLines="29" lines="32">
+  <package name="" lineCoverage="0.9091" coveredLines="10" lines="11">
+    <class name="CoverageTest" lineCoverage="0.9091" coveredLines="10" lines="11" pathname="C:\Source\flexcover\CoverageTest\src\CoverageTest.mxml" transformedPathname="C:\Source\flexcover\CoverageTest\src\CoverageTest.mxml">
       <function name="___CoverageTest_WindowedApplication1_applicationComplete" lineCoverage="1.000" coveredLines="1" lines="1">
+        <branch name="+3#137.18" count="1"/>
         <line name="3" count="2"/>
       </function>
       <function name="CoverageTest" lineCoverage="1.000" coveredLines="2" lines="2">
+        <branch name="+2#90.4" count="1"/>
         <line name="2" count="1"/>
         <line name="3" count="1"/>
       </function>
-      <function name="foo/get" lineCoverage="0.0000" coveredLines="0" lines="1">
-        <line name="10" count="0"/>
-      </function>
-      <function name="foo/set" lineCoverage="0.0000" coveredLines="0" lines="1">
-        <line name="10" count="0"/>
-      </function>
       <function name="runTest" lineCoverage="0.8750" coveredLines="7" lines="8">
+        <branch name="+12#119.27" count="1"/>
         <line name="12" count="1"/>
         <line name="14" count="1"/>
         <line name="15" count="1"/>
@@ -26,32 +23,16 @@
       </function>
     </class>
   </package>
-  <package name="pkg" lineCoverage="0.7857" coveredLines="22" lines="28">
-    <class name="TestClass" lineCoverage="0.7857" coveredLines="22" lines="28" pathname="C:\Source\flexcover\CoverageTest\src\pkg\TestClass.as">
-      <function name="addEventListener" lineCoverage="0.0000" coveredLines="0" lines="1">
-        <line name="6" count="0"/>
-      </function>
-      <function name="bindableVar/get" lineCoverage="1.000" coveredLines="1" lines="1">
-        <line name="6" count="1"/>
-      </function>
-      <function name="bindableVar/set" lineCoverage="1.000" coveredLines="1" lines="1">
-        <line name="6" count="1"/>
-      </function>
-      <function name="dispatchEvent" lineCoverage="1.000" coveredLines="1" lines="1">
-        <line name="6" count="1"/>
-      </function>
-      <function name="hasEventListener" lineCoverage="0.0000" coveredLines="0" lines="1">
-        <line name="6" count="0"/>
-      </function>
-      <function name="removeEventListener" lineCoverage="0.0000" coveredLines="0" lines="1">
-        <line name="6" count="0"/>
-      </function>
+  <package name="pkg" lineCoverage="0.9048" coveredLines="19" lines="21">
+    <class name="TestClass" lineCoverage="0.9048" coveredLines="19" lines="21" pathname="C:\Source\flexcover\CoverageTest\src\pkg\TestClass.as" transformedPathname="C:\Source\flexcover\CoverageTest\src\pkg\TestClass.as">
       <function name="staticFunction" lineCoverage="1.000" coveredLines="3" lines="3">
+        <branch name="+41.33" count="1"/>
         <line name="41" count="1"/>
         <line name="43" count="1"/>
         <line name="44" count="1"/>
       </function>
       <function name="TestClass" lineCoverage="1.000" coveredLines="6" lines="6">
+        <branch name="+10.26" count="1"/>
         <line name="10" count="1"/>
         <line name="11" count="1"/>
         <line name="12" count="1"/>
@@ -60,6 +41,13 @@
         <line name="6" count="1"/>
       </function>
       <function name="testFunction" lineCoverage="0.8333" coveredLines="10" lines="12">
+        <branch name="+16.26" count="3"/>
+        <branch name="+19.24" count="2"/>
+        <branch name="+27.41" count="6"/>
+        <branch name="+33.19" count="0"/>
+        <branch name="-19.24" count="1"/>
+        <branch name="-27.41" count="3"/>
+        <branch name="-33.19" count="3"/>
         <line name="16" count="3"/>
         <line name="18" count="3"/>
         <line name="19" count="3"/>
@@ -72,9 +60,6 @@
         <line name="34" count="0"/>
         <line name="35" count="0"/>
         <line name="39" count="3"/>
-      </function>
-      <function name="willTrigger" lineCoverage="0.0000" coveredLines="0" lines="1">
-        <line name="6" count="0"/>
       </function>
     </class>
   </package>

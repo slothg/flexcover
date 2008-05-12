@@ -87,14 +87,6 @@ package com.allurent.coverage.model
                 if (element is LineCoverageElement)
                 {
                     classModel.pathname = element.pathname;
-                    if (classModel.transformedPathname == null)
-                    {
-                        classModel.transformedPathname = element.pathname;
-                    }
-                }
-                else if (element is BranchCoverageElement)
-                {
-                    classModel.transformedPathname = element.pathname;
                 }
             }
         }
