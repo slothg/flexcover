@@ -1,6 +1,7 @@
 <project name="InstrumentationTest" default="build">
 
     <!-- Project specific overrides -->
+    <property name="flex.mxmlc.options" value="-coverage=false"/>
     <property name="testlib.dir" value="testlib"/>
     <property name="runtest.dir" location="stage"/>
 
@@ -22,8 +23,7 @@
         <mkdir dir="${testlib.dir}/bin"/>
         <compc src.dir="${testlib.dir}/src" dest="${testlib.dir}/bin/testlib.swc"
                lib.path.id="testlib.lib.path"
-               cvm="${testlib.dir}/bin/testlib.cvm"
-               options="-coverage"/>
+               options="-coverage=true"/>
     </target>
 
     <target name="run-test" depends="build-testlib,air-application-stage">
