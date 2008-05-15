@@ -31,7 +31,6 @@
     <macrodef name="mxmlc" description="">
         <attribute name="src" />
         <attribute name="dest" />
-        <attribute name="cvm" default="metadata.cvm"/>
         <attribute name="src.path" default="${src.flex.dir}" />
         <attribute name="lib.path.id" default="flex.lib.path" />
         <attribute name="options" default="${flex.mxmlc.options}" />
@@ -60,7 +59,6 @@
                 <arg value="-source-path=@{src.path}" />
                 <arg value="-file-specs=@{src}" />
                 <arg value="-output=@{dest}" />
-                <arg value="-coverage-metadata=@{cvm}" />
             </java>
         </sequential>
     </macrodef>
@@ -74,7 +72,6 @@
     <macrodef name="compc" description="">
         <attribute name="src.dir" />
         <attribute name="dest" />
-        <attribute name="cvm" default="metadata.cvm"/>
         <attribute name="lib.path.id" default="flex.lib.path" />
         <attribute name="options" default="${flex.compc.options}" />
         <attribute name="config" default="${flex.config}" />
@@ -103,7 +100,6 @@
                 <arg value="-source-path=@{src.dir}" />
                 <arg value="-include-sources=@{src.dir}" />
                 <arg value="-output=@{dest}" />
-                <arg value="-coverage-metadata=@{cvm}" />
             </java>
         </sequential>
     </macrodef>

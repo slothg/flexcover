@@ -1,6 +1,7 @@
 <project name="CoverageViewer" default="build">
 
     <!-- Project specific overrides -->
+    <property name="flex.mxmlc.options" value="-coverage=false"/>
 
     <!-- Common properties and targets -->
     <import file="build-imports.xml"/>

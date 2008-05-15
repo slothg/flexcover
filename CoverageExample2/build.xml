@@ -2,7 +2,6 @@
 
     <!-- Project specific overrides -->
     <property name="project.name" value="FacesApplication"/>
-    <property name="flex.mxmlc.options" value="-coverage"/>
 
     <!-- Common properties and targets -->
     <import file="../build-imports.xml"/>

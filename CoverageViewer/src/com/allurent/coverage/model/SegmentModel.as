@@ -354,6 +354,9 @@ package com.allurent.coverage.model
             xml.@lineCoverage = lineCoverage.toPrecision(4);
             xml.@coveredLines = coveredLines;
             xml.@lines = numLines;
+            xml.@branchCoverage = branchCoverage.toPrecision(4);
+            xml.@coveredBranches = coveredBranches;
+            xml.@branches = numBranches;
         }
     }
 }

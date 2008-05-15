@@ -1,4 +1,8 @@
+frameworks/flex-config.xml
+frameworks/air-config.xml
 frameworks/libs/utilities.swc
+frameworks/projects/utilities/src/coverage.as
+frameworks/projects/utilities/src/com/allurent/coverage/runtime/**
 lib/asc.jar
 lib/asdoc.jar
 lib/commons-logging.properties
@@ -16,5 +20,3 @@ lib/mxmlc_ja.jar
 lib/optimizer.jar
 lib/swfdump.jar
 lib/swfutils.jar
-frameworks/projects/utilities/src/coverage.as
-frameworks/projects/utilities/src/com/allurent/coverage/runtime/**
