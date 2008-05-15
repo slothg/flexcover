@@ -8,11 +8,12 @@
         import flash.filesystem.FileStream;
 
         import pkg.InstrumentedClass;
-        import coverage;
+        import com.allurent.coverage.runtime.CoverageManager;
 
         private function initializeApplication():void
         {
             nativeApplication.addEventListener(InvokeEvent.INVOKE, handleInvoke);
+            CoverageManager.agent = new InstrumentationTestAgent();
         }
 
         private function handleInvoke(e:InvokeEvent):void
