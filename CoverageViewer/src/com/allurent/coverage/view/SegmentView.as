@@ -24,7 +24,6 @@ package com.allurent.coverage.view
 {
     import com.allurent.coverage.Controller;
     import com.allurent.coverage.event.SourceViewEvent;
-    import com.allurent.coverage.model.ClassModel;
     import com.allurent.coverage.model.CoverageData;
     import com.allurent.coverage.model.SegmentModel;
     
@@ -76,7 +75,7 @@ package com.allurent.coverage.view
         
         public function showSource(selection:Object):void
         {
-            dispatchEvent(new SourceViewEvent(SourceViewEvent.VIEW_CLASS, selection as ClassModel));
+            dispatchEvent(new SourceViewEvent(SourceViewEvent.VIEW_CLASS, selection as SegmentModel));
         }
     }
 }

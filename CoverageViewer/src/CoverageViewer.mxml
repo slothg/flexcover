@@ -35,6 +35,8 @@
     
     <mx:Script>
         <![CDATA[
+            import com.allurent.coverage.model.FunctionModel;
+            import com.allurent.coverage.model.ClassModel;
             import com.allurent.coverage.view.SourceCoverageView;
             import com.allurent.coverage.event.SourceViewEvent;
             import mx.controls.Alert;
@@ -72,13 +74,39 @@
             
             private function handleSourceView(e:SourceViewEvent):void
             {
-                sourceViewCanvas.removeAllChildren();
-                if (e.classModel != null)
+                var classModel:ClassModel = null;
+                var lineNum:uint = 0;
+                if (e.segmentModel is ClassModel)
                 {
-                    var sourceView:SourceCoverageView = new SourceCoverageView();
-                    sourceView.percentWidth = sourceView.percentHeight = 100;
-                    sourceViewCanvas.addChild(sourceView);
-                    sourceView.show(controller.project, e.classModel);
+                    classModel = e.segmentModel as ClassModel;
+                }
+                else if (e.segmentModel is FunctionModel)
+                {
+                    var functionModel:FunctionModel = e.segmentModel as FunctionModel; 
+                    classModel = functionModel.classModel;
+                    lineNum = functionModel.line;
+                } 
+                
+                if (classModel == null)
+                {
+                    sourceViewCanvas.removeAllChildren();
+                }
+                else 
+                {
+                    var sourceView:SourceCoverageView = null;
+                    if (sourceViewCanvas.numChildren > 0)
+                    {
+                        sourceView = sourceViewCanvas.getChildAt(0) as SourceCoverageView;
+                    }
+                    if (sourceView == null || sourceView.classModel != classModel)
+                    {
+                        sourceViewCanvas.removeAllChildren();
+                        sourceView = new SourceCoverageView();
+                        sourceView.percentWidth = sourceView.percentHeight = 100;
+                        sourceViewCanvas.addChild(sourceView);
+                        sourceView.show(controller.project, classModel);
+                    }
+                    sourceView.scrollToLine(lineNum);
                 }
             }
             
