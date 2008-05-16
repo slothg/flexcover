@@ -149,6 +149,19 @@
             htmlText = html.toXMLString().replace("[BODY]", sourceText);
         }
         
+        public function scrollToLine(lineNum:uint):void
+        {
+            var lineElement:Object = htmlLoader.window.document.getElementById("line" + lineNum);
+            if (lineElement != null)
+            {
+                htmlLoader.window.scrollTo(0, lineElement.offsetTop);
+            }
+            else
+            {
+                htmlLoader.window.scrollTo(0, 0);
+            }
+        }
+        
         private static const NO_ELEMENTS:int = 0;
         private static const UNCOVERED_ELEMENTS:int = 1;
         private static const ALL_ELEMENTS_COVERED:int = 2;

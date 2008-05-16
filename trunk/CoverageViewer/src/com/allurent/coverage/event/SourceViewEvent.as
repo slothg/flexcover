@@ -22,7 +22,7 @@
  */
 package com.allurent.coverage.event
 {
-    import com.allurent.coverage.model.ClassModel;
+    import com.allurent.coverage.model.SegmentModel;
     
     import flash.events.Event;
 
@@ -30,17 +30,17 @@ package com.allurent.coverage.event
     {
         public static const VIEW_CLASS:String = "viewClass";
         
-        public var classModel:ClassModel;
+        public var segmentModel:SegmentModel;
         
-        public function SourceViewEvent(type:String, classModel:ClassModel)
+        public function SourceViewEvent(type:String, segmentModel:SegmentModel)
         {
             super(type, true);
-            this.classModel = classModel;
+            this.segmentModel = segmentModel;
         }
         
         override public function clone():Event
         {
-            return new SourceViewEvent(type, classModel);
+            return new SourceViewEvent(type, segmentModel);
         }
     }
 }

@@ -61,6 +61,18 @@ package com.allurent.coverage.model
             return null;
         } 
 
+        public function get line():uint
+        {
+            for each (var child:ElementModel in children)
+            {
+                if (child is BranchModel)
+                {
+                    return uint(BranchModel(child).line);
+                }
+            }
+            return 0;
+        }
+        
         override public function createChild(element:CoverageElement):SegmentModel
         {
             if (element is LineCoverageElement)
