@@ -61,16 +61,23 @@ package com.allurent.coverage.model
             return null;
         } 
 
+        /**
+         * Get the first executable or branch line in this function; since there is a branch
+         * element for the function declaration itself, this should get us a line that will
+         * show the function from its start.
+         */
         public function get line():uint
         {
+            var lineNum:int = 0; 
             for each (var child:ElementModel in children)
             {
                 if (child is BranchModel)
                 {
-                    return uint(BranchModel(child).line);
+                    var branchLine:uint = uint(BranchModel(child).line);
+                    lineNum = (lineNum == 0) ? branchLine : Math.min(lineNum, branchLine); 
                 }
             }
-            return 0;
+            return lineNum;
         }
         
         override public function createChild(element:CoverageElement):SegmentModel
