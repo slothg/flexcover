@@ -35,6 +35,8 @@
     
     <mx:Script>
         <![CDATA[
+            import mx.events.PropertyChangeEvent;
+            import com.allurent.coverage.view.GapFinderView;
             import com.allurent.coverage.model.FunctionModel;
             import com.allurent.coverage.model.ClassModel;
             import com.allurent.coverage.view.SourceCoverageView;
@@ -89,21 +91,36 @@
                 
                 if (classModel == null)
                 {
-                    sourceViewCanvas.removeAllChildren();
+                    sourceViewBox.removeAllChildren();
                 }
                 else 
                 {
                     var sourceView:SourceCoverageView = null;
-                    if (sourceViewCanvas.numChildren > 0)
+                    if (sourceViewBox.numChildren > 0)
                     {
-                        sourceView = sourceViewCanvas.getChildAt(0) as SourceCoverageView;
+                        sourceView = sourceViewBox.getChildAt(0) as SourceCoverageView;
                     }
                     if (sourceView == null || sourceView.classModel != classModel)
                     {
-                        sourceViewCanvas.removeAllChildren();
+                        sourceViewBox.removeAllChildren();
+                        
                         sourceView = new SourceCoverageView();
                         sourceView.percentWidth = sourceView.percentHeight = 100;
-                        sourceViewCanvas.addChild(sourceView);
+                        sourceViewBox.addChild(sourceView);
+                        
+                        var gapFinder:GapFinderView = new GapFinderView();
+                        gapFinder.width = 10;
+                        gapFinder.percentHeight = 100;
+                        sourceViewBox.addChild(gapFinder);
+                        
+                        var gapBinding:Function = function(e:PropertyChangeEvent):void {
+                            if (e.property == "gapOffsets")
+                            {
+                                gapFinder.gapOffsets = e.newValue as Array;
+                            }
+                        }
+                        sourceView.addEventListener(PropertyChangeEvent.PROPERTY_CHANGE, gapBinding);
+                        
                         sourceView.show(controller.project, classModel);
                     }
                     sourceView.scrollToLine(lineNum);
@@ -267,7 +284,7 @@
                 label="Lines"
                 controller="{controller}"/>
         </mx:TabNavigator>
-        <mx:Canvas id="sourceViewCanvas" width="100%" height="100%"/>
+        <mx:HBox id="sourceViewBox" width="100%" height="100%"/>
     </mx:HDividedBox>
 
 </mx:WindowedApplication>
