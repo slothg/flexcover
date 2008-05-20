@@ -27,7 +27,6 @@ package com.allurent.coverage.model
     /**
      * Coverage model for an entire application. 
      */
-    [Bindable]
     public class CoverageModel extends SegmentModel
     {
         /**
