@@ -39,7 +39,6 @@ package com.allurent.coverage.model
     public class SegmentModel extends EventDispatcher
     {
         /** Number of individual lines that are direct or indirect descendants of this one. */
-        [Bindable]
         public var numLines:Number = 0;
         
         /** Number of covered lines at/below this segment. */
@@ -47,7 +46,6 @@ package com.allurent.coverage.model
         public var coveredLines:Number = 0;
 
         /** Number of individual branches that are direct or indirect descendants of this one. */
-        [Bindable]
         public var numBranches:Number = 0;
         
         /** Number of covered branches at/below this segment. */
@@ -55,11 +53,9 @@ package com.allurent.coverage.model
         public var coveredBranches:Number = 0;
 
         /** Internal name. */
-        [Bindable]
         public var name:String;
         
         /** child SegmentModels of this model. */
-        [Bindable]
         public var children:ArrayCollection = null;
         
         /** The parent SegmentModel of this model. */

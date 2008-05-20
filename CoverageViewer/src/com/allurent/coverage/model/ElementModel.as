@@ -30,7 +30,6 @@ package com.allurent.coverage.model
     /**
      * Model for a single executable element within the application. 
      */
-    [Bindable]
     public class ElementModel extends SegmentModel
     {
         /** Number of times that this line has been executed. */

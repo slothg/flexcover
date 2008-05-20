@@ -27,7 +27,6 @@ package com.allurent.coverage.model
     /**
      * Model of a package in the application for coverage purposes. 
      */
-    [Bindable]
     public class PackageModel extends SegmentModel
     {
         /**

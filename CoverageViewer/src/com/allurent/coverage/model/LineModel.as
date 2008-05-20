@@ -30,7 +30,6 @@ package com.allurent.coverage.model
     /**
      * Model for a single executable line within the application. 
      */
-    [Bindable]
     public class LineModel extends ElementModel
     {
         /**

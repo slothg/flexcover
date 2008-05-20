@@ -28,7 +28,6 @@ package com.allurent.coverage.model
      * A ClassModel represents a Class whose coverage can be monitored. 
      * @author joeb
      */
-    [Bindable]
     public class ClassModel extends SegmentModel
     {
         /** Map from all line numbers in the source to individual LineModels, which are grandchildren. */

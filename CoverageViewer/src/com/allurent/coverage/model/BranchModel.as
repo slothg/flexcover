@@ -30,7 +30,6 @@ package com.allurent.coverage.model
     /**
      * Model for a single executable branch within the application. 
      */
-    [Bindable]
     public class BranchModel extends ElementModel
     {
         /** Type of branch: "+" or "-" */

@@ -27,7 +27,6 @@ package com.allurent.coverage.model
     /**
      * Model for a single function in the application.
      */
-    [Bindable]
     public class FunctionModel extends SegmentModel
     {
         /**
