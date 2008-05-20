@@ -196,6 +196,12 @@ package com.allurent.coverage
          */
         public function attachConnection(connectionName:String):void
         {
+            if (conn != null)
+            {
+                // Don't set this up multiple times.
+                return;
+            }
+            
             // Set up our LocalConnection.  Note that the Controller handles
             conn = new LocalConnection();
             conn.allowDomain("*");
@@ -206,7 +212,17 @@ package com.allurent.coverage
             }
             catch (error:ArgumentError)
             {
-                Alert.show(error.message);
+                if (error.errorID == 2082)
+                {
+                    Alert.show("Another program has already opened a LocalConnection with id '"
+                                + connectionName + "'.  No coverage data will be recorded.",
+                                "Coverage Recording Error");
+                }
+                else
+                {
+                    Alert.show(error.message, "Coverage Recording Error");
+                }
+                conn == null;
             }
         }
         
