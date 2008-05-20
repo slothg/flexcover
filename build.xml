@@ -3,7 +3,7 @@
     <!-- ======================================================== -->
     <!-- Properties relating to distribution creation             -->
     <!-- ======================================================== -->
-    <property name="version" value="0.10"/>
+    <property name="version" value="0.50"/>
     <property name="dist.dir" value="flexcover-${version}"/>
 
     <import file="buildtools/build-master-targets.xml" />
@@ -35,12 +35,17 @@
                 <file name="CoverageViewer"/>
             </filelist>
         </subant>
+        <subant target="air-package" verbose="true">
+            <filelist dir=".">
+                <file name="CoverageViewer"/>
+            </filelist>
+        </subant>
     </target>
 
     <!-- ======================================================== -->
     <!-- dist: Create a new distribution.                         -->
     <!-- ======================================================== -->
-    <target name="dist" depends="clean,build-viewer,stage-sdk,copy-dist,zip-dist"/>
+    <target name="dist" depends="build,build-viewer,stage-sdk,copy-dist,zip-dist"/>
 
     <!-- ======================================================== -->
     <!-- copy-dist: copy distribution to a new distribution dir.  -->
@@ -48,8 +53,23 @@
     <target name="copy-dist">
         <delete dir="../${dist.dir}"/>
         <mkdir dir="../${dist.dir}"/>
-        <copy todir="../${dist.dir}">
-            <fileset dir="." excludes="**/.svn,build-user.properties,sdk-includes"/>
+
+        <copy todir="../${dist.dir}" file="${CoverageViewer.air}"/>
+        <copy todir="../${dist.dir}" file="README"/>
+
+        <mkdir dir="../${dist.dir}/doc"/>
+        <copy todir="../${dist.dir}/doc">
+            <fileset dir="doc" excludes="**/.svn"/>
+        </copy>
+
+        <mkdir dir="../${dist.dir}/CoverageExample1"/>
+        <copy todir="../${dist.dir}/CoverageExample1">
+            <fileset dir="CoverageExample1" excludes="**/.svn"/>
+        </copy>
+
+        <mkdir dir="../${dist.dir}/sdk-modifications"/>
+        <copy todir="../${dist.dir}/sdk-modifications">
+            <fileset dir="sdk" excludes="**/.svn"/>
         </copy>
     </target>
 
@@ -64,8 +84,8 @@
     <!-- stage-sdk: stage the custom SDK files for a distro.      -->
     <!-- ======================================================== -->
     <target name="stage-sdk">
-        <copy todir="sdk">
-            <fileset dir="${flex.dir}" includesfile="sdk-includes"/>
+        <copy todir="sdk" overwrite="true">
+            <fileset dir="${flex.dir}" includesfile="sdk-includes" excludes="**/.svn"/>
         </copy>
     </target>
 
