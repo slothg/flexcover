@@ -14,6 +14,7 @@ package faces.command
         public function UpdateCommand (context:ICommandContext, model:FacesModel, data:Object)
         {
             super(context);
+            this._model = model;
             this._data = data;
         }
 
