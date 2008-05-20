@@ -34,6 +34,11 @@
                     <mx:NumberFormatter precision="2"/>
                 </mx:formatter>
             </mx:AdvancedDataGridColumn>
+            <mx:AdvancedDataGridColumn dataField="uncoveredBranches" headerText="Uncovered" width="100">
+                <mx:formatter>
+                    <mx:NumberFormatter/>
+                </mx:formatter>
+            </mx:AdvancedDataGridColumn>
         </mx:columns>
         <mx:rendererProviders>
             <mx:AdvancedDataGridRendererProvider column="{branchCoverageColumn}"
