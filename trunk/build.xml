@@ -56,6 +56,7 @@
 
         <copy todir="../${dist.dir}" file="${CoverageViewer.air}"/>
         <copy todir="../${dist.dir}" file="README"/>
+        <copy todir="../${dist.dir}" file="RELEASE_NOTES"/>
 
         <mkdir dir="../${dist.dir}/doc"/>
         <copy todir="../${dist.dir}/doc">
@@ -63,8 +64,8 @@
         </copy>
 
         <mkdir dir="../${dist.dir}/CoverageExample1"/>
-        <copy todir="../${dist.dir}/CoverageExample1">
-            <fileset dir="CoverageExample1" excludes="**/.svn"/>
+        <copy todir="../${dist.dir}/CoverageExample1" includeEmptyDirs="false">
+            <fileset dir="CoverageExample1" excludes="**/.svn,build.xml"/>
         </copy>
 
         <mkdir dir="../${dist.dir}/sdk-modifications"/>
