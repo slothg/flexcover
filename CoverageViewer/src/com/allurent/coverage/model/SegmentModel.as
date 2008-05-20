@@ -232,6 +232,15 @@ package com.allurent.coverage.model
         }
         
         /**
+         * The number of uncovered lines.
+         */
+        [Bindable("coverageChange")]
+        public function get uncoveredLines():Number
+        {
+            return numLines - coveredLines;
+        }
+        
+        /**
          * The total line coverage ratio for this segment.
          */
         [Bindable("coverageChange")]
@@ -242,6 +251,15 @@ package com.allurent.coverage.model
                 return 0;
             }
             return coveredBranches / numBranches;
+        }
+        
+        /**
+         * The number of uncovered branches.
+         */
+        [Bindable("coverageChange")]
+        public function get uncoveredBranches():Number
+        {
+            return numBranches - coveredBranches;
         }
         
         /**

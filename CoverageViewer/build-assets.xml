@@ -2,5 +2,6 @@
 
     <dirname property="CoverageViewer.dir" file="${ant.file.CoverageViewer.assets}"/>
     <property name="CoverageViewer.app" location="${CoverageViewer.dir}/stage/CoverageViewer-app.xml"/>
+    <property name="CoverageViewer.air" location="${CoverageViewer.dir}/dist/CoverageViewer.air"/>
 
 </project>
