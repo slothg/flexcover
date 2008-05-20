@@ -291,6 +291,7 @@
     <target name="air-package"
             unless="${project.air}.compiled"
             depends="air-application-stage,air-package-check,air-certificate-password-prompt">
+        <mkdir dir="${build.dist.dir}"/>
         <adt />
     </target>
 
