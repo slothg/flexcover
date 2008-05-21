@@ -88,6 +88,13 @@ package com.allurent.coverage.model
             dispatchEvent(new Event("executionCountChange"));
         }
         
+        override public function clearCoverageData():void
+        {
+            super.clearCoverageData();
+            executionCount = 0;
+            dispatchEvent(new Event("executionCountChange"));
+        }
+        
         protected function addCoverage(n:uint):void
         {
             throw new Error("addCoverage() not overridden");

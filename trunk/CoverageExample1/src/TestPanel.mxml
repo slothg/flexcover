@@ -20,8 +20,8 @@
                click="new TestClass().testFunction(1)"/>
     <mx:Button label="Call TestClass.staticFunction()"
                click="TestClass.staticFunction()"/>
-    <mx:Button label="Modify foo"
-               click="foo = 'def'"/>
     <mx:Button label="Conditionally show an alert"
                click="if (foo == 'def') showAlert()"/>
+    <mx:Button label="Modify foo"
+               click="foo = 'def'"/>
 </mx:Panel>

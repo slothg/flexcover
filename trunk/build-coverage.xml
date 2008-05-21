@@ -36,11 +36,11 @@
 
     <target name="make-coverage-report">
         <coverage-viewer-report input="${basedir}/${build.dir}/${project.cvm}"
-            output="${basedir}/${build.dir}/coverage-report.xml"/>
+            output="${basedir}/${build.dir}/coverage-report.cvr"/>
     </target>
 
     <target name="view-coverage-report">
-        <coverage-viewer input="${basedir}/${build.dir}/coverage-report.xml"/>
+        <coverage-viewer input="${basedir}/${build.dir}/coverage-report.cvr"/>
     </target>
 
     <target name="flex-coverage" depends="flex-application">

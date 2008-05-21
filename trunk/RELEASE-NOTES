@@ -66,3 +66,17 @@ A new column in the main view shows the number of branches or lines
 that have not received any coverage so far.  Sorting by this column is
 a very convenient way to see which parts of your program need the most
 attention.
+
+
+ICoverageAgent interface supports multiple recording approaches
+
+The coverage recording runtime for instrumented applications is no
+longer limited to using LocalConnection to communicate with an
+external application.  Over time this can grow to support multiple
+approaches to recording and multiple data-collecting applications.
+The new ICoverageAgent interface can be implemented by "coverage
+agents" that may do anything they wish with the coverage information
+they receive, while the AbstractCoverageAgent class provides basic
+support for recording, independent of the means used to communicate
+coverage data to an external application.
+

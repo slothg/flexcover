@@ -149,6 +149,29 @@
             </icon> -->
             
         </fileType>
+
+        <fileType>
+            <!-- The name that the system displays for the registered file type. Required. -->
+            <name>flexcover.report</name>
+
+            <!-- The extension to register. Required. -->
+            <extension>cvr</extension>
+            
+            <!-- The description of the file type. Optional. -->
+            <description>Flexcover Coverage Report</description>
+            
+            <!-- The MIME type. Optional. -->
+            <contentType>application/vnd.flexcover.report</contentType>
+            
+            <!-- The icon to display for the file type. Optional. -->
+            <!-- <icon>
+                <image16x16></image16x16>
+                <image32x32></image32x32>
+                <image48x48></image48x48>
+                <image128x128></image128x128>
+            </icon> -->
+            
+        </fileType>
     </fileTypes>
 
 </application>
