@@ -162,6 +162,11 @@ package com.allurent.coverage
             } 
         }
 
+        public function clearCoverageData():void
+        {
+            coverageModel.clearCoverageData();
+        }
+
         /**
          * Handler called by instrumented program when coverage ends. 
          */

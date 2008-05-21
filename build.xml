@@ -56,7 +56,7 @@
 
         <copy todir="../${dist.dir}" file="${CoverageViewer.air}"/>
         <copy todir="../${dist.dir}" file="README"/>
-        <copy todir="../${dist.dir}" file="RELEASE_NOTES"/>
+        <copy todir="../${dist.dir}" file="RELEASE-NOTES"/>
 
         <mkdir dir="../${dist.dir}/doc"/>
         <copy todir="../${dist.dir}/doc">
@@ -70,7 +70,7 @@
 
         <mkdir dir="../${dist.dir}/sdk-modifications"/>
         <copy todir="../${dist.dir}/sdk-modifications">
-            <fileset dir="sdk" excludes="**/.svn"/>
+            <fileset dir="sdk-modifications"/>
         </copy>
     </target>
 
@@ -85,22 +85,25 @@
     <!-- stage-sdk: stage the custom SDK files for a distro.      -->
     <!-- ======================================================== -->
     <target name="stage-sdk">
-        <copy todir="sdk" overwrite="true">
-            <fileset dir="${flex.dir}" includesfile="sdk-includes" excludes="**/.svn"/>
+        <delete dir="sdk-modifications"/>
+        <mkdir dir="sdk-modifications"/>
+        <copy todir="sdk-modifications">
+            <fileset dir="${flexcover.build.sdk.dir}" includesfile="sdk-includes" excludes="**/.svn"/>
+        </copy>
+        <copy tofile="sdk-modifications/frameworks/flex-config.xml">
+            <fileset dir="${flexcover.build.sdk.dir}" includes="frameworks/flex-config-coverage.xml"/>
+        </copy>
+        <copy tofile="sdk-modifications/frameworks/air-config.xml">
+            <fileset dir="${flexcover.build.sdk.dir}" includes="frameworks/air-config-coverage.xml"/>
         </copy>
     </target>
 
     <!-- ======================================================== -->
-    <!-- modify-sdk: copy the custom SDK files into an SDK.       -->
+    <!-- modify-sdk: copy the custom SDK files on top of a working SDK -->
     <!-- ======================================================== -->
     <target name="modify-sdk">
-        <condition property="sdk-dest-ok">
-            <available file="${flex.dir}/lib/mxmlc.jar"/>
-        </condition>
-        <fail message="Cannot modify SDK: ${flex.dir}/lib/mxmlc.jar not found."
-              unless="sdk-dest-ok"/>
-        <copy todir="${flex.dir}" overwrite="true" verbose="true">
-            <fileset dir="sdk"/>
+        <copy todir="${flex.dir}">
+            <fileset dir="sdk-modifications"/>
         </copy>
     </target>
 </project>

@@ -8,7 +8,13 @@
 #
 # location of Flex SDK (if SDK is under version control, don't define this here)
 #
-flex.dir=/Applications/FlexcoverSDK
+flex.dir=/Applications/Flex/FlexcoverSDK
+
+#
+# location of modified Flexcover SDK built from flexcover-sdk project overlaid
+# on stock Open Source Flex SDK
+#
+flexcover.build.sdk.dir=/Applications/Flex/3.0.1.1092
 
 #
 # location of stand alone debug player (correct for an SDK from Adobe Flex Builder 3.0 Plugin)

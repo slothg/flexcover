@@ -11,6 +11,12 @@
 flex.dir=C:/Apps/Flex/flexcover
 
 #
+# location of modified Flexcover SDK built from flexcover-sdk project overlaid
+# on stock Open Source Flex SDK
+#
+flexcover.build.sdk.dir=C:/work/flex/3.0.1.1092
+
+#
 # location of stand alone debug player
 #
 flex.standalone.player=${flex.dir}/runtimes/player/win/FlashPlayer.exe

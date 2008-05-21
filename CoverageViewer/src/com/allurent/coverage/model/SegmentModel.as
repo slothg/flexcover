@@ -322,6 +322,15 @@ package com.allurent.coverage.model
             }
         }
         
+        public function clearCoverageData():void
+        {
+            coveredBranches = coveredLines = 0;
+            for each (var child:SegmentModel in children)
+            {
+                child.clearCoverageData();
+            }
+        }
+        
         public function toXML():XML
         {
             var element:XML = createXmlElement();
