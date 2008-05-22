@@ -39,9 +39,9 @@ CoverageViewer is now a shrink-wrapped AIR application
 
 The CoverageViewer is no longer launched from Ant: it is now a
 regular, installable AIR application.  It registers itself for the CVM
-file type, which makes it very easy to launch by double-clicking any
-instrumented application's .cvm file in Flex Builder or on your OS
-desktop.
+and CVR (see below) file types, which makes it very easy to launch by
+double-clicking any instrumented application's .cvm file in Flex
+Builder or on your OS desktop, or any saved coverage report.
 
 
 Source code coverage viewing improvements
@@ -79,4 +79,10 @@ agents" that may do anything they wish with the coverage information
 they receive, while the AbstractCoverageAgent class provides basic
 support for recording, independent of the means used to communicate
 coverage data to an external application.
+
+
+Report files now use .cvr extension
+
+XML coverage reports now use the .cvr suffix, so that they can be
+registered to start up the Coverage Viewer to examine them.
 
