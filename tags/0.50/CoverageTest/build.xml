@@ -1,0 +1,22 @@
+<project name="CoverageTest" default="build">
+
+    <!-- Project specific overrides -->
+
+    <!-- Common properties and targets -->
+    <import file="../build-imports.xml"/>
+
+    <!-- Build path -->
+    <path id="flex.lib.path">
+    </path>
+
+    <!-- Project specific targets -->
+    <target name="build" depends="init,air-application-stage"/>
+
+    <target name="test" depends="build,air-report">
+        <condition property="CoverageTest.ok">
+            <filesmatch file1="bin/coverage-report.xml" file2="baseline/coverage-report.xml"/>
+        </condition>
+        <fail message="Coverage report failed to match baseline!" unless="CoverageTest.ok"/>
+    </target>
+
+</project>

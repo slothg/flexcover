@@ -1,0 +1,48 @@
+<project name="InstrumentationTest" default="build">
+
+    <!-- Project specific overrides -->
+    <property name="flex.mxmlc.options" value="-coverage=false"/>
+    <property name="testlib.dir" value="testlib"/>
+    <property name="runtest.dir" location="stage"/>
+
+    <!-- Common properties and targets -->
+    <import file="../build-imports.xml"/>
+
+    <!-- Build paths -->
+    <path id="flex.lib.path">
+        <pathelement location="${testlib.dir}/bin/testlib.swc"/>
+    </path>
+
+    <path id="testlib.lib.path">
+    </path>
+
+    <!-- Project specific targets -->
+    <target name="build" depends="init,air-application-stage"/>
+
+    <target name="build-testlib">
+        <mkdir dir="${testlib.dir}/bin"/>
+        <compc src.dir="${testlib.dir}/src" dest="${testlib.dir}/bin/testlib.swc"
+               lib.path.id="testlib.lib.path"
+               options="-coverage=true"/>
+    </target>
+
+    <target name="run-test" depends="build-testlib,air-application-stage">
+        <exec executable="${air.adl}" dir="stage">
+            <arg value="InstrumentationTest-app.xml"/>
+            <arg value="--" />
+            <arg value="${runtest.dir}/log.out"/>
+        </exec>
+    </target>
+
+    <target name="test" depends="run-test">
+        <condition property="InstrumentationTest.log.ok">
+            <filesmatch file1="stage/log.out" file2="baseline/log.out"/>
+        </condition>
+        <fail message="Instrumentation report failed to match baseline!" unless="InstrumentationTest.log.ok"/>
+        <condition property="InstrumentationTest.cvm.ok">
+            <filesmatch file1="testlib/bin/testlib.cvm" file2="baseline/testlib.cvm"/>
+        </condition>
+        <fail message="Coverage metadata failed to match baseline!" unless="InstrumentationTest.cvm.ok"/>
+    </target>
+
+</project>

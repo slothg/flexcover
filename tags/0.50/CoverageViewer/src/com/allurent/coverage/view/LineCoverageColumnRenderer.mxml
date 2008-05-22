@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<view:CoverageColumnRenderer
+    textAlign="center" horizontalScrollPolicy="off" 
+    xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:view="com.allurent.coverage.view.*">
+
+    <mx:Script>
+        <![CDATA[
+        override protected function getCoverage(value:Object):Number
+        {
+            return Number(value.lineCoverage);
+        } 
+
+        override protected function getCount(value:Object):int
+        {
+            return Number(value.coveredLines);
+        }
+        
+        override protected function getTotal(value:Object):int
+        {
+            return Number(value.numLines);
+        }
+        ]]>
+    </mx:Script>
+    
+    <mx:Canvas id="greenBar" backgroundColor="#00FF00" height="100%"/> 
+    <mx:Label id="coverageLabel" fontWeight="bold" width="100%" textAlign="center"/>
+</view:CoverageColumnRenderer>

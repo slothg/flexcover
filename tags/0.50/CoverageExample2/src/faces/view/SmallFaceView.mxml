@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<mx:Canvas xmlns="*"
+    xmlns:mx="http://www.adobe.com/2006/mxml"
+    width="400" height="120"
+    initialize="currentState = BASE_STATE"
+    rollOver="currentState = ROLLOVER_STATE"
+    rollOut="currentState = BASE_STATE"
+    implements="mx.core.IDataRenderer"
+>
+
+    <mx:Metadata>
+        [Event(name="uiEvent",type="UIEvent")]
+        [Event(name="open",type="flash.events.Event")]
+    </mx:Metadata>
+
+    <mx:Script><![CDATA[
+        import faces.model.AppModel;
+        import faces.events.UIEventKind;
+        import faces.events.UIEvent;
+        import faces.model.Face;
+
+        // Display state constants.
+        private static const BASE_STATE:String = "base";
+        private static const ROLLOVER_STATE:String = "rollover";
+
+        [Bindable]
+        public var model:Face;
+        
+        [Bindable]
+        public var appModel:AppModel;
+            
+    ]]></mx:Script>
+
+    <!-- STATES, TRANSITIONS, EFFECTS -->
+
+    <mx:states>
+        <mx:State name="{BASE_STATE}"/>
+
+        <mx:State name="{ROLLOVER_STATE}">
+            <mx:SetStyle target="{this}" name="borderColor" value="#008888" />
+        </mx:State>
+    </mx:states>
+
+    <mx:transitions>
+        <mx:Transition fromState="{BASE_STATE}" toState="{ROLLOVER_STATE}">
+            <mx:Glow target="{img}" duration="800"
+                alphaFrom="1.0" alphaTo="0.5"
+                blurXFrom="0.0" blurXTo="50.0"
+                blurYFrom="0.0" blurYTo="50.0"
+                color="#888800"
+            />
+        </mx:Transition>
+
+        <mx:Transition fromState="{ROLLOVER_STATE}" toState="{BASE_STATE}">
+            <mx:Glow target="{img}" duration="800"
+                alphaFrom="0.5" alphaTo="1.0"
+                blurXFrom="50.0" blurXTo="0.0"
+                blurYFrom="50.0" blurYTo="0.0"
+                color="#888800"
+            />
+        </mx:Transition>
+    </mx:transitions>
+
+    <!-- COMPONENTS -->
+
+    <mx:Image id="img" 
+        source="{model.source}" 
+        x="10" y="12" width="92" height="92"
+        click="dispatchEvent(new Event('open'))"
+    />
+        
+    <mx:Label styleName="faceNameLabel"
+        text="{model.name}"
+        x="116" y="2" width="200"
+        click="dispatchEvent(new Event('open'))"
+    />
+
+    <mx:Text styleName="faceDescriptionText"
+        text="{model.description}"
+        selectable="false"
+        x="116" y="28" width="240" height="60"
+    />
+
+    <mx:Label styleName="faceCountryLabel"
+        text="{appModel.getCountryName(model.countryCode)}"
+        x="116" y="87" width="200"
+        click="dispatchEvent(new Event('open'))"
+    />
+
+    <mx:LinkButton
+        label="remove"
+        x="330" y="2"
+        enabled="{model.changeEnabled}"
+        click="dispatchEvent(new UIEvent(UIEventKind.REMOVE, model))"
+    />
+
+    <mx:Fade id="fadeIn" duration="400" />
+    <mx:Fade id="fadeOut" duration="400" />
+
+    <mx:Binding source="data as Face" destination="model"/>
+    <mx:Binding source="model" destination="data"/>
+
+</mx:Canvas>

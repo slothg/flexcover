@@ -1,0 +1,138 @@
+<?xml version="1.0"?>
+
+<SearchResults>
+
+    <Terms>
+        <Term>echmalian</Term>
+    </Terms>
+
+    <Faces>
+        <Face id="1">
+            <FirstName>Giacomo</FirstName>
+            <Surname>Carissimi</Surname>
+            <Source>100px-Giacomo_Carissimi.jpg</Source>
+            <Country>it</Country>
+            <Description>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</Description>
+        </Face>
+        <Face id="2">
+            <FirstName>Johann</FirstName>
+            <Surname>Fux</Surname>
+            <Source>105px-Fux01.jpg</Source>
+            <Country>de</Country>
+            <Description>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</Description>
+        </Face>
+        <Face id="3">
+            <FirstName>Jean-Henri</FirstName>
+            <Surname>d'Anglebert</Surname>
+            <Source>105px-Giovanni_bononcini.jpg</Source>
+            <Country>fr</Country>
+            <Description>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</Description>
+        </Face>
+        <Face id="4">
+            <FirstName>Louis</FirstName>
+            <Surname>Couperin</Surname>
+            <Source>120px-CouperinLouis.jpg</Source>
+            <Country>fr</Country>
+            <Description>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</Description>
+        </Face>
+        <Face id="5">
+            <FirstName>Giovanni</FirstName>
+            <Surname>Bononcini</Surname>
+            <Source>120px-Giovanni_Battista_Bononcini.png</Source>
+            <Country>it</Country>
+            <Description>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</Description>
+        </Face>
+        <Face id="6">
+            <FirstName>Michel-Richard</FirstName>
+            <Surname>Delalande</Surname>
+            <Source>120px-Michel-Richard_Delalande.jpg</Source>
+            <Country>fr</Country>
+            <Description>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</Description>
+        </Face>
+        <Face id="7">
+            <FirstName>Thomas</FirstName>
+            <Surname>Arne</Surname>
+            <Source>66px-Thomas_Augustine_Arne.jpg</Source>
+            <Country>en</Country>
+            <Description>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</Description>
+        </Face>
+        <Face id="8">
+            <FirstName>Henry</FirstName>
+            <Surname>Purcell</Surname>
+            <Source>78px-Henry_Purcell_001.jpg</Source>
+            <Country>en</Country>
+            <Description>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</Description>
+        </Face>
+        <Face id="9">
+            <FirstName>Louis-Claude</FirstName>
+            <Surname>Daquin</Surname>
+            <Source>79px-Louis-Claude_Daquin.jpg</Source>
+            <Country>fr</Country>
+            <Description>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</Description>
+        </Face>
+        <Face id="10">
+            <FirstName>Heinrich</FirstName>
+            <Surname>Schutz</Surname>
+            <Source>80px-Schutz.jpg</Source>
+            <Country>de</Country>
+            <Description>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</Description>
+        </Face>
+        <Face id="11">
+            <FirstName>Arcangelo</FirstName>
+            <Surname>Corelli</Surname>
+            <Source>82px-Corelli.jpg</Source>
+            <Country>it</Country>
+            <Description>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</Description>
+        </Face>
+        <Face id="12">
+            <FirstName>John</FirstName>
+            <Surname>Blow</Surname>
+            <Source>86px-John_Blow.jpg</Source>
+            <Country>en</Country>
+            <Description>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</Description>
+        </Face>
+        <Face id="13">
+            <FirstName>Johann</FirstName>
+            <Surname>Hasse</Surname>
+            <Source>91px-Johann_Adolph_Hasse.jpg</Source>
+            <Country>de</Country>
+            <Description>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</Description>
+        </Face>
+        <Face id="14">
+            <FirstName>Michael</FirstName>
+            <Surname>Praetorius</Surname>
+            <Source>91px-Michael_Praetorius.png</Source>
+            <Country>de</Country>
+            <Description>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</Description>
+        </Face>
+        <Face id="15">
+            <FirstName>Giovanni</FirstName>
+            <Surname>Gabrieli</Surname>
+            <Source>96px-Giovanni_Gabrieli.jpg</Source>
+            <Country>it</Country>
+            <Description>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</Description>
+        </Face>
+        <Face id="16">
+            <FirstName>Antonio</FirstName>
+            <Surname>Caldara</Surname>
+            <Source>97px-Antonio_Caldara.jpg</Source>
+            <Country>it</Country>
+            <Description>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</Description>
+        </Face>
+        <Face id="17">
+            <FirstName>Nicola</FirstName>
+            <Surname>Fago</Surname>
+            <Source>97px-Nicola_Fago.jpg</Source>
+            <Country>it</Country>
+            <Description>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</Description>
+        </Face>
+        <Face id="18">
+            <FirstName>Francesco</FirstName>
+            <Surname>Cavalli</Surname>
+            <Source>97px-Francesco_Cavalli.png</Source>
+            <Country>it</Country>
+            <Description>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</Description>
+        </Face>
+    </Faces>
+
+</SearchResults>

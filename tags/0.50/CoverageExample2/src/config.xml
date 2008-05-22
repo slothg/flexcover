@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<Config>
+
+    <Title>FACES</Title>
+    
+    <CountryCodes>
+        <Country code="fr" name="France"/> 
+        <Country code="it" name="Italy"/> 
+        <Country code="de" name="Germany"/> 
+        <Country code="en" name="England"/> 
+    </CountryCodes>
+
+</Config>
+
