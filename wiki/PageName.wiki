@@ -1,0 +1,12 @@
+#summary Flexcover Usage Hints
+= Flexcover Usage Hints =
+
+== OutOfMemoryError during compilation ==
+
+The Flexcover versions of mxmlc and compc are a little more memory-hungry than the originals.  If your compile in Ant is failing in java with an OutOfMemoryError, try including the 'fork' and 'maxmemory' attribute in your compilation task, for example:
+
+{{{
+   <mxmlc fork="true" maxmemory="512m" ...>
+       ...
+   </mxmlc>
+}}}
