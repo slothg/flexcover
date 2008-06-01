@@ -34,6 +34,7 @@ package com.allurent.coverage
     import flash.filesystem.FileMode;
     import flash.filesystem.FileStream;
     import flash.net.LocalConnection;
+    import flash.utils.getQualifiedClassName;
     
     import mx.controls.Alert;
     
@@ -66,18 +67,25 @@ package com.allurent.coverage
          */
         public var coverageOutputFile:File = null;
         
-        public static var instance:Controller;
+        private static var _instance:Controller;
+        public static function get instance():Controller
+        {
+            if (_instance == null)
+            {
+                _instance = new Controller(new SingletonEnforcer());
+            }   	
+        	return _instance;
+        }
         
         // LocalConnection open for receiving coverage data from live instrumented apps
         private var conn:LocalConnection;
         
-        public function Controller()
+        public function Controller(enforcer:SingletonEnforcer)
         {
-            if (instance != null)
-            {
-                throw new Error("Multiple Controller instances!");
-            }
-            instance = this;
+			if ( getQualifiedClassName( super ) != "com.allurent.coverage::Controller" ) 
+			{
+				throw new Error( "Invalid Singleton access." );
+			}
         }
         
         /**
@@ -241,5 +249,7 @@ package com.allurent.coverage
             out.writeUTFBytes(coverageModel.toXML().toXMLString());
             out.close();
         }
-    }
+    }    
 }
+
+class SingletonEnforcer{}

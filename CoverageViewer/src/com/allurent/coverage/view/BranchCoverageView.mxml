@@ -21,20 +21,33 @@
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
  * OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  -->
-<view:SegmentView xmlns:mx="http://www.adobe.com/2006/mxml"
-    xmlns:view="com.allurent.coverage.view.*"
->
-    
+<view:SegmentView 
+	xmlns:mx="http://www.adobe.com/2006/mxml"
+    xmlns:view="com.allurent.coverage.view.*" 
+    segmentModel="{coverageViewerPM.coverageModel}"
+    >
+
+    <mx:Binding 
+    	source="coverageData" 
+    	destination="coverageViewerPM.branchCoverageModel"/>
+    		
     <mx:AdvancedDataGrid id="coverageGrid" width="100%" height="100%"
         change="showSource(coverageGrid.selectedItem)"> 
         <mx:columns>
-            <mx:AdvancedDataGridColumn dataField="displayName" headerText="Name"/>
-            <mx:AdvancedDataGridColumn id="branchCoverageColumn" dataField="branchCoverage" headerText="Branch Coverage">
+            <mx:AdvancedDataGridColumn 
+            	dataField="displayName" 
+            	headerText="Name" />
+            <mx:AdvancedDataGridColumn 
+            	id="branchCoverageColumn" 
+            	width="140"
+            	dataField="branchCoverage" headerText="Branch Coverage">
                 <mx:formatter>
                     <mx:NumberFormatter precision="2"/>
                 </mx:formatter>
             </mx:AdvancedDataGridColumn>
-            <mx:AdvancedDataGridColumn dataField="uncoveredBranches" headerText="Uncovered" width="100">
+            <mx:AdvancedDataGridColumn 
+            	width="100"
+            	dataField="uncoveredBranches" headerText="Uncovered">
                 <mx:formatter>
                     <mx:NumberFormatter/>
                 </mx:formatter>

@@ -23,7 +23,12 @@
  -->
 <view:SegmentView xmlns:mx="http://www.adobe.com/2006/mxml"
     xmlns:view="com.allurent.coverage.view.*"
->
+    segmentModel="{coverageViewerPM.coverageModel}"
+	>
+
+    <mx:Binding 
+    	source="coverageData" 
+    	destination="coverageViewerPM.lineCoverageModel"/>
     
     <mx:AdvancedDataGrid id="coverageGrid" width="100%" height="100%"
         change="showSource(coverageGrid.selectedItem)"> 

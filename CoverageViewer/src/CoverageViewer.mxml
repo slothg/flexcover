@@ -25,34 +25,29 @@
     width="950" height="700"
     xmlns:view="com.allurent.coverage.view.*"
     applicationComplete="initializeApplication()"
-    close="onClose()"
+    close="coverageViewerPM.onClose()"
     nativeDragEnter="handleDragIn(event)"
     nativeDragOver="handleDragIn(event)"
-    nativeDragDrop="handleDragDrop(event)"
+    nativeDragDrop="coverageViewerPM.handleDragDrop(event)"
     >
     
     <!-- Main CoverageViewer MXML Application View -->
     
     <mx:Script>
         <![CDATA[
-            import mx.events.PropertyChangeEvent;
-            import com.allurent.coverage.view.GapFinderView;
-            import com.allurent.coverage.model.FunctionModel;
-            import com.allurent.coverage.model.ClassModel;
-            import com.allurent.coverage.view.SourceCoverageView;
-            import com.allurent.coverage.event.SourceViewEvent;
-            import mx.controls.Alert;
-            import com.allurent.coverage.Controller;
+        	import com.allurent.coverage.Controller;
+        	import com.allurent.coverage.view.SourceCoverageView;
+        	import com.allurent.coverage.view.GapFinderView;
+        	import com.allurent.coverage.view.model.CoverageViewerPM;
+        	import mx.events.PropertyChangeEvent;
+        	import mx.controls.NavBar;
+        	import com.allurent.coverage.model.FunctionModel;
+        	import com.allurent.coverage.event.SourceViewEvent;
+        	import com.allurent.coverage.model.ClassModel;
             
-            import flash.filesystem.File;
-            
-            // Top level Controller for the CoverageViewer application
             [Bindable]
-            public var controller:Controller = new Controller();
-            
-            // Name of LocalConnection to use for receiving data
-            private var connectionName:String = "_flexcover";
-            
+            private var coverageViewerPM:CoverageViewerPM = new CoverageViewerPM(Controller.instance);
+                        
             /**
              * Initialize the application by listening for an Invoke event that will communicate
              * command line options.  Also attach the LocalConnection to receive live coverage
@@ -60,18 +55,8 @@
              */
             private function initializeApplication():void
             {
-                nativeApplication.addEventListener(InvokeEvent.INVOKE, handleInvoke);
+                nativeApplication.addEventListener(InvokeEvent.INVOKE, coverageViewerPM.handleInvoke);
                 this.addEventListener(SourceViewEvent.VIEW_CLASS, handleSourceView);
-            }
-            
-            /**
-             * When we get our invoke event, process options.  Only then can we attach
-             * the LocalConnection (since this is option-dependent). 
-             */
-            private function handleInvoke(e:InvokeEvent):void
-            {
-                processOptions(e.arguments);
-                controller.attachConnection(connectionName);
             }
             
             private function handleSourceView(e:SourceViewEvent):void
@@ -87,7 +72,7 @@
                     var functionModel:FunctionModel = e.segmentModel as FunctionModel; 
                     classModel = functionModel.classModel;
                     lineNum = functionModel.line;
-                } 
+                }
                 
                 if (classModel == null)
                 {
@@ -121,7 +106,7 @@
                         }
                         sourceView.addEventListener(PropertyChangeEvent.PROPERTY_CHANGE, gapBinding);
                         
-                        sourceView.show(controller.project, classModel);
+                        sourceView.show(coverageViewerPM.controller.project, classModel);
                     }
                     sourceView.scrollToLine(lineNum);
                 }
@@ -129,147 +114,54 @@
             
             private function handleDragIn(e:NativeDragEvent):void
             {
-                if (e.clipboard.hasFormat(ClipboardFormats.FILE_LIST_FORMAT))
+                if (coverageViewerPM.hasValidDragInFormat(e))
                 {
                     NativeDragManager.acceptDragDrop(this);
                 }
             }
-            
-            private function handleDragDrop(e:NativeDragEvent):void
-            {
-                if (e.clipboard.hasFormat(ClipboardFormats.FILE_LIST_FORMAT))
-                {
-                    var files:Array = e.clipboard.getData(ClipboardFormats.FILE_LIST_FORMAT) as Array;
-                    for each (var f:File in files)
-                    {
-                        processFileArgument(f);
-                    }
-                }
-            }
-            
-            /**
-             * When the main app window closes, exit the application after first cleaning up.
-             *  
-             */
-            private function onClose():void
-            {
-                controller.close();
-            }
-                
-            /**
-             * Process command line options prior to full startup. 
-             */
-            private function processOptions(args:Array):void
-            {
-                var option:String = null;
-                for each (var arg:String in args)
-                {
-                    if (arg.length > 0 && arg.charAt(0) == "-")
-                    {
-                        // Got an option, chuck it into a variable to affect subsequent non-option args.
-                        option = arg.substring(1);
-                    }
-                    else if (option != null)
-                    {
-                        // All non-option strings are treated as arguments to be processed in light
-                        // of the last option string that was seen.  There's no argument
-                        // that is not associated with some option.
-                        //
-                        switch(option)
-                        {
-                            case "output":
-                                controller.coverageOutputFile = new File(arg);
-                                controller.autoExit = true;
-                                break;
-                                
-                            case "coverage-metadata":
-                                controller.loadMetadata(new File(arg));
-                                break;
-                                
-                            case "trace-log":
-                                controller.loadTraceLog(new File(arg));
-                                break;
-                                
-                            case "source-path":
-                                controller.project.sourcePath.addItem(new File(arg));
-                                break;
-                                
-                            case "coverage-output":
-                                // TODO: set up output filename for coverage data.
-                                break;
-                                
-                            case "connection-name":
-                                connectionName = arg;
-                                break;
-                            
-                            default:
-                                Alert.show("Unknown option: " + option);
-                        }
-                        option = null;
-                    }
-                    else
-                    {
-                        processFileArgument(new File(arg));
-                    }
-                }
-                
-                // After processing all options, load the models up from the project
-                // and display the top-level report view.
-                //
-                lineCoverageView.segmentModel = controller.coverageModel;
-                branchCoverageView.segmentModel = controller.coverageModel;
-            }
-
-            private function processFileArgument(f:File):void
-            {
-                if (f.name.match(/\.cvm$/))
-                {
-                    controller.loadMetadata(f);
-                }
-                else if (f.name.match(/\.cvr/))
-                {
-                    controller.loadCoverageReport(f);
-                    lineCoverageView.segmentModel = controller.coverageModel;
-                    branchCoverageView.segmentModel = controller.coverageModel;
-                }
-            }
-            
+                        
             private function openInput():void
             {
                 var file:File = new File();
-                file.addEventListener(Event.SELECT, inputFileSelected);
+                file.addEventListener(Event.SELECT, coverageViewerPM.inputFileSelected);
                 var filter0:FileFilter = new FileFilter("All Files", "*.*");
                 var filter1:FileFilter = new FileFilter("Coverage Metadata (.cvm)", "*.cvm");
                 var filter2:FileFilter = new FileFilter("Coverage Report (.cvr)", "*.cvr");
                 file.browseForOpen("Open File", [filter0, filter1, filter2]);
             }
-            
-            private function inputFileSelected(e:Event):void
-            {
-                processFileArgument(e.target as File);
-            }
-            
+                        
             private function saveOutput():void
             {
                 var file:File = new File();
-                file.addEventListener(Event.SELECT, outputFileSelected);
+                file.addEventListener(Event.SELECT, coverageViewerPM.outputFileSelected);
                 file.browseForSave("Save XML Coverage Report");
             }
-            
-            private function outputFileSelected(e:Event):void
-            {
-                var file:File = e.target as File;
-                controller.writeReport(file);
-            }
-            
+                        
             private function clearCoverageData():void
             {
-                controller.clearCoverageData();
+                coverageViewerPM.controller.clearCoverageData();
             }
+            
+			private function createSelectedIndex( buttonBar : NavBar ) : void
+			{
+				buttonBar.selectedIndex = 0;
+			}
         ]]>
     </mx:Script>
-
+	
     <mx:HBox width="100%" horizontalAlign="left">
+		<mx:Label text="Search By:"/>
+		<mx:ToggleButtonBar 
+			id="searchByCombo" 
+			dataProvider="{coverageViewerPM.searchPM.searchByProvider}" 
+			creationComplete="createSelectedIndex(searchByCombo);" 
+			itemClick="coverageViewerPM.searchPM.changeSearchBy(event.item);searchInput.setFocus();"/>
+		<mx:TextInput 
+			id="searchInput" 
+			width="100%" 
+			text="{coverageViewerPM.searchPM.currentSearchInput}" 
+			change="coverageViewerPM.searchPM.search(searchInput.text);" 
+			creationComplete="searchInput.setFocus();"/>
         <mx:Button label="Load File..." click="openInput()"/>
         <mx:Button label="Save Report..." click="saveOutput()"/>
         <mx:Button label="Clear Coverage Data" click="clearCoverageData()"/>
@@ -277,13 +169,25 @@
     
     <!-- View of the coverage stats for the entire application -->
     <mx:HDividedBox width="100%" height="100%">
-        <mx:TabNavigator width="350" height="100%" creationPolicy="all">
-            <view:BranchCoverageView id="branchCoverageView" width="100%" height="100%"
-                label="Branches"
-                controller="{controller}"/>
-            <view:LineCoverageView id="lineCoverageView" width="100%" height="100%"
+        <mx:TabNavigator id="coverageMeasureTabNavigator" 
+        	width="600" height="100%" 
+        	creationPolicy="all" 
+        	creationComplete="coverageViewerPM.changeCoverageMeasure(coverageMeasureTabNavigator.selectedIndex)" 
+        	change="coverageViewerPM.changeCoverageMeasure(coverageMeasureTabNavigator.selectedIndex)">
+            <view:BranchCoverageView 
+            	id="branchCoverageView" 
+            	width="100%" height="100%"
+                label="Branches" 
+                coverageViewerPM="{coverageViewerPM}"
+                controller="{coverageViewerPM.controller}" 
+                />
+            <view:LineCoverageView 
+            	id="lineCoverageView" 
+            	width="100%" height="100%"
                 label="Lines"
-                controller="{controller}"/>
+                coverageViewerPM="{coverageViewerPM}"
+                controller="{coverageViewerPM.controller}"
+                />
         </mx:TabNavigator>
         <mx:HBox id="sourceViewBox" width="100%" height="100%"/>
     </mx:HDividedBox>
