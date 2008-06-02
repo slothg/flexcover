@@ -41,9 +41,7 @@ package com.allurent.coverage.view
     	public var coverageViewerPM:CoverageViewerPM;
     	[Bindable]
     	public var coverageData:IHierarchicalCollectionView;
-        [Bindable]
-        public var controller:Controller;
-
+		
         [Bindable]
         public var coverageGrid:AdvancedDataGrid;
         

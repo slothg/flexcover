@@ -21,7 +21,8 @@
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
  * OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  -->
-<view:SegmentView xmlns:mx="http://www.adobe.com/2006/mxml"
+<view:SegmentView 
+	xmlns:mx="http://www.adobe.com/2006/mxml"
     xmlns:view="com.allurent.coverage.view.*"
     segmentModel="{coverageViewerPM.coverageModel}"
 	>
@@ -33,13 +34,20 @@
     <mx:AdvancedDataGrid id="coverageGrid" width="100%" height="100%"
         change="showSource(coverageGrid.selectedItem)"> 
         <mx:columns>
-            <mx:AdvancedDataGridColumn dataField="displayName" headerText="Name"/>
-            <mx:AdvancedDataGridColumn id="lineCoverageColumn" dataField="lineCoverage" headerText="Line Coverage">
+            <mx:AdvancedDataGridColumn 
+            	dataField="displayName" 
+            	headerText="Name"/>
+            <mx:AdvancedDataGridColumn 
+            	id="lineCoverageColumn" 
+            	width="140"
+            	dataField="lineCoverage" headerText="Line Coverage">
                 <mx:formatter>
                     <mx:NumberFormatter precision="2"/>
                 </mx:formatter>
             </mx:AdvancedDataGridColumn>
-            <mx:AdvancedDataGridColumn dataField="uncoveredLines" headerText="Uncovered" width="100">
+            <mx:AdvancedDataGridColumn 
+            	width="100"
+            	dataField="uncoveredLines" headerText="Uncovered">
                 <mx:formatter>
                     <mx:NumberFormatter/>
                 </mx:formatter>

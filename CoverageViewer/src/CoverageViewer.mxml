@@ -172,6 +172,7 @@
         <mx:TabNavigator id="coverageMeasureTabNavigator" 
         	width="600" height="100%" 
         	creationPolicy="all" 
+        	selectedIndex="1" 
         	creationComplete="coverageViewerPM.changeCoverageMeasure(coverageMeasureTabNavigator.selectedIndex)" 
         	change="coverageViewerPM.changeCoverageMeasure(coverageMeasureTabNavigator.selectedIndex)">
             <view:BranchCoverageView 
@@ -179,14 +180,12 @@
             	width="100%" height="100%"
                 label="Branches" 
                 coverageViewerPM="{coverageViewerPM}"
-                controller="{coverageViewerPM.controller}" 
                 />
             <view:LineCoverageView 
             	id="lineCoverageView" 
             	width="100%" height="100%"
                 label="Lines"
                 coverageViewerPM="{coverageViewerPM}"
-                controller="{coverageViewerPM.controller}"
                 />
         </mx:TabNavigator>
         <mx:HBox id="sourceViewBox" width="100%" height="100%"/>
