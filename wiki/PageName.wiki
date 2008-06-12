@@ -10,3 +10,16 @@ The Flexcover versions of mxmlc and compc are a little more memory-hungry than t
        ...
    </mxmlc>
 }}}
+
+
+== Automating Coverage Tests ==
+
+It is possible to automate coverage measurements from unit test suites with flexcover -- it is a very important capability.  In order to do so, you need to do the following:
+
+1. start the CoverageViewer app from Ant and pass the `.cvm` file on the command line, plus the `-output` option to specify the `.cvr` file to which the report will be written.  i.e.:
+
+{{{
+    CoverageViewer myProject.cvm -output myProject.cvr
+}}}
+
+2. have the unit tests call `CoverageManager.exit()` when they are done, rather than `System.exit()` or `fscommand("quit")`.  If you're using flexunit2 or Antennae's test runner, you will need to change the code in the TestResultPrinter class to make this change.  This ensures that all coverage data is flushed correctly before the program terminates.  It also causes the CoverageViewer to write the output file and terminate itself when it receives the information that the instrumented app has terminated.
