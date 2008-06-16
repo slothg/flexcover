@@ -35,6 +35,10 @@
     
     <mx:Script>
         <![CDATA[
+        	import mx.events.MenuEvent;
+        	import mx.events.ListEvent;
+        	import mx.events.FlexEvent;
+        	import mx.controls.Menu;
         	import com.allurent.coverage.Controller;
         	import com.allurent.coverage.view.SourceCoverageView;
         	import com.allurent.coverage.view.GapFinderView;
@@ -142,10 +146,91 @@
                 coverageViewerPM.controller.clearCoverageData();
             }
             
-			private function createSelectedIndex( buttonBar : NavBar ) : void
+			private function createSelectedIndex(buttonBar:NavBar):void
 			{
 				buttonBar.selectedIndex = 0;
 			}
+			
+			private function changeSearchBy(item:Object):void
+			{
+				coverageViewerPM.searchPM.changeSearchBy(item);
+				createFilterMenu();				
+				searchInput.setFocus();
+				searchInput.setSelection(0, searchInput.text.length);
+			}
+			
+			//TODO: Refactor, duplication
+			private function createFilterMenu():void
+			{
+				var searchByMenu:Menu = Menu.createMenu(this, null, false);
+				searchByMenu.setStyle("openDuration", 100);
+				var label:String;
+				var point:Point = new Point();
+							
+				if(coverageViewerPM.searchPM.searchForPackage)
+				{
+					if(!coverageViewerPM.searchPM.areOnlyPackagesShown)
+					{
+						label = "Only show packages";						
+						searchByMenu.addEventListener(ListEvent.ITEM_CLICK, handleOnlyShowPackagesChoice);
+					}
+					else
+					{
+						label = "Show packages and classes";
+						searchByMenu.addEventListener(ListEvent.ITEM_CLICK, handleShowPackagesAndClassesChoice);
+					}
+					
+					searchByMenu.dataProvider = label;
+					point = new Point();
+					point.y = -searchByCombo.height;
+					point = searchByCombo.localToGlobal(point);
+					searchByMenu.show(point.x, point.y);				
+				}
+				else
+				{
+					if(!coverageViewerPM.searchPM.areOnlyClassesShown)
+					{
+						label = "Only show classes";						
+						searchByMenu.addEventListener(ListEvent.ITEM_CLICK, handleOnlyShowClassesChoice);
+					}
+					else
+					{
+						label = "Show classes and members";
+						searchByMenu.addEventListener(ListEvent.ITEM_CLICK, handleShowClassesAndMembersChoice);
+					}
+					
+					searchByMenu.dataProvider = label;
+					point = new Point();
+					point.x = searchByCombo.x;
+					point.y = -searchByCombo.height;
+					point = searchByCombo.localToGlobal(point);
+					searchByMenu.show(point.x, point.y);					
+				}			
+			}
+			
+			private function handleOnlyShowPackagesChoice(event:MenuEvent):void
+			{
+				coverageViewerPM.searchPM.areOnlyPackagesShown = true;
+				coverageViewerPM.searchPM.search(coverageViewerPM.searchPM.currentSearchInput);
+			}
+			
+			private function handleShowPackagesAndClassesChoice(event:MenuEvent):void
+			{
+				coverageViewerPM.searchPM.areOnlyPackagesShown = false;
+				coverageViewerPM.searchPM.search(coverageViewerPM.searchPM.currentSearchInput);
+			}
+			
+			private function handleOnlyShowClassesChoice(event:MenuEvent):void
+			{
+				coverageViewerPM.searchPM.areOnlyClassesShown = true;
+				coverageViewerPM.searchPM.search(coverageViewerPM.searchPM.currentSearchInput);
+			}
+			
+			private function handleShowClassesAndMembersChoice(event:MenuEvent):void
+			{
+				coverageViewerPM.searchPM.areOnlyClassesShown = false;
+				coverageViewerPM.searchPM.search(coverageViewerPM.searchPM.currentSearchInput);
+			}			
         ]]>
     </mx:Script>
 	
@@ -155,13 +240,14 @@
 			id="searchByCombo" 
 			dataProvider="{coverageViewerPM.searchPM.searchByProvider}" 
 			creationComplete="createSelectedIndex(searchByCombo);" 
-			itemClick="coverageViewerPM.searchPM.changeSearchBy(event.item);searchInput.setFocus();"/>
+			itemClick="changeSearchBy(event.item);"/>		
 		<mx:TextInput 
 			id="searchInput" 
 			width="100%" 
 			text="{coverageViewerPM.searchPM.currentSearchInput}" 
 			change="coverageViewerPM.searchPM.search(searchInput.text);" 
 			creationComplete="searchInput.setFocus();"/>
+			
         <mx:Button label="Load File..." click="openInput()"/>
         <mx:Button label="Save Report..." click="saveOutput()"/>
         <mx:Button label="Clear Coverage Data" click="clearCoverageData()"/>
