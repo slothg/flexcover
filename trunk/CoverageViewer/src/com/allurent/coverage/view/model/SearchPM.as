@@ -108,7 +108,6 @@ package com.allurent.coverage.view.model
 					if(found)
 					{
 						collection.openNode(packageModel);
-						//collection.openNode(classModel);
 						if(areOnlyClassesShown)
 							currentCoverageModel.closeNode(classModel);
 						else
