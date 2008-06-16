@@ -12,8 +12,8 @@ package com.allurent.coverage.view.model
 	
 	public class SearchPM
 	{
-		private static const SEARCH_BY_PACKAGE:String = "Package";
-		private static const SEARCH_BY_CLASS:String = "Class";	
+		public static const SEARCH_BY_PACKAGE:String = "Package";
+		public static const SEARCH_BY_CLASS:String = "Class";	
 			
 		public var currentCoverageModel:IHierarchicalCollectionView;	
 		
@@ -21,25 +21,42 @@ package com.allurent.coverage.view.model
 		public var searchByProvider:IList;
 		[Bindable]
 		public var currentSearchInput:String;
-		private var searchForPackage:Boolean;		
+		public var searchForPackage:Boolean;
+		public var areOnlyPackagesShown:Boolean;
+		public var areOnlyClassesShown:Boolean;
+		
+		private var lastSearchInputForPackage:String = "";
+		private var lastSearchInputForClass:String = "";
 		
 		public function SearchPM()
 		{
 			createSearchByProvider();
 			searchForPackage = true;
+			areOnlyPackagesShown = false;
+			areOnlyClassesShown = false;
 		}
 		
 		public function changeSearchBy(searchByInput:Object):void
 		{
 			var searchBy : String = String(searchByInput);
 			searchForPackage = (searchBy == SearchPM.SEARCH_BY_PACKAGE) ? true : false;
-			currentSearchInput = "";
-			search("");
+			
+			currentSearchInput = (searchForPackage) ? lastSearchInputForPackage : lastSearchInputForClass;			
+			search(currentSearchInput);
+			
 			closeClassNodes();		
 		}
 		
 		public function search(searchInput:String):void
 		{
+			if(searchForPackage)
+			{
+				lastSearchInputForPackage = searchInput;
+			}
+			else
+			{
+				lastSearchInputForClass = searchInput;
+			}
 			currentSearchInput = searchInput;
 			currentCoverageModel.filterFunction = filterBySearchInput;
 			currentCoverageModel.refresh();
@@ -68,7 +85,10 @@ package com.allurent.coverage.view.model
 			var found:Boolean = findString(packageModel.displayName);
 			if(found)
 			{
-				currentCoverageModel.openNode(packageModel);
+				if(areOnlyPackagesShown)
+					currentCoverageModel.closeNode(packageModel);
+				else
+					currentCoverageModel.openNode(packageModel);
 			}
 			return found;		
 		}
@@ -88,7 +108,11 @@ package com.allurent.coverage.view.model
 					if(found)
 					{
 						collection.openNode(packageModel);
-						collection.openNode(classModel);
+						//collection.openNode(classModel);
+						if(areOnlyClassesShown)
+							currentCoverageModel.closeNode(classModel);
+						else
+							currentCoverageModel.openNode(classModel);						
 					}
 				}
 				cursor.moveNext();
@@ -99,6 +123,7 @@ package com.allurent.coverage.view.model
 		//TODO: Duplication of findClass behaviour, needs work.
 		private function closeClassNodes() : void
 		{
+			if( !searchForPackage ) return;
 			var collection:IHierarchicalCollectionView = currentCoverageModel;
 			var collectionCursor:IViewCursor = collection.createCursor();
 			while(collectionCursor.current)
@@ -113,15 +138,14 @@ package com.allurent.coverage.view.model
 						
 						if(!isTopLevel(model.displayName))
 						{
-							var classModel:ClassModel = ClassModel(cursor.current);
-							//collection.openNode(packageModel);
+							var classModel:ClassModel = ClassModel(cursor.current);						
 							collection.closeNode(classModel);							
 						}
 						cursor.moveNext();
 					}					
 				}
 				collectionCursor.moveNext();
-			}		
+			}
 		}
 		
 		private function findString(name:String):Boolean

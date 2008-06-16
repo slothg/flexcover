@@ -1,15 +1,25 @@
 package com.allurent.coverage.view.model
 {
 	import com.allurent.coverage.Controller;
+	import com.allurent.coverage.model.ClassModel;
 	import com.allurent.coverage.model.CoverageModel;
+	import com.allurent.coverage.model.PackageModel;
+	import com.allurent.coverage.model.SegmentModel;
 	
 	import flash.desktop.ClipboardFormats;
 	import flash.events.Event;
 	import flash.events.InvokeEvent;
 	import flash.events.NativeDragEvent;
 	import flash.filesystem.File;
+	import flash.utils.describeType;
+	import flash.utils.getDefinitionByName;
 	
+	import flexunit.framework.TestCase;
+	import flexunit.framework.TestSuite;
+	
+	import mx.collections.ICollectionView;
 	import mx.collections.IHierarchicalCollectionView;
+	import mx.collections.IViewCursor;
 	import mx.controls.Alert;
 	
 	public class CoverageViewerPM
@@ -205,6 +215,6 @@ package com.allurent.coverage.view.model
 			{
 				currentCoverageModel = lineCoverageModel;
 			}
-		}
+		}		
 	}
 }
