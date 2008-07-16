@@ -1,7 +1,10 @@
 package com.allurent.coverage.view.model
 {
 	import com.allurent.coverage.Controller;
+	import com.allurent.coverage.event.CoverageModelEvent;
 	import com.allurent.coverage.model.CoverageModel;
+	import com.allurent.coverage.parse.CommandLineOptionsParser;
+	import com.allurent.coverage.parse.FileParser;
 	
 	import flash.desktop.ClipboardFormats;
 	import flash.events.Event;
@@ -9,73 +12,67 @@ package com.allurent.coverage.view.model
 	import flash.events.NativeDragEvent;
 	import flash.filesystem.File;
 	
-	import mx.collections.IHierarchicalCollectionView;
-	import mx.controls.Alert;
-	
 	public class CoverageViewerPM
 	{
-		private static const COVERAGE_MEASURE_BRANCH:int = 0;
-		private static const COVERAGE_MEASURE_LINE:int = 1;			
-		
+		public static const COVERAGE_MEASURE_BRANCH:int = 0;
+		public static const COVERAGE_MEASURE_LINE:int = 1;		
+				
         [Bindable]
-        public var searchPM:SearchPM;	
+        public var searchPM:SearchPM;
+        [Bindable]
+        public var contentPM:ContentPM;
+                
         // Top level Controller for the CoverageViewer application
         [Bindable]
         public var controller:Controller;        
+         
+        private var _coverageModel:CoverageModel;
         [Bindable]
-        public var coverageModel:CoverageModel;    
-		
-		
+        public function get coverageModel():CoverageModel
+        {
+        	return _coverageModel;
+        }
+        public function set coverageModel(value:CoverageModel):void
+        {
+        	if(value.isEmpty()) return;
+        	enabled = true;
+        	_coverageModel = value;
+        	
+        	searchPM.initialize(coverageModel);
+        }
+                
+        [Bindable]
+        public var enabled:Boolean;		
 		[Bindable]
-		public var branchCoverageModel:IHierarchicalCollectionView;
-		[Bindable]
-		public var lineCoverageModel:IHierarchicalCollectionView;
-		
-		
-		private var _currentCoverageModel:IHierarchicalCollectionView;
-		public function get currentCoverageModel():IHierarchicalCollectionView
-		{
-			return _currentCoverageModel;
-		}
-		public function set currentCoverageModel(value:IHierarchicalCollectionView):void
-		{
-			_currentCoverageModel = value;
-			searchPM.currentCoverageModel = value;
-		}
+		public var showMessageOverlay:Boolean = false;
 		
 		private var currentCoverageMeasureIndex:int;
-		
-        // Name of LocalConnection to use for receiving data
-        private var connectionName:String = "_flexcover";  		
-		
+				
 		public function CoverageViewerPM(controller:Controller)
 		{
-            this.controller = controller
-            searchPM = new SearchPM();
+			this.controller = controller;
+			contentPM = new ContentPM(controller.project);
+			searchPM = new SearchPM();  
             currentCoverageMeasureIndex = CoverageViewerPM.COVERAGE_MEASURE_BRANCH;
 		}
 		
         public function inputFileSelected(e:Event):void
         {
-            processFileArgument(e.target as File);
+            processFileArgument(File(e.target));
         }
-        
+                
         public function outputFileSelected(e:Event):void
         {
             var file:File = File(e.target);
             controller.writeReport(file);
         }
         		
-        public function handleDragDrop(e:NativeDragEvent):void
+        public function handleDragDrop(files:Array):void
         {
-            if (hasValidDragInFormat(e))
-            {
-                var files:Array = e.clipboard.getData(ClipboardFormats.FILE_LIST_FORMAT) as Array;
-                for each (var f:File in files)
-                {
-                    processFileArgument(f);
-                }
-            }
+            for each (var f:File in files)
+	        {
+	        	processFileArgument(f);
+	        }
         }
         
         public function hasValidDragInFormat(e:NativeDragEvent):Boolean
@@ -90,7 +87,7 @@ package com.allurent.coverage.view.model
         public function onClose():void
         {
             controller.close();
-        }    
+        }
 		
         /**
          * When we get our invoke event, process options.  Only then can we attach
@@ -98,113 +95,46 @@ package com.allurent.coverage.view.model
          */
         public function handleInvoke(e:InvokeEvent):void
         {
-            processOptions(e.arguments);
-            controller.attachConnection(connectionName);
-        }
-		
-        /**
-         * Process command line options prior to full startup. 
-         */
-        public function processOptions(args:Array):void
-        {
-            var option:String = null;
-            for each (var arg:String in args)
-            {
-                if (arg.length > 0 && arg.charAt(0) == "-")
-                {
-                    // Got an option, chuck it into a variable to affect subsequent non-option args.
-                    option = arg.substring(1);
-                }
-                else if (option != null)
-                {
-                    // All non-option strings are treated as arguments to be processed in light
-                    // of the last option string that was seen.  There's no argument
-                    // that is not associated with some option.
-                    //
-                    switch(option)
-                    {
-                        case "output":
-                            controller.coverageOutputFile = new File(arg);
-                            controller.autoExit = true;
-                            break;
-                            
-                        case "coverage-metadata":
-                            controller.loadMetadata(new File(arg));
-                            break;
-                            
-                        case "trace-log":
-                            controller.loadTraceLog(new File(arg));
-                            break;
-                            
-                        case "source-path":
-                            controller.project.sourcePath.addItem(new File(arg));
-                            break;
-                            
-                        case "coverage-output":
-                            // TODO: set up output filename for coverage data.
-                            break;
-                            
-                        case "connection-name":
-                            connectionName = arg;
-                            break;
-                        
-                        default:
-                            Alert.show("Unknown option: " + option);
-                    }
-                    option = null;
-                }
-                else
-                {
-                    processFileArgument(new File(arg));
-                }
-            }
+            var parser:CommandLineOptionsParser = new CommandLineOptionsParser(controller);
             
-            // After processing all options, load the models up from the project
-            // and display the top-level report view.
-            //
-            coverageModel = controller.coverageModel;     
+            parser.addEventListener(
+				CoverageModelEvent.COVERAGE_MODEL_CHANGE, 
+				handleCoverageModelChange);
+			
+			parser.parse(e.arguments);            
         }
-
-        private function processFileArgument(f:File):void
-        {
-            if (f.name.match(/\.cvm$/))
-            {
-                controller.loadMetadata(f);
-            }
-            else if (f.name.match(/\.cvr/))
-            {
-                controller.loadCoverageReport(f);
-                coverageModel = controller.coverageModel;
-            }
-        }		
-		
+				
 		public function changeCoverageMeasure(index:int):void
 		{
-			if(currentCoverageMeasureIndex == CoverageViewerPM.COVERAGE_MEASURE_BRANCH)
+			if(isValidCoverageMeasureIndex(index))
 			{
 				currentCoverageMeasureIndex = index;
-			}
-			else if(currentCoverageMeasureIndex == CoverageViewerPM.COVERAGE_MEASURE_LINE)
-			{
-				currentCoverageMeasureIndex = index;
+				searchPM.currentCoverageMeasureIndex = index;
 			}
 			else
 			{
 				throw new Error("Invalid Coverage Measure");
 			}
-			applyCurrentCoverageModel();		
 		}
 		
-		public function applyCurrentCoverageModel():void
+		private function isValidCoverageMeasureIndex(index:int):Boolean
 		{
-			if(currentCoverageMeasureIndex == CoverageViewerPM.COVERAGE_MEASURE_BRANCH)
-			{
-				currentCoverageModel = branchCoverageModel;
-			}
-			else if(currentCoverageMeasureIndex == CoverageViewerPM.COVERAGE_MEASURE_LINE)
-			{
-				currentCoverageModel = lineCoverageModel;
-			}
-		}		
+			return (currentCoverageMeasureIndex == CoverageViewerPM.COVERAGE_MEASURE_BRANCH
+					|| currentCoverageMeasureIndex == CoverageViewerPM.COVERAGE_MEASURE_LINE);
+		}
+		
+        private function processFileArgument(file:File):void
+        {
+        	var parser:FileParser = new FileParser(controller);
+        	parser.addEventListener(
+        					CoverageModelEvent.COVERAGE_MODEL_CHANGE, 
+        					handleCoverageModelChange);
+        	parser.parse(file);         	
+        }
+        
+        private function handleCoverageModelChange(event:CoverageModelEvent):void
+		{
+			coverageModel = event.coverageModel;
+		}	
 	}
 }

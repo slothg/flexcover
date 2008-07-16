@@ -22,9 +22,7 @@
  */
 package com.allurent.coverage.view
 {
-    import com.allurent.coverage.Controller;
-    import com.allurent.coverage.event.SourceViewEvent;
-    import com.allurent.coverage.model.CoverageData;
+    import com.allurent.coverage.event.BrowserItemEvent;
     import com.allurent.coverage.model.SegmentModel;
     import com.allurent.coverage.view.model.CoverageViewerPM;
     
@@ -33,56 +31,52 @@ package com.allurent.coverage.view
     import mx.collections.IHierarchicalCollectionView;
     import mx.containers.VBox;
     import mx.controls.AdvancedDataGrid;
-    import mx.events.FlexEvent;
+    import mx.core.IFactory;
 
     public class SegmentView extends VBox
     {
     	[Bindable]
     	public var coverageViewerPM:CoverageViewerPM;
-    	[Bindable]
-    	public var coverageData:IHierarchicalCollectionView;
-		
+		[Bindable]
+		public var headerText:String;		
+		[Bindable]
+		public var renderer:IFactory;
+		[Bindable]
+		public var coverageDataField:String;   	
+		[Bindable]
+		public var uncoveredDataField:String;        
+        
         [Bindable]
         public var coverageGrid:AdvancedDataGrid;
         
-        private var _segmentModel:SegmentModel;
-        private var _gridComplete:Boolean;
-        
+        private var _dataProvider:IHierarchicalCollectionView;
+                
         [Bindable]
-        public function get segmentModel():SegmentModel
+        public function get dataProvider():IHierarchicalCollectionView
         {
-            return _segmentModel;
-        } 
-        
-        public function set segmentModel(s:SegmentModel):void
-        {
-            _segmentModel = s;
-            if (coverageGrid == null)
-            {
-                addEventListener(FlexEvent.CREATION_COMPLETE, handleCreationComplete);
-                return;
-            }
-            initializeGrid();
+            return _dataProvider;
         }
         
-        private function handleCreationComplete(e:Event):void
-        {
-            initializeGrid();
+        public function set dataProvider(value:IHierarchicalCollectionView):void
+        {            
+            if (coverageGrid != null && value != null)
+            {
+                _dataProvider = value;
+                initializeGrid();
+            }
         }
         
         private function initializeGrid():void
         {
-            coverageGrid.dataProvider = new CoverageData(_segmentModel);            
+            coverageGrid.dataProvider = dataProvider;   
             coverageGrid.validateNow();
-            coverageGrid.expandItem(_segmentModel, true);
-            
-            coverageData = IHierarchicalCollectionView(coverageGrid.dataProvider);
-            coverageViewerPM.applyCurrentCoverageModel();
-        }
+            coverageGrid.expandItem(coverageViewerPM.coverageModel, true);
+            _dataProvider.showRoot = true;
+        }        
         
-        public function showSource(selection:Object):void
+        public function selectItem(selection:Object):void
         {
-            dispatchEvent(new SourceViewEvent(SourceViewEvent.VIEW_CLASS, selection as SegmentModel));
+            dispatchEvent(new BrowserItemEvent(SegmentModel(selection)));
         }
     }
 }

@@ -16,28 +16,36 @@ package tests.com.allurent.coverage.view.model
 		
 		override public function setUp():void
 		{
-			model = new CoverageViewerPM(Controller.instance);
-			//simulate Binding tags in each 
-			branchCoverageModel = new HierarchicalCollectionView();
-			lineCoverageModel = new HierarchicalCollectionView();			
+			model = new CoverageViewerPM(Controller.instance);		
 		}
 		
-		public function testInitalizationOfCurrentCoverageModel():void
+		public function testInvalidCoverageMeasure():void
 		{
-			assertNull("currentCoverageModel not initialized", model.currentCoverageModel);
+			try
+			{
+				model.changeCoverageMeasure(-1);
+				fail("expected error when invalid coverage measure given");
+			}
+			catch(e:Error)
+			{
+				
+			}
+		}
+				
+		public function testDefaultCoverageMeasure():void
+		{
 			model.changeCoverageMeasure(0);
-			model.branchCoverageModel = branchCoverageModel;
-			model.lineCoverageModel = lineCoverageModel;
-			model.applyCurrentCoverageModel();
-			assertNotNull("currentCoverageModel initialized", model.currentCoverageModel);
-			assertEquals("currentCoverageModel should be branchCoverageModel", branchCoverageModel, model.currentCoverageModel);
+			assertEquals("should propagate coverage measure to SearchPM", 
+						0, 
+						model.searchPM.currentCoverageMeasureIndex);	
 		}
 		
 		public function testChangeOfCurrentCoverageModel():void
 		{
-			testInitalizationOfCurrentCoverageModel();
 			model.changeCoverageMeasure(1);
-			assertEquals("currentCoverageModel should be lineCoverageModel", lineCoverageModel, model.currentCoverageModel);			
-		}		
+			assertEquals("should propagate coverage measure to SearchPM", 
+						1, 
+						model.searchPM.currentCoverageMeasureIndex);		
+		}
 	}
 }

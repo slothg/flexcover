@@ -21,36 +21,34 @@
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
  * OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  -->
-<mx:WindowedApplication xmlns:mx="http://www.adobe.com/2006/mxml" layout="vertical"
-    width="950" height="700"
+<mx:WindowedApplication 
+	xmlns:mx="http://www.adobe.com/2006/mxml" 
+	layout="absolute"
+    width="950" height="700" 
     xmlns:view="com.allurent.coverage.view.*"
     applicationComplete="initializeApplication()"
     close="coverageViewerPM.onClose()"
     nativeDragEnter="handleDragIn(event)"
     nativeDragOver="handleDragIn(event)"
-    nativeDragDrop="coverageViewerPM.handleDragDrop(event)"
-    >
+    nativeDragDrop="handleDragDrop(event)" 
+    enabled="{coverageViewerPM.enabled}">
     
     <!-- Main CoverageViewer MXML Application View -->
     
     <mx:Script>
         <![CDATA[
-        	import mx.events.MenuEvent;
-        	import mx.events.ListEvent;
-        	import mx.controls.Menu;
+        	import flash.utils.setTimeout;
+        	import mx.events.FlexEvent;
+        	import com.allurent.coverage.view.MessageOverlay;
         	import com.allurent.coverage.Controller;
-        	import com.allurent.coverage.view.SourceCoverageView;
-        	import com.allurent.coverage.view.GapFinderView;
         	import com.allurent.coverage.view.model.CoverageViewerPM;
-        	import mx.events.PropertyChangeEvent;
-        	import mx.controls.NavBar;
-        	import com.allurent.coverage.model.FunctionModel;
-        	import com.allurent.coverage.event.SourceViewEvent;
-        	import com.allurent.coverage.model.ClassModel;
+        	import com.allurent.coverage.event.BrowserItemEvent;
             
             [Bindable]
             private var coverageViewerPM:CoverageViewerPM = new CoverageViewerPM(Controller.instance);
-                        
+            
+            private var files:Array;           
+                            
             /**
              * Initialize the application by listening for an Invoke event that will communicate
              * command line options.  Also attach the LocalConnection to receive live coverage
@@ -58,222 +56,92 @@
              */
             private function initializeApplication():void
             {
-                nativeApplication.addEventListener(InvokeEvent.INVOKE, coverageViewerPM.handleInvoke);
-                this.addEventListener(SourceViewEvent.VIEW_CLASS, handleSourceView);
+                nativeApplication.addEventListener(InvokeEvent.INVOKE, 
+                									coverageViewerPM.handleInvoke);
+                addEventListener(Event.SELECT, 
+                					coverageViewerPM.contentPM.handleContentChange);
             }
-            
-            private function handleSourceView(e:SourceViewEvent):void
-            {
-                var classModel:ClassModel = null;
-                var lineNum:uint = 0;
-                if (e.segmentModel is ClassModel)
-                {
-                    classModel = e.segmentModel as ClassModel;
-                }
-                else if (e.segmentModel is FunctionModel)
-                {
-                    var functionModel:FunctionModel = e.segmentModel as FunctionModel; 
-                    classModel = functionModel.classModel;
-                    lineNum = functionModel.line;
-                }
-                
-                if (classModel == null)
-                {
-                    sourceViewBox.removeAllChildren();
-                }
-                else 
-                {
-                    var sourceView:SourceCoverageView = null;
-                    if (sourceViewBox.numChildren > 0)
-                    {
-                        sourceView = sourceViewBox.getChildAt(0) as SourceCoverageView;
-                    }
-                    if (sourceView == null || sourceView.classModel != classModel)
-                    {
-                        sourceViewBox.removeAllChildren();
-                        
-                        sourceView = new SourceCoverageView();
-                        sourceView.percentWidth = sourceView.percentHeight = 100;
-                        sourceViewBox.addChild(sourceView);
-                        
-                        var gapFinder:GapFinderView = new GapFinderView();
-                        gapFinder.width = 10;
-                        gapFinder.percentHeight = 100;
-                        sourceViewBox.addChild(gapFinder);
-                        
-                        var gapBinding:Function = function(e:PropertyChangeEvent):void {
-                            if (e.property == "gapOffsets")
-                            {
-                                gapFinder.gapOffsets = e.newValue as Array;
-                            }
-                        }
-                        sourceView.addEventListener(PropertyChangeEvent.PROPERTY_CHANGE, gapBinding);
-                        
-                        sourceView.show(coverageViewerPM.controller.project, classModel);
-                    }
-                    sourceView.scrollToLine(lineNum);
-                }
-            }
-            
+                    
             private function handleDragIn(e:NativeDragEvent):void
             {
                 if (coverageViewerPM.hasValidDragInFormat(e))
                 {
                     NativeDragManager.acceptDragDrop(this);
                 }
+            }            
+           
+            private function handleDragDrop(e:NativeDragEvent):void
+            {
+	            if (coverageViewerPM.hasValidDragInFormat(e))
+	            {  
+	                files = e.clipboard.getData(ClipboardFormats.FILE_LIST_FORMAT) as Array;
+	                showProgressMessage();
+	            }       	
+            }
+         	
+            private function performDragDrop(files:Array):void
+            {
+            	coverageViewerPM.handleDragDrop(files);
+            	hideProgressMessage();
             }
                         
-            private function openInput():void
+            private function showProgressMessage():void
             {
-                var file:File = new File();
-                file.addEventListener(Event.SELECT, coverageViewerPM.inputFileSelected);
-                var filter0:FileFilter = new FileFilter("All Files", "*.*");
-                var filter1:FileFilter = new FileFilter("Coverage Metadata (.cvm)", "*.cvm");
-                var filter2:FileFilter = new FileFilter("Coverage Report (.cvr)", "*.cvr");
-                file.browseForOpen("Open File", [filter0, filter1, filter2]);
-            }
-                        
-            private function saveOutput():void
-            {
-                var file:File = new File();
-                file.addEventListener(Event.SELECT, coverageViewerPM.outputFileSelected);
-                file.browseForSave("Save XML Coverage Report");
-            }
-                        
-            private function clearCoverageData():void
-            {
-                coverageViewerPM.controller.clearCoverageData();
+            	messageOverlayView.addEventListener(FlexEvent.SHOW, handleMessageOverlayShow);            	
+            	coverageViewerPM.showMessageOverlay = true;
             }
             
-			private function createSelectedIndex(buttonBar:NavBar):void
-			{
-				buttonBar.selectedIndex = 0;
-			}
-			
-			private function changeSearchBy(item:Object):void
-			{
-				coverageViewerPM.searchPM.changeSearchBy(item);
-				createFilterMenu();				
-				searchInput.setFocus();
-				searchInput.setSelection(0, searchInput.text.length);
-			}
-			
-			//TODO: Refactor, duplication
-			private function createFilterMenu():void
-			{
-				var searchByMenu:Menu = Menu.createMenu(this, null, false);
-				searchByMenu.setStyle("openDuration", 100);
-				var label:String;
-				var point:Point = new Point();
-							
-				if(coverageViewerPM.searchPM.searchForPackage)
-				{
-					if(!coverageViewerPM.searchPM.areOnlyPackagesShown)
-					{
-						label = "Only show packages";						
-						searchByMenu.addEventListener(ListEvent.ITEM_CLICK, handleOnlyShowPackagesChoice);
-					}
-					else
-					{
-						label = "Show packages and classes";
-						searchByMenu.addEventListener(ListEvent.ITEM_CLICK, handleShowPackagesAndClassesChoice);
-					}
-					
-					searchByMenu.dataProvider = label;
-					point = new Point();
-					point.y = -searchByCombo.height;
-					point = searchByCombo.localToGlobal(point);
-					searchByMenu.show(point.x, point.y);				
-				}
-				else
-				{
-					if(!coverageViewerPM.searchPM.areOnlyClassesShown)
-					{
-						label = "Only show classes";						
-						searchByMenu.addEventListener(ListEvent.ITEM_CLICK, handleOnlyShowClassesChoice);
-					}
-					else
-					{
-						label = "Show classes and members";
-						searchByMenu.addEventListener(ListEvent.ITEM_CLICK, handleShowClassesAndMembersChoice);
-					}
-					
-					searchByMenu.dataProvider = label;
-					point = new Point();
-					point.x = searchByCombo.x;
-					point.y = -searchByCombo.height;
-					point = searchByCombo.localToGlobal(point);
-					searchByMenu.show(point.x, point.y);					
-				}			
-			}
-			
-			private function handleOnlyShowPackagesChoice(event:MenuEvent):void
-			{
-				coverageViewerPM.searchPM.areOnlyPackagesShown = true;
-				coverageViewerPM.searchPM.search(coverageViewerPM.searchPM.currentSearchInput);
-			}
-			
-			private function handleShowPackagesAndClassesChoice(event:MenuEvent):void
-			{
-				coverageViewerPM.searchPM.areOnlyPackagesShown = false;
-				coverageViewerPM.searchPM.search(coverageViewerPM.searchPM.currentSearchInput);
-			}
-			
-			private function handleOnlyShowClassesChoice(event:MenuEvent):void
-			{
-				coverageViewerPM.searchPM.areOnlyClassesShown = true;
-				coverageViewerPM.searchPM.search(coverageViewerPM.searchPM.currentSearchInput);
-			}
-			
-			private function handleShowClassesAndMembersChoice(event:MenuEvent):void
-			{
-				coverageViewerPM.searchPM.areOnlyClassesShown = false;
-				coverageViewerPM.searchPM.search(coverageViewerPM.searchPM.currentSearchInput);
-			}			
+            private function handleMessageOverlayShow(event:FlexEvent):void
+            {
+            	messageOverlayView.removeEventListener(event.type, handleMessageOverlayShow);
+            	
+            	//CLUNKY: SHOW isn't the correct event to wait till 
+            	//messageOverlayView is rendered.
+            	//setup second timer to make sure it's drawn to the screen.
+            	setTimeout(performDragDrop,500,files);
+            }
+            
+            private function hideProgressMessage():void
+            {
+            	coverageViewerPM.showMessageOverlay = false;
+            }
         ]]>
     </mx:Script>
 	
-    <mx:HBox width="100%" horizontalAlign="left">
-		<mx:Label text="Search By:"/>
-		<mx:ToggleButtonBar 
-			id="searchByCombo" 
-			dataProvider="{coverageViewerPM.searchPM.searchByProvider}" 
-			creationComplete="createSelectedIndex(searchByCombo);" 
-			itemClick="changeSearchBy(event.item);"/>		
-		<mx:TextInput 
-			id="searchInput" 
-			width="100%" 
-			text="{coverageViewerPM.searchPM.currentSearchInput}" 
-			change="coverageViewerPM.searchPM.search(searchInput.text);" 
-			creationComplete="searchInput.setFocus();"/>
+	<mx:VBox 
+		id="contentContainer" 
+		width="100%" height="100%" 
+    	paddingLeft="3" paddingRight="3" 
+    	paddingTop="3" paddingBottom="3"		
+		enabled="{!coverageViewerPM.showMessageOverlay}" 
+		>
+		
+	    <view:HeaderView 
+	    	width="100%" 
+	    	coverageViewerPM="{coverageViewerPM}"
+	    	/>
+	    
+	    <!-- View of the coverage stats for the entire application -->
+	    <mx:HDividedBox 
+	    	width="100%" height="100%">
+	    
+	        <view:BrowserView 
+	        	id="coverageMeasureTabNavigator" 
+	        	model="{coverageViewerPM}"
+	        	width="500" height="100%" 
+	        	/>
+	        <view:ContentView 
+	        	id="contentView" 
+	        	contentPM="{coverageViewerPM.contentPM}" 
+	        	width="100%" height="100%"/>
+	        	        	
+	    </mx:HDividedBox>
+	</mx:VBox>
+	
+	<view:MessageOverlay 
+		id="messageOverlayView"  
+		verticalCenter="0" 
+		horizontalCenter="0" 
+		visible="{coverageViewerPM.showMessageOverlay}" />
 			
-        <mx:Button label="Load File..." click="openInput()"/>
-        <mx:Button label="Save Report..." click="saveOutput()"/>
-        <mx:Button label="Clear Coverage Data" click="clearCoverageData()"/>
-    </mx:HBox>
-    
-    <!-- View of the coverage stats for the entire application -->
-    <mx:HDividedBox width="100%" height="100%">
-        <mx:TabNavigator id="coverageMeasureTabNavigator" 
-        	width="600" height="100%" 
-        	creationPolicy="all" 
-        	selectedIndex="1" 
-        	creationComplete="coverageViewerPM.changeCoverageMeasure(coverageMeasureTabNavigator.selectedIndex)" 
-        	change="coverageViewerPM.changeCoverageMeasure(coverageMeasureTabNavigator.selectedIndex)">
-            <view:BranchCoverageView 
-            	id="branchCoverageView" 
-            	width="100%" height="100%"
-                label="Branches" 
-                coverageViewerPM="{coverageViewerPM}"
-                />
-            <view:LineCoverageView 
-            	id="lineCoverageView" 
-            	width="100%" height="100%"
-                label="Lines"
-                coverageViewerPM="{coverageViewerPM}"
-                />
-        </mx:TabNavigator>
-        <mx:HBox id="sourceViewBox" width="100%" height="100%"/>
-    </mx:HDividedBox>
-
 </mx:WindowedApplication>

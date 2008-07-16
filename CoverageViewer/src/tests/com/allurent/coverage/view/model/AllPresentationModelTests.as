@@ -7,6 +7,7 @@ package tests.com.allurent.coverage.view.model
 	{
 		public function AllPresentationModelTests()
 		{
+			addTest(new TestSuite(ContentPMTest));
 			addTest(new TestSuite(CoverageViewerPMTest));
 			addTest(new TestSuite(SearchPMTest));
 		}
