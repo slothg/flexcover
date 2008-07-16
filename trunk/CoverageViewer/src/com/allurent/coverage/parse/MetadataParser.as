@@ -54,7 +54,6 @@ package com.allurent.coverage.parse
                         coverageModel.addCoverageElement(element);
                     }
                 }
-
             }
         }
     }

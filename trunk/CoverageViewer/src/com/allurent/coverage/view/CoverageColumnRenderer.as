@@ -63,6 +63,7 @@ package com.allurent.coverage.view
 
         override public function set data(value:Object):void
         {
+        	if(value == null) return;
             var coverage:Number = getCoverage(value);
             var happyColor:uint = 0x33FF33 + ((1- coverage) * 0xCC) + (uint((1 - coverage) * 0xCC) << 16);
             var warningColor:uint = 0xFF0000 + (coverage * 0xFF) + (uint(coverage * 0xFF) << 8)

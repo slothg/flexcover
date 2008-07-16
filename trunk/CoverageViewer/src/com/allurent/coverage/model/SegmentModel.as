@@ -75,6 +75,12 @@ package com.allurent.coverage.model
         {
         }
         
+        public function isEmpty():Boolean
+        {
+        	if(children==null) return true;
+        	return (children.length < 1);
+        }
+                
         /**
          * Factory method to create a child of this SegmentModel.  Overridden by the various 
          * model subclasses to ensure that their children are of the correct type.

@@ -22,6 +22,7 @@
  */
 package com.allurent.coverage
 {
+    import com.allurent.coverage.event.CoverageModelEvent;
     import com.allurent.coverage.model.CoverageElement;
     import com.allurent.coverage.model.CoverageModel;
     import com.allurent.coverage.model.ProjectModel;
@@ -30,6 +31,7 @@ package com.allurent.coverage
     import com.allurent.coverage.parse.TraceLogParser;
     
     import flash.desktop.NativeApplication;
+    import flash.events.EventDispatcher;
     import flash.filesystem.File;
     import flash.filesystem.FileMode;
     import flash.filesystem.FileStream;
@@ -42,7 +44,7 @@ package com.allurent.coverage
      * Overall Controller for actions in the Coverage Viewer application. 
      * 
      */
-    public class Controller
+    public class Controller extends EventDispatcher
     {
         [Bindable]
         public var project:ProjectModel = new ProjectModel();
@@ -129,7 +131,8 @@ package com.allurent.coverage
         public function loadMetadata(metadataFile:File):void
         {
             new MetadataParser(coverageModel, project).parseFile(metadataFile);
-        }     
+            dispatchCoverageModelChangeEvent();
+        }  
 
         /**
          * Load a trace log file into the project. 
@@ -147,6 +150,7 @@ package com.allurent.coverage
             var newCoverageModel:CoverageModel = new CoverageModel();
             new CoverageReportParser(newCoverageModel, project).parseFile(report);
             coverageModel = newCoverageModel;
+            dispatchCoverageModelChangeEvent();
         }
 
         /**
@@ -249,6 +253,13 @@ package com.allurent.coverage
             out.writeUTFBytes(coverageModel.toXML().toXMLString());
             out.close();
         }
+        
+        private function dispatchCoverageModelChangeEvent():void
+        {
+            dispatchEvent(new CoverageModelEvent(
+            						CoverageModelEvent.COVERAGE_MODEL_CHANGE, 
+            						coverageModel));
+        }        
     }    
 }
 

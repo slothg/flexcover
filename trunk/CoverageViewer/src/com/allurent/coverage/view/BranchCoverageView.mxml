@@ -21,42 +21,38 @@
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
  * OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  -->
-<view:SegmentView 
+<mx:ViewStack 
 	xmlns:mx="http://www.adobe.com/2006/mxml"
     xmlns:view="com.allurent.coverage.view.*" 
-    segmentModel="{coverageViewerPM.coverageModel}"
+    selectedIndex="{coverageViewerPM.searchPM.searchForPackage ? 0 : 1}" 
     >
-
-    <mx:Binding 
-    	source="coverageData" 
-    	destination="coverageViewerPM.branchCoverageModel"/>
+    
+    <mx:Script>
+    	<![CDATA[
+    		import com.allurent.coverage.view.model.CoverageViewerPM;
     		
-    <mx:AdvancedDataGrid id="coverageGrid" width="100%" height="100%"
-        change="showSource(coverageGrid.selectedItem)"> 
-        <mx:columns>
-            <mx:AdvancedDataGridColumn 
-            	dataField="displayName" 
-            	headerText="Name" />
-            <mx:AdvancedDataGridColumn 
-            	id="branchCoverageColumn" 
-            	width="140"
-            	dataField="branchCoverage" headerText="Branch Coverage">
-                <mx:formatter>
-                    <mx:NumberFormatter precision="2"/>
-                </mx:formatter>
-            </mx:AdvancedDataGridColumn>
-            <mx:AdvancedDataGridColumn 
-            	width="100"
-            	dataField="uncoveredBranches" headerText="Uncovered">
-                <mx:formatter>
-                    <mx:NumberFormatter/>
-                </mx:formatter>
-            </mx:AdvancedDataGridColumn>
-        </mx:columns>
-        <mx:rendererProviders>
-            <mx:AdvancedDataGridRendererProvider column="{branchCoverageColumn}"
-                renderer="com.allurent.coverage.view.BranchCoverageColumnRenderer"/>
-        </mx:rendererProviders>
-    </mx:AdvancedDataGrid>  
-
-</view:SegmentView>
+    		[Bindable]
+    		public var coverageViewerPM:CoverageViewerPM;
+    	]]>
+    </mx:Script>
+	    
+	<view:CoverageOverview
+		width="100%" height="100%"
+	    dataProvider="{coverageViewerPM.searchPM.branchPackageSearch.content}" 
+	    coverageViewerPM="{coverageViewerPM}" 
+	    headerText="Branch Coverage" 
+	    coverageDataField="branchCoverage" 
+	    uncoveredDataField="uncoveredBranches"	    
+	    renderer="com.allurent.coverage.view.BranchCoverageColumnRenderer"
+	    />
+	<view:CoverageOverview 
+		width="100%" height="100%"
+	    dataProvider="{coverageViewerPM.searchPM.branchClassSearch.content}" 
+	    coverageViewerPM="{coverageViewerPM}" 
+	    headerText="Branch Coverage" 
+	    coverageDataField="branchCoverage" 
+	    uncoveredDataField="uncoveredBranches"	    
+	    renderer="com.allurent.coverage.view.BranchCoverageColumnRenderer" 
+	    />	    
+	    
+</mx:ViewStack>

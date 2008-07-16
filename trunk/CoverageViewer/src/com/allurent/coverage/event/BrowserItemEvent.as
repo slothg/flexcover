@@ -26,21 +26,19 @@ package com.allurent.coverage.event
     
     import flash.events.Event;
 
-    public class SourceViewEvent extends Event
+    public class BrowserItemEvent extends Event
     {
-        public static const VIEW_CLASS:String = "viewClass";
-        
         public var segmentModel:SegmentModel;
         
-        public function SourceViewEvent(type:String, segmentModel:SegmentModel)
+        public function BrowserItemEvent(segmentModel:SegmentModel)
         {
-            super(type, true);
+            super(Event.SELECT, true);
             this.segmentModel = segmentModel;
         }
         
         override public function clone():Event
         {
-            return new SourceViewEvent(type, segmentModel);
+            return new BrowserItemEvent(segmentModel);
         }
     }
 }
