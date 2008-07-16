@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TabNavigator 
+	xmlns:mx="http://www.adobe.com/2006/mxml" 
+	xmlns:view="com.allurent.coverage.view.*" 
+	creationPolicy="all" 
+	creationComplete="model.changeCoverageMeasure(selectedIndex)" 
+	change="model.changeCoverageMeasure(selectedIndex)"	
+	>
+		
+	<mx:Script>
+		<![CDATA[
+			import com.allurent.coverage.view.model.CoverageViewerPM;
+			
+			[Bindable]
+			public var model:CoverageViewerPM;
+		]]>
+	</mx:Script>
+	
+	<view:BranchCoverageView 
+		width="100%" height="100%"
+		label="Branches" 
+		coverageViewerPM="{model}"
+		/>
+	<view:LineCoverageView 
+		width="100%" height="100%"
+		label="Lines"
+		coverageViewerPM="{model}" 
+		/> 
+		
+</mx:TabNavigator>

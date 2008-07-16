@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:HBox 
+	xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:ac="com.adobe.ac.*">
+	
+	<mx:Script>
+		<![CDATA[
+			import com.adobe.ac.util.TimerUtil;
+			import com.adobe.ac.util.ITimerUtil;
+			import mx.events.ListEvent;
+			import mx.controls.Menu;
+			import mx.controls.NavBar;
+			import mx.events.MenuEvent;
+			import com.allurent.coverage.view.model.CoverageViewerPM;
+            
+            [Bindable]
+            public var coverageViewerPM:CoverageViewerPM;
+			private var timer:ITimerUtil = new TimerUtil();            
+            
+			private function createSelectedIndex(buttonBar:NavBar):void
+			{
+				buttonBar.selectedIndex = 0;
+			}
+			
+			private function changeSearchBy(item:Object):void
+			{
+				coverageViewerPM.searchPM.changeSearchBy(item);
+				createFilterMenu();
+				searchInput.setFocus();
+				searchInput.setSelection(0, searchInput.text.length);
+			}
+			
+			//TODO: Refactor, duplication
+			private function createFilterMenu():void
+			{
+				var searchByMenu:Menu = Menu.createMenu(this, null, false);
+				searchByMenu.setStyle("openDuration", 100);
+				var label:String;
+				var point:Point = new Point();
+				
+				if(coverageViewerPM.searchPM.searchForPackage)
+				{
+					if(coverageViewerPM.searchPM.showDetail)
+					{
+						label = "Only show packages";						
+						searchByMenu.addEventListener(ListEvent.ITEM_CLICK, handleHideDetailChoice);
+					}
+					else
+					{
+						label = "Show packages and classes";
+						searchByMenu.addEventListener(ListEvent.ITEM_CLICK, handleShowDetailChoice);
+					}
+					
+					searchByMenu.dataProvider = label;
+					point = new Point();
+					point.y = searchByCombo.height;
+					point = searchByCombo.localToGlobal(point);
+					searchByMenu.show(point.x, point.y);				
+				}
+				else
+				{
+					if(coverageViewerPM.searchPM.showDetail)
+					{
+						label = "Only show classes";						
+						searchByMenu.addEventListener(ListEvent.ITEM_CLICK, handleHideDetailChoice);
+					}
+					else
+					{
+						label = "Show classes and members";
+						searchByMenu.addEventListener(ListEvent.ITEM_CLICK, handleShowDetailChoice);
+					}
+					
+					searchByMenu.dataProvider = label;
+					point = new Point();
+					point.x = searchByCombo.x;
+					point.y = searchByCombo.height;
+					point = searchByCombo.localToGlobal(point);
+					searchByMenu.show(point.x, point.y);					
+				}
+				searchByMenu.setFocus();	
+			}
+			
+			private function handleShowDetailChoice(event:MenuEvent):void
+			{
+				coverageViewerPM.searchPM.currentSearch.showDetail = true;
+				coverageViewerPM.searchPM.search(coverageViewerPM.searchPM.currentSearchInput);
+			}
+			
+			private function handleHideDetailChoice(event:MenuEvent):void
+			{
+				coverageViewerPM.searchPM.currentSearch.showDetail = false;
+				coverageViewerPM.searchPM.search(coverageViewerPM.searchPM.currentSearchInput);
+			}			
+	
+			private function search(searchInput:String):void
+			{
+				timer.delay(500, onSearch);
+			}
+			
+			private function onSearch():void
+			{
+				coverageViewerPM.searchPM.search(searchInput.text);
+			}
+			
+            private function openInput():void
+            {
+                var file:File = new File();
+                file.addEventListener(Event.SELECT, coverageViewerPM.inputFileSelected);
+                var filter0:FileFilter = new FileFilter("All Files", "*.*");
+                var filter1:FileFilter = new FileFilter("Coverage Metadata (.cvm)", "*.cvm");
+                var filter2:FileFilter = new FileFilter("Coverage Report (.cvr)", "*.cvr");
+                file.browseForOpen("Open File", [filter0, filter1, filter2]);
+            }
+                        
+            private function saveOutput():void
+            {
+                var file:File = new File();
+                file.addEventListener(Event.SELECT, coverageViewerPM.outputFileSelected);
+                file.browseForSave("Save XML Coverage Report");
+            }
+                        
+            private function clearCoverageData():void
+            {
+                coverageViewerPM.controller.clearCoverageData();
+            }			         
+		]]>
+	</mx:Script>
+	
+	<ac:ObserveValue 
+		source="{coverageViewerPM.enabled}" 
+		handler="{searchInput.setFocus}" 
+		value="{true}" 
+		/>
+		
+	<mx:Label text="Search By:"/>
+	<mx:ToggleButtonBar 
+		id="searchByCombo" 
+		dataProvider="{coverageViewerPM.searchPM.searchByProvider}" 
+		creationComplete="createSelectedIndex(searchByCombo);" 
+		itemClick="changeSearchBy(event.item);"/>		
+	<mx:TextInput 
+		id="searchInput" 
+		width="100%" 
+		text="{coverageViewerPM.searchPM.currentSearchInput}" 
+		change="search(searchInput.text);" />
+		
+    <mx:Button label="Load File..." click="openInput()"/>
+    <mx:Button label="Save Report..." click="saveOutput()"/>
+    <mx:Button label="Clear Coverage Data" click="clearCoverageData()"/>
+
+</mx:HBox>

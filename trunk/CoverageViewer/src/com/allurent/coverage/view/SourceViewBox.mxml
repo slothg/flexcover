@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:HBox 
+	xmlns:mx="http://www.adobe.com/2006/mxml" 
+	show="showSourceView()" 
+	hide="hideSourceView()" xmlns:ac="com.adobe.ac.*">
+	
+	<mx:Script>
+		<![CDATA[
+			import com.allurent.coverage.model.ProjectModel;
+			import mx.events.PropertyChangeEvent;
+			import com.allurent.coverage.model.FunctionModel;
+			import com.allurent.coverage.model.ClassModel;
+            
+			[Bindable]
+			public var project:ProjectModel;
+			[Bindable]
+			public var classModel:ClassModel;
+			[Bindable]
+			public var lineNum:uint = 0;
+			[Bindable]
+			public var hasInvalidated:Boolean;			         
+	            
+            public function hideSourceView():void
+            {
+            	removeAllChildren();
+            }
+               
+            public function showSourceView():void
+            {
+                var sourceView:SourceCoverageView = null;
+                if (numChildren > 0)
+                {
+                    sourceView = getChildAt(0) as SourceCoverageView;
+                }
+                if (sourceView == null || sourceView.classModel != classModel)
+                {
+                    removeAllChildren();
+                    
+                    sourceView = new SourceCoverageView();
+                    sourceView.percentWidth = sourceView.percentHeight = 100;
+                    addChild(sourceView);
+                    
+                    var gapFinder:GapFinderView = new GapFinderView();
+                    gapFinder.width = 10;
+                    gapFinder.percentHeight = 100;
+                    addChild(gapFinder);
+                    
+                    var gapBinding:Function = function(e:PropertyChangeEvent):void {
+                        if (e.property == "gapOffsets")
+                        {
+                            gapFinder.gapOffsets = e.newValue as Array;
+                        }
+                    }
+                    sourceView.addEventListener(PropertyChangeEvent.PROPERTY_CHANGE, gapBinding);
+                    
+                    sourceView.show(project, classModel);
+                }
+                sourceView.scrollToLine(lineNum);
+            }
+		]]>
+	</mx:Script>
+	
+	<ac:ObserveValue 
+		source="{hasInvalidated}" 
+		handler="showSourceView" 
+		value="{true}"/>	
+	
+</mx:HBox>

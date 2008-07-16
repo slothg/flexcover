@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 
+ * Copyright (c) 2008 Allurent, Inc.
+ *
+ * Permission is hereby granted, free of charge, to any person
+ * obtaining a copy of this software and associated documentation
+ * files (the "Software"), to deal in the Software without restriction,
+ * including without limitation the rights to use, copy, modify,
+ * merge, publish, distribute, sublicense, and/or sell copies of the
+ * Software, and to permit persons to whom the Software is furnished
+ * to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+ * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+ * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+ * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+ * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
+ * OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ -->
+<view:SegmentView 
+	xmlns:mx="http://www.adobe.com/2006/mxml"
+    xmlns:view="com.allurent.coverage.view.*" 
+    >
+
+    <mx:AdvancedDataGrid 
+    	id="coverageGrid" 
+    	width="100%" height="100%" 
+    	openDuration="100"  
+        change="selectItem(coverageGrid.selectedItem)"> 
+        <mx:columns>
+            <mx:AdvancedDataGridColumn 
+            	dataField="displayName" 
+            	width="100" 
+            	headerText="Name" />
+            <mx:AdvancedDataGridColumn 
+            	id="coverageColumn" 
+            	width="55" 
+            	dataField="{coverageDataField}" 
+            	headerText="{headerText}">
+                <mx:formatter>
+                    <mx:NumberFormatter precision="2"/>
+                </mx:formatter>
+            </mx:AdvancedDataGridColumn>
+            <mx:AdvancedDataGridColumn 
+            	width="42" 
+            	dataField="{uncoveredDataField}" 
+            	headerText="Uncovered">
+                <mx:formatter>
+                    <mx:NumberFormatter/>
+                </mx:formatter>
+            </mx:AdvancedDataGridColumn>
+        </mx:columns>
+        <mx:rendererProviders>
+            <mx:AdvancedDataGridRendererProvider 
+            	column="{coverageColumn}"
+                renderer="{renderer}"/>
+        </mx:rendererProviders>
+    </mx:AdvancedDataGrid>
+
+</view:SegmentView>
