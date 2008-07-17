@@ -1,5 +1,5 @@
 /* 
- * Copyright (c) 2008 Allurent, Inc.
+ * Copyright (c) 2008 Adobe Systems Incorporated.
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -20,17 +20,13 @@
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
  * OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package tests.com.allurent.coverage.model
+package com.adobe.ac.util
 {
-	import flexunit.framework.TestSuite;
-	
-	public class AllDomainModelTests extends TestSuite
+	public interface IOneTimeInterval
 	{
-		public function AllDomainModelTests()
-		{
-			addTest( new TestSuite(PackageSearchTest));
-			addTest( new TestSuite(ClassSearchTest));
-		}
-
+		function delay( time : Number, 
+                        callback : Function, 
+                        ... rest ) : void;
+        function clear() : void;              
 	}
 }

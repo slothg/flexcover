@@ -124,7 +124,7 @@
 	    <!-- View of the coverage stats for the entire application -->
 	    <mx:HDividedBox 
 	    	width="100%" height="100%">
-	    
+	        
 	        <view:BrowserView 
 	        	id="coverageMeasureTabNavigator" 
 	        	model="{coverageViewerPM}"
@@ -134,10 +134,17 @@
 	        	id="contentView" 
 	        	contentPM="{coverageViewerPM.contentPM}" 
 	        	width="100%" height="100%"/>
-	        	        	
+	           	
 	    </mx:HDividedBox>
 	</mx:VBox>
 	
+    <mx:Label 
+    	left="150" 
+    	top="33" 
+        text="Recording" 
+        fontWeight="bold" 
+    	visible="{coverageViewerPM.controller.isRecording}" />
+	 
 	<view:MessageOverlay 
 		id="messageOverlayView"  
 		verticalCenter="0" 

@@ -25,7 +25,6 @@ package com.allurent.coverage.parse
     import com.allurent.coverage.model.CoverageElement;
     import com.allurent.coverage.model.CoverageModel;
     import com.allurent.coverage.model.ProjectModel;
-    import com.allurent.coverage.runtime.CoverageManager;
     
     /**
      * This parser processes a coverage report XML file.

@@ -1,7 +1,31 @@
+/* 
+ * Copyright (c) 2008 Allurent, Inc.
+ *
+ * Permission is hereby granted, free of charge, to any person
+ * obtaining a copy of this software and associated documentation
+ * files (the "Software"), to deal in the Software without restriction,
+ * including without limitation the rights to use, copy, modify,
+ * merge, publish, distribute, sublicense, and/or sell copies of the
+ * Software, and to permit persons to whom the Software is furnished
+ * to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+ * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+ * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+ * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+ * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
+ * OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
 package com.allurent.coverage.view.model
 {
+	import com.adobe.ac.util.IOneTimeInterval;
+	import com.adobe.ac.util.OneTimeInterval;
 	import com.allurent.coverage.Controller;
-	import com.allurent.coverage.event.CoverageModelEvent;
+	import com.allurent.coverage.event.CoverageEvent;
 	import com.allurent.coverage.model.CoverageModel;
 	import com.allurent.coverage.parse.CommandLineOptionsParser;
 	import com.allurent.coverage.parse.FileParser;
@@ -47,6 +71,7 @@ package com.allurent.coverage.view.model
 		public var showMessageOverlay:Boolean = false;
 		
 		private var currentCoverageMeasureIndex:int;
+		private var timer:IOneTimeInterval = new OneTimeInterval();
 				
 		public function CoverageViewerPM(controller:Controller)
 		{
@@ -54,8 +79,21 @@ package com.allurent.coverage.view.model
 			contentPM = new ContentPM(controller.project);
 			searchPM = new SearchPM();  
             currentCoverageMeasureIndex = CoverageViewerPM.COVERAGE_MEASURE_BRANCH;
+            controller.addEventListener(CoverageEvent.RECORDING_END, handleRecordingEnd);
 		}
 		
+		private function handleRecordingEnd(event:CoverageEvent):void
+		{
+			showMessageOverlay = true;
+			timer.delay(250, parseCoverageData);
+		}
+
+        private function parseCoverageData():void
+        {
+        	controller.parseCoverageData();
+            showMessageOverlay = false;      
+        }
+
         public function inputFileSelected(e:Event):void
         {
             processFileArgument(File(e.target));
@@ -98,7 +136,7 @@ package com.allurent.coverage.view.model
             var parser:CommandLineOptionsParser = new CommandLineOptionsParser(controller);
             
             parser.addEventListener(
-				CoverageModelEvent.COVERAGE_MODEL_CHANGE, 
+				CoverageEvent.COVERAGE_MODEL_CHANGE, 
 				handleCoverageModelChange);
 			
 			parser.parse(e.arguments);            
@@ -127,12 +165,12 @@ package com.allurent.coverage.view.model
         {
         	var parser:FileParser = new FileParser(controller);
         	parser.addEventListener(
-        					CoverageModelEvent.COVERAGE_MODEL_CHANGE, 
+        					CoverageEvent.COVERAGE_MODEL_CHANGE, 
         					handleCoverageModelChange);
         	parser.parse(file);         	
         }
         
-        private function handleCoverageModelChange(event:CoverageModelEvent):void
+        private function handleCoverageModelChange(event:CoverageEvent):void
 		{
 			coverageModel = event.coverageModel;
 		}	

@@ -20,17 +20,31 @@
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
  * OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package tests.com.allurent.coverage.model
+package com.allurent.coverage.event
 {
-	import flexunit.framework.TestSuite;
-	
-	public class AllDomainModelTests extends TestSuite
-	{
-		public function AllDomainModelTests()
-		{
-			addTest( new TestSuite(PackageSearchTest));
-			addTest( new TestSuite(ClassSearchTest));
-		}
+    import com.allurent.coverage.model.CoverageModel;
+    
+    import flash.events.Event;
 
-	}
+    public class CoverageEvent extends Event
+    {
+        public static const COVERAGE_MODEL_CHANGE:String = "coverageModelChange";
+        public static const RECORDING_START:String = "recordingStart";
+        public static const RECORDING_END:String = "recordingEnd";
+        public static const PARSING_START:String = "parsingStart";
+        public static const PARSING_END:String = "parsingEnd";
+        
+        public var coverageModel:CoverageModel;
+        
+        public function CoverageEvent(type:String, coverageModel:CoverageModel=null)
+        {
+            super(type, true);
+            this.coverageModel = coverageModel;
+        }
+        
+        override public function clone():Event
+        {
+            return new CoverageEvent(type, coverageModel);
+        }
+    }
 }

@@ -20,60 +20,56 @@
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
  * OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package com.adobe.ac
+package com.adobe.ac.util
 {
-	import mx.core.Application;
-	import mx.core.UIComponent;
-   
-	public class Observer 
+	import flash.events.TimerEvent;
+	import flash.utils.Timer;
+	
+	/**
+	* One OneTimeInterval instance will only hold one active Timer at a time.
+	*/
+	public class OneTimeInterval implements IOneTimeInterval
 	{
-		protected var isHandlerInitialized : Boolean = false;
-		protected var isSourceInitialized : Boolean = false;
-		
-		public function get handler() : Function
+		private var timer : Timer;
+		private var callback : Function;
+		private var parameters : Array;
+	    
+		public function OneTimeInterval()
 		{
-			return null;
-		}
-  
-		public function get source() : Object
-		{
-			return null;
+            timer = new Timer( 0 );
 		}
 		
-		public function execute( method : Function, ...params : Array ) : Object
+		public function delay( time : Number, 
+		                      callback : Function, 
+		                      ... rest ) : void
 		{
-			var returnValue : Object;
-			try
+			if( timer.running )
 			{
-				returnValue = method.apply( null, params );
+				timer.stop();
+				timer.removeEventListener( TimerEvent.TIMER_COMPLETE, onTimeout );
 			}
-			catch( e : Error )
-			{
-				delay( e );
-			}
-			return returnValue;
+			this.callback = callback;
+			this.parameters = rest;
+			startTimer( time );
 		}
-			
-		protected function callHandler() : void
+		  
+		public function clear() : void
 		{
-			try
-			{
-				handler.call( null, source );
-			}
-			catch( e : Error )
-			{
-				delay( e );
-			}
+			timer.stop();
+			timer.removeEventListener( TimerEvent.TIMER_COMPLETE, onTimeout );         
 		}
-   
-		protected function delay( e : Error ) : void
+		  
+		private function startTimer( time : Number ) : void
 		{
-			UIComponent( Application.application ).callLater( throwException, [ e ] );
+			timer = new Timer( time, 1 );
+			timer.addEventListener( TimerEvent.TIMER_COMPLETE, onTimeout );
+			timer.start();
 		}
-   
-		private function throwException( e : Error ) : void
+		  
+		private function onTimeout( event : TimerEvent ) : void
 		{
-			throw e;
+			clear();
+			callback.apply( this, parameters );
 		}
 	}
 }

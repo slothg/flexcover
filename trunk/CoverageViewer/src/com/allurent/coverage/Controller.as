@@ -22,8 +22,9 @@
  */
 package com.allurent.coverage
 {
-    import com.allurent.coverage.event.CoverageModelEvent;
+    import com.allurent.coverage.event.CoverageEvent;
     import com.allurent.coverage.model.CoverageElement;
+    import com.allurent.coverage.model.CoverageElementContainer;
     import com.allurent.coverage.model.CoverageModel;
     import com.allurent.coverage.model.ProjectModel;
     import com.allurent.coverage.parse.CoverageReportParser;
@@ -40,6 +41,21 @@ package com.allurent.coverage
     
     import mx.controls.Alert;
     
+    /** This event is dispatched when the coverage model is updated with new metadata. */
+    [Event(name="coverageModelChange",
+            type="com.allurent.coverage.event.CoverageEvent")]
+    /** This event is dispatched when the coverage model is updated with new metadata. */
+    [Event(name="recordingStart",
+            type="com.allurent.coverage.event.CoverageEvent")]
+    /** This event is dispatched when the coverage model is updated with new metadata. */
+    [Event(name="recordingEnd",
+            type="com.allurent.coverage.event.CoverageEvent")]
+    /** This event is dispatched when the coverage model is updated with new metadata. */
+    [Event(name="parsingStart",
+            type="com.allurent.coverage.event.CoverageEvent")]
+    /** This event is dispatched when the coverage model is updated with new metadata. */
+    [Event(name="parsingEnd",
+            type="com.allurent.coverage.event.CoverageEvent")]                                    
     /**
      * Overall Controller for actions in the Coverage Viewer application. 
      * 
@@ -51,6 +67,8 @@ package com.allurent.coverage
         
         [Bindable]
         public var coverageModel:CoverageModel = new CoverageModel();
+        [Bindable]
+        public var isRecording:Boolean = false;        
         
         /**
          * Flag indicating that application should exit when instrumented app is done.
@@ -69,6 +87,8 @@ package com.allurent.coverage
          */
         public var coverageOutputFile:File = null;
         
+        private var coverageElementsContainer:Array = new Array();
+        
         private static var _instance:Controller;
         public static function get instance():Controller
         {
@@ -77,6 +97,11 @@ package com.allurent.coverage
                 _instance = new Controller(new SingletonEnforcer());
             }   	
         	return _instance;
+        }
+        
+        public static function resetForTesting():void
+        {
+        	_instance = null
         }
         
         // LocalConnection open for receiving coverage data from live instrumented apps
@@ -163,17 +188,46 @@ package com.allurent.coverage
          */
         public function coverageData(keyMap:Object):void
         {
+        	var isRecording:Boolean = false;
+        	
             for (var key:String in keyMap)
             {
+            	isRecording = true;
                 var element:CoverageElement = CoverageElement.fromString(key);
                 if (element != null)
                 {
                     var count:uint = keyMap[key];
-                    coverageModel.recordCoverageElement(element, count, constrainToModel);
+                    coverageElementsContainer.push(new CoverageElementContainer(element, count));
                 }
-            } 
+            }
+            if(isRecording && !this.isRecording)
+            {
+            	dispatchEvent(new CoverageEvent(CoverageEvent.RECORDING_START));
+            	this.isRecording = true;            	
+            }
+            else if(!isRecording && this.isRecording)
+            {
+            	this.isRecording = false;
+            	closeConnection();
+            	dispatchEvent(new CoverageEvent(CoverageEvent.RECORDING_END));
+            }
         }
-
+        
+        public function parseCoverageData():void
+        {
+        	dispatchEvent(new CoverageEvent(CoverageEvent.PARSING_START));
+        	var container:Array = coverageElementsContainer;
+        	var len:int = container.length;
+        	for(var i:int; i < len; i++)
+        	{
+        		var item:CoverageElementContainer = CoverageElementContainer(container[i]);
+        		coverageModel.recordCoverageElement(item.element, 
+        		                                      item.count, 
+        		                                      constrainToModel);
+        	}        	
+        	dispatchEvent(new CoverageEvent(CoverageEvent.PARSING_END));
+        }
+        
         public function clearCoverageData():void
         {
             coverageModel.clearCoverageData();
@@ -243,6 +297,12 @@ package com.allurent.coverage
             }
         }
         
+        public function closeConnection():void
+        {
+        	if(conn == null) return;
+        	conn.close();     	
+        }  
+        
         /**
          * Write accumulated coverage data to an output file if specified. 
          */
@@ -256,11 +316,11 @@ package com.allurent.coverage
         
         private function dispatchCoverageModelChangeEvent():void
         {
-            dispatchEvent(new CoverageModelEvent(
-            						CoverageModelEvent.COVERAGE_MODEL_CHANGE, 
+            dispatchEvent(new CoverageEvent(
+            						CoverageEvent.COVERAGE_MODEL_CHANGE, 
             						coverageModel));
-        }        
-    }    
+        }
+    }
 }
 
 class SingletonEnforcer{}
