@@ -20,54 +20,52 @@
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
  * OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package tests.com.allurent.coverage.view.model
+package tests.com.allurent.coverage
 {
 	import com.allurent.coverage.Controller;
-	import com.allurent.coverage.view.model.CoverageViewerPM;
 	
 	import flexunit.framework.TestCase;
 	
-	import mx.collections.HierarchicalCollectionView;
-	import mx.collections.IHierarchicalCollectionView;
-
-	public class CoverageViewerPMTest extends TestCase
+	public class ControllerTest extends TestCase
 	{
-		private var model:CoverageViewerPM;
-		private var branchCoverageModel : IHierarchicalCollectionView;
-		private var lineCoverageModel : IHierarchicalCollectionView;
+		private var controller:Controller;
 		
 		override public function setUp():void
-		{
-			model = new CoverageViewerPM(Controller.instance);		
+		{		
+			controller = Controller.instance;
 		}
 		
-		public function testInvalidCoverageMeasure():void
-		{
-			try
-			{
-				model.changeCoverageMeasure(-1);
-				fail("expected error when invalid coverage measure given");
-			}
-			catch(e:Error)
-			{
-				
-			}
-		}
-				
-		public function testDefaultCoverageMeasure():void
-		{
-			model.changeCoverageMeasure(0);
-			assertEquals("should propagate coverage measure to SearchPM", 
-						0, 
-						model.searchPM.currentCoverageMeasureIndex);	
-		}
+        override public function tearDown():void
+        {
+        	Controller.resetForTesting();        	
+        }	
 		
-		public function testChangeOfCurrentCoverageModel():void
-		{
-			model.changeCoverageMeasure(1);
-			assertEquals("should propagate coverage measure to SearchPM", 
-						1, 
-						model.searchPM.currentCoverageMeasureIndex);		
-		}
+        public function testNoRecordingOnStartup():void
+        {
+        	assertFalse("expected no recording", controller.isRecording);
+        }		
+        
+        public function testStartRecording():void
+        {
+        	var keyMap:Object = new Object();
+        	keyMap[1] = new Object();
+        	keyMap[2] = new Object();
+        	controller.coverageData(keyMap);
+        	assertTrue("expected recording to start", controller.isRecording);
+        }
+        
+        public function testStopRecording():void
+        {
+            testStartRecording();
+            var keyMap:Object = new Object();
+            controller.coverageData(keyMap);
+            assertFalse("expected recording to have stopped", controller.isRecording);
+        } 
+        
+        public function testStartAndResumeRecording():void
+        {
+            testStopRecording();
+            testStartRecording();
+        }        
 	}
 }

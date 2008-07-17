@@ -25,7 +25,7 @@ package com.allurent.coverage.parse
     import com.allurent.coverage.model.CoverageElement;
     import com.allurent.coverage.model.CoverageModel;
     import com.allurent.coverage.model.ProjectModel;
-    import com.allurent.coverage.runtime.TraceCoverageAgent;
+   // import com.allurent.coverage.runtime.TraceCoverageAgent;
     
     /**
      * This parser processes a runtime-generated trace log file that contains
@@ -43,6 +43,7 @@ package com.allurent.coverage.parse
          */
         override public function parseContents(data:String):void
         {
+        	/*
             var prefixLen:uint = TraceCoverageAgent.COVERAGE_TRACE_PREFIX.length;
             var lines:Array = data.split("\n");
             for each (var line:String in lines)
@@ -62,6 +63,7 @@ package com.allurent.coverage.parse
                     }
                 }
             }
+            */
         }
     }
 }

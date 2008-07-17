@@ -402,24 +402,26 @@
             for each (var lineNum:int in gapLines)
             {
                 var lineElement:Object = htmlLoader.window.document.getElementById("line" + lineNum);
-
-                if (lineNum == lastGapLine + 1)
+                if(lineElement != null)
                 {
-                    // This gap line immediately follows the previous one, so extend the run of gaps.
-                    lastGap[1] = (lineElement.offsetTop + lineElement.offsetHeight) / htmlLoader.contentHeight;
+	                if (lineNum == lastGapLine + 1)
+	                {
+	                    // This gap line immediately follows the previous one, so extend the run of gaps.
+	                    lastGap[1] = (lineElement.offsetTop + lineElement.offsetHeight) / htmlLoader.contentHeight;
+	                }
+	                else
+	                {
+	                    // We found a new starting line for some run of gaps, so push any run that we've been
+	                    // accumulating.
+	                    if (lastGap != null)
+	                    {
+	                        offsets.push(lastGap);
+	                    }
+	                    lastGap = [lineElement.offsetTop / htmlLoader.contentHeight,
+	                               (lineElement.offsetTop + lineElement.offsetHeight) / htmlLoader.contentHeight];
+	                }
+	                lastGapLine = lineNum;           	
                 }
-                else
-                {
-                    // We found a new starting line for some run of gaps, so push any run that we've been
-                    // accumulating.
-                    if (lastGap != null)
-                    {
-                        offsets.push(lastGap);
-                    }
-                    lastGap = [lineElement.offsetTop / htmlLoader.contentHeight,
-                               (lineElement.offsetTop + lineElement.offsetHeight) / htmlLoader.contentHeight];
-                }
-                lastGapLine = lineNum;
             }
             
             if (lastGap != null)
