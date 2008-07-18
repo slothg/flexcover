@@ -24,7 +24,7 @@
 <mx:WindowedApplication 
 	xmlns:mx="http://www.adobe.com/2006/mxml" 
 	layout="absolute"
-    width="950" height="700" 
+    width="950" height="700"
     xmlns:view="com.allurent.coverage.view.*" 
     preinitialize="preinitializeApplication()"
     applicationComplete="initializeApplication()"
@@ -118,7 +118,7 @@
 	
     <mx:Label 
     	left="150" 
-    	top="33" 
+    	top="32" 
         text="Recording" 
         fontWeight="bold" 
     	visible="{coverageViewerPM.controller.isRecording}" />
@@ -127,7 +127,7 @@
     	horizontalScrollPolicy="off">
 	    <mx:Label 
 	        left="230" 
-	        top="33" 
+	        top="32" 
 	        fontWeight="bold" 
 	        text="{coverageViewerPM.controller.currentRecording}" 
 	        visible="{coverageViewerPM.controller.isRecording}" />

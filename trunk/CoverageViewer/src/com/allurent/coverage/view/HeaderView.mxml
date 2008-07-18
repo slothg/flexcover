@@ -142,7 +142,7 @@
                         
             private function clearCoverageData():void
             {
-                coverageViewerPM.controller.clearCoverageData();
+                coverageViewerPM.clearCoverageData();
             }			         
 		]]>
 	</mx:Script>
@@ -169,6 +169,7 @@
 	
     <mx:Button 
     	label="Load File..." 
+    	enabled="{!coverageViewerPM.controller.isRecording}" 
     	click="openInput()"/>
     <mx:Button 
     	label="Save Report..." 
@@ -176,7 +177,9 @@
     	click="saveOutput()"/>
     <mx:Button 
     	label="Clear Coverage Data" 
-    	enabled="{coverageViewerPM.enabled}" 
+    	enabled="{coverageViewerPM.canClearCoverageData(
+    	                   coverageViewerPM.enabled, 
+    	                   coverageViewerPM.controller.isCoverageDataCleared )}" 
     	click="clearCoverageData()"/>
 
 </mx:HBox>
