@@ -20,7 +20,7 @@
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
  * OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package tests.com.allurent.coverage.model
+package tests.com.allurent.coverage.model.search
 {
 	import com.allurent.coverage.model.CoverageModel;
 	import com.allurent.coverage.model.search.ClassSearch;

@@ -20,19 +20,32 @@
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
  * OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package tests.com.allurent.coverage.view.model
+package com.allurent.coverage.event
 {
-	import flexunit.framework.TestCase;
-	import flexunit.framework.TestSuite;
-	
-	public class AllPresentationModelTests extends TestSuite
-	{
-		public function AllPresentationModelTests()
-		{
-			addTest(new TestSuite(ContentPMTest));
-			addTest(new TestSuite(CoverageViewerPMTest));
-			addTest(new TestSuite(HeaderPMTest));
-			addTest(new TestSuite(SearchPMTest));
-		}
-	}
+    import flash.events.Event;
+    
+    public class HeavyOperationEvent extends Event
+    {
+        public static const EVENT_NAME:String = "heavyOperationEvent";
+        
+        private var callback:Function;
+        private var parameters:Array;
+        
+        public function HeavyOperationEvent(callback:Function, parameters:Array)
+        {
+            super(EVENT_NAME, true);
+            this.callback = callback;
+            this.parameters = parameters;
+        }
+        
+        public function execute():void
+        {
+        	callback.apply(this, parameters);
+        }
+        
+        override public function clone():Event
+        {
+            return new HeavyOperationEvent(callback, parameters);
+        }
+    }
 }

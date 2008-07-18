@@ -96,7 +96,7 @@
 		
 	    <view:HeaderView 
 	    	width="100%" 
-	    	coverageViewerPM="{coverageViewerPM}"
+	    	model="{coverageViewerPM.headerPM}"
 	    	/>
 	    
 	    <!-- View of the coverage stats for the entire application -->

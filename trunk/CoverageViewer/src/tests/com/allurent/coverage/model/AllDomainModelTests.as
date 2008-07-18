@@ -24,12 +24,15 @@ package tests.com.allurent.coverage.model
 {
 	import flexunit.framework.TestSuite;
 	
+	import tests.com.allurent.coverage.model.search.ClassSearchTest;
+	import tests.com.allurent.coverage.model.search.PackageSearchTest;
+	
 	public class AllDomainModelTests extends TestSuite
 	{
 		public function AllDomainModelTests()
 		{
-			addTest( new TestSuite(PackageSearchTest));
-			addTest( new TestSuite(ClassSearchTest));
+			addTest(new TestSuite(PackageSearchTest));
+			addTest(new TestSuite(ClassSearchTest));
 		}
 
 	}

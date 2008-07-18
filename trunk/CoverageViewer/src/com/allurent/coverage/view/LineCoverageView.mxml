@@ -24,7 +24,7 @@
 <mx:ViewStack 
 	xmlns:mx="http://www.adobe.com/2006/mxml"
     xmlns:view="com.allurent.coverage.view.*" 
-    selectedIndex="{ coverageViewerPM.searchPM.searchForPackage ? 0 : 1 }" 
+    selectedIndex="{ coverageViewerPM.headerPM.searchPM.searchForPackage ? 0 : 1 }" 
     >
     
     <mx:Script>
@@ -38,7 +38,7 @@
 	
 	<view:CoverageOverview
 		width="100%" height="100%"
-	    dataProvider="{coverageViewerPM.searchPM.linePackageSearch.content}" 
+	    dataProvider="{coverageViewerPM.headerPM.searchPM.linePackageSearch.content}" 
 	    coverageViewerPM="{coverageViewerPM}" 
 	    headerText="Line Coverage" 
 	    coverageDataField="lineCoverage" 
@@ -47,7 +47,7 @@
 	    />
 	<view:CoverageOverview 
 		width="100%" height="100%"
-	    dataProvider="{coverageViewerPM.searchPM.lineClassSearch.content}" 
+	    dataProvider="{coverageViewerPM.headerPM.searchPM.lineClassSearch.content}" 
 	    coverageViewerPM="{coverageViewerPM}" 
 	    headerText="Line Coverage" 
 	    coverageDataField="lineCoverage" 

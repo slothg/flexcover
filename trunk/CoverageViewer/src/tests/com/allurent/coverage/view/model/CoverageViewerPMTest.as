@@ -61,7 +61,7 @@ package tests.com.allurent.coverage.view.model
 			model.changeCoverageMeasure(0);
 			assertEquals("should propagate coverage measure to SearchPM", 
 						0, 
-						model.searchPM.currentCoverageMeasureIndex);	
+						model.headerPM.searchPM.currentCoverageMeasureIndex);	
 		}
 		
 		public function testChangeOfCurrentCoverageModel():void
@@ -69,7 +69,7 @@ package tests.com.allurent.coverage.view.model
 			model.changeCoverageMeasure(1);
 			assertEquals("should propagate coverage measure to SearchPM", 
 						1, 
-						model.searchPM.currentCoverageMeasureIndex);		
+						model.headerPM.searchPM.currentCoverageMeasureIndex);		
 		}
 	}
 }
