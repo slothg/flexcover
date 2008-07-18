@@ -30,8 +30,7 @@
     close="coverageViewerPM.onClose()"
     nativeDragEnter="handleDragIn(event)"
     nativeDragOver="handleDragIn(event)"
-    nativeDragDrop="handleDragDrop(event)" 
-    enabled="{coverageViewerPM.enabled}">
+    nativeDragDrop="handleDragDrop(event)">
     
     <!-- Main CoverageViewer MXML Application View -->
     
