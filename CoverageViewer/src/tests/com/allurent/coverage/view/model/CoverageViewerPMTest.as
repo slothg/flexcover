@@ -27,8 +27,9 @@ package tests.com.allurent.coverage.view.model
 	
 	import flexunit.framework.TestCase;
 	
-	import mx.collections.HierarchicalCollectionView;
 	import mx.collections.IHierarchicalCollectionView;
+	
+	import tests.com.adobe.ac.util.OneTimeIntervalStub;
 
 	public class CoverageViewerPMTest extends TestCase
 	{
@@ -38,7 +39,8 @@ package tests.com.allurent.coverage.view.model
 		
 		override public function setUp():void
 		{
-			model = new CoverageViewerPM(Controller.instance);		
+			model = new CoverageViewerPM(Controller.instance, 
+			                             new OneTimeIntervalStub());
 		}
 		
 		public function testInvalidCoverageMeasure():void

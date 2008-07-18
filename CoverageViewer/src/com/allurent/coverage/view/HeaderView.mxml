@@ -157,16 +157,26 @@
 	<mx:ToggleButtonBar 
 		id="searchByCombo" 
 		dataProvider="{coverageViewerPM.searchPM.searchByProvider}" 
+		enabled="{coverageViewerPM.enabled}"
 		creationComplete="createSelectedIndex(searchByCombo);" 
 		itemClick="changeSearchBy(event.item);"/>		
 	<mx:TextInput 
 		id="searchInput" 
 		width="100%" 
 		text="{coverageViewerPM.searchPM.currentSearchInput}" 
+		enabled="{coverageViewerPM.enabled}"
 		change="search(searchInput.text);" />
-		
-    <mx:Button label="Load File..." click="openInput()"/>
-    <mx:Button label="Save Report..." click="saveOutput()"/>
-    <mx:Button label="Clear Coverage Data" click="clearCoverageData()"/>
+	
+    <mx:Button 
+    	label="Load File..." 
+    	click="openInput()"/>
+    <mx:Button 
+    	label="Save Report..." 
+    	enabled="{coverageViewerPM.enabled}" 
+    	click="saveOutput()"/>
+    <mx:Button 
+    	label="Clear Coverage Data" 
+    	enabled="{coverageViewerPM.enabled}" 
+    	click="clearCoverageData()"/>
 
 </mx:HBox>
