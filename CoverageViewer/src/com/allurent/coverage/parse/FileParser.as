@@ -38,7 +38,7 @@ package com.allurent.coverage.parse
 		public function FileParser(controller:Controller)
 		{
 			this.controller = controller;
-		}		
+		}
 		
         public function parse(f:File):void
         {

@@ -25,12 +25,11 @@ package com.allurent.coverage.view.model
 	import com.adobe.ac.util.IOneTimeInterval;
 	import com.allurent.coverage.Controller;
 	import com.allurent.coverage.event.CoverageEvent;
+	import com.allurent.coverage.event.HeavyOperationEvent;
 	import com.allurent.coverage.model.CoverageModel;
 	import com.allurent.coverage.parse.CommandLineOptionsParser;
-	import com.allurent.coverage.parse.FileParser;
 	
 	import flash.desktop.ClipboardFormats;
-	import flash.events.Event;
 	import flash.events.InvokeEvent;
 	import flash.events.NativeDragEvent;
 	import flash.filesystem.File;
@@ -41,14 +40,14 @@ package com.allurent.coverage.view.model
 		public static const COVERAGE_MEASURE_LINE:int = 1;		
 				
         [Bindable]
-        public var searchPM:SearchPM;
+        public var headerPM:HeaderPM;
         [Bindable]
-        public var contentPM:ContentPM;        
-                
+        public var contentPM:ContentPM;       
+        
         // Top level Controller for the CoverageViewer application
         [Bindable]
-        public var controller:Controller;        
-         
+        public var controller:Controller;
+        
         private var _coverageModel:CoverageModel;
         [Bindable]
         public function get coverageModel():CoverageModel
@@ -61,59 +60,55 @@ package com.allurent.coverage.view.model
             if(value.isEmpty()) return;
             enabled = true;
             _coverageModel = value;
-                   
-            searchPM.initialize(coverageModel);
+            
+            headerPM.searchPM.initialize(coverageModel);
         }
-                
+        
+        private var _enabled:Boolean;
         [Bindable]
-        public var enabled:Boolean;		
+        public function get enabled():Boolean
+        {
+            return _enabled;
+        }
+        public function set enabled(value:Boolean):void
+        {
+        	_enabled = value;
+            headerPM.enabled = value;
+        }
+        
 		[Bindable]
 		public var showMessageOverlay:Boolean = false;		
 		
-		private var timer:IOneTimeInterval;		
+		private var timer:IOneTimeInterval;
 		private var currentCoverageMeasureIndex:int;		
         
 		public function CoverageViewerPM(controller:Controller, 
 		                                 timer:IOneTimeInterval)
 		{
-			this.timer = timer;
 			this.controller = controller;
+			this.timer = timer;
+			
+            headerPM = new HeaderPM(controller);
+            headerPM.addEventListener(HeavyOperationEvent.EVENT_NAME, 
+                                      handleHeavyOperationEvent);
+            headerPM.addEventListener(CoverageEvent.COVERAGE_MODEL_CHANGE, 
+                                      handleCoverageModelChange);
+                                                                          
 			contentPM = new ContentPM(controller.project);
-			searchPM = new SearchPM();
+		    		
             currentCoverageMeasureIndex = CoverageViewerPM.COVERAGE_MEASURE_BRANCH;   
-            controller.addEventListener(CoverageEvent.RECORDING_END, handleRecordingEnd);
+            controller.addEventListener(CoverageEvent.RECORDING_END, 
+                                        handleRecordingEnd);
 		}
-		
-        public function clearCoverageData():void
-        {
-            controller.clearCoverageData();
-        }
-        
-        public function canClearCoverageData(enabled:Boolean, 
-                                            isCoverageDataCleared:Boolean):Boolean
-        {
-        	return (enabled && !isCoverageDataCleared);
-        }
-        
-        public function inputFileSelected(e:Event):void
-        {
-            startProcessFileArgument(File(e.target));
-        }
-        
-        public function outputFileSelected(e:Event):void
-        {
-            var file:File = File(e.target);
-            controller.writeReport(file);
-        }
-        		
+				
         public function handleDragDrop(files:Array):void
         {
             for each (var f:File in files)
 	        {
-	        	startProcessFileArgument(f);
+	        	performHeavyOperation(headerPM.processFileArgument, [f]);
 	        }
         }
-        
+                
         public function hasValidDragInFormat(e:NativeDragEvent):Boolean
         {
         	return e.clipboard.hasFormat(ClipboardFormats.FILE_LIST_FORMAT);
@@ -134,8 +129,7 @@ package com.allurent.coverage.view.model
          */
         public function handleInvoke(event:InvokeEvent):void
         {
-        	showMessageOverlay = true;
-            timer.delay(250, performInvokeEvent, event);      
+            performHeavyOperation(performInvokeEvent, [event]);  
         }
         
         public function performInvokeEvent(event:InvokeEvent):void
@@ -154,7 +148,7 @@ package com.allurent.coverage.view.model
 			if(isValidCoverageMeasureIndex(index))
 			{
 				currentCoverageMeasureIndex = index;
-				searchPM.currentCoverageMeasureIndex = index;
+				headerPM.searchPM.currentCoverageMeasureIndex = index;
 			}
 			else
 			{
@@ -162,10 +156,23 @@ package com.allurent.coverage.view.model
 			}
 		}
 		
-        private function handleRecordingEnd(event:CoverageEvent):void
+        private function performHeavyOperation(callback:Function, 
+                                               parameters:Array = null):void
+        {
+	        handleHeavyOperationEvent(new HeavyOperationEvent( 
+	                                          callback, 
+	                                          parameters));
+        }
+        
+        private function handleHeavyOperationEvent(event:HeavyOperationEvent):void
         {
             showMessageOverlay = true;
-            timer.delay(500, parseCoverageData);
+            timer.delay(500, event.execute);
+        }
+		
+        private function handleRecordingEnd(event:CoverageEvent):void
+        {
+        	performHeavyOperation(parseCoverageData);
         }
         
         private function parseCoverageData():void
@@ -179,21 +186,6 @@ package com.allurent.coverage.view.model
 			return (currentCoverageMeasureIndex == CoverageViewerPM.COVERAGE_MEASURE_BRANCH
 					|| currentCoverageMeasureIndex == CoverageViewerPM.COVERAGE_MEASURE_LINE);
 		}
-		
-        private function startProcessFileArgument(file:File):void
-        {
-        	showMessageOverlay = true;
-        	timer.delay(250, processFileArgument, file);	
-        }
-        
-        private function processFileArgument(file:File):void
-        {
-            var parser:FileParser = new FileParser(controller);
-            parser.addEventListener(
-                            CoverageEvent.COVERAGE_MODEL_CHANGE, 
-                            handleCoverageModelChange);
-            parser.parse(file);            	
-        }
         
         private function handleCoverageModelChange(event:CoverageEvent):void
 		{

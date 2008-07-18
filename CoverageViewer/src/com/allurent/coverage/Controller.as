@@ -46,18 +46,18 @@ package com.allurent.coverage
     /** This event is dispatched when the coverage model is updated with new metadata. */
     [Event(name="coverageModelChange",
             type="com.allurent.coverage.event.CoverageEvent")]
-    /** This event is dispatched when the coverage model is updated with new metadata. */
+    /** Recording of coverage data started. */
     [Event(name="recordingStart",
             type="com.allurent.coverage.event.CoverageEvent")]
-    /** This event is dispatched when the coverage model is updated with new metadata. */
+    /** Recording of coverage data ended. */
     [Event(name="recordingEnd",
             type="com.allurent.coverage.event.CoverageEvent")]
-    /** This event is dispatched when the coverage model is updated with new metadata. */
+    /** Applying recorded coverage data to coverage model starts. */
     [Event(name="parsingStart",
             type="com.allurent.coverage.event.CoverageEvent")]
-    /** This event is dispatched when the coverage model is updated with new metadata. */
+    /** Applying recorded coverage data to coverage model ends. */
     [Event(name="parsingEnd",
-            type="com.allurent.coverage.event.CoverageEvent")]                                    
+            type="com.allurent.coverage.event.CoverageEvent")]                            
     /**
      * Overall Controller for actions in the Coverage Viewer application. 
      * 
