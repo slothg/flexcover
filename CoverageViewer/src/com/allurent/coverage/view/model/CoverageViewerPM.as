@@ -83,24 +83,23 @@ package com.allurent.coverage.view.model
             currentCoverageMeasureIndex = CoverageViewerPM.COVERAGE_MEASURE_BRANCH;   
             controller.addEventListener(CoverageEvent.RECORDING_END, handleRecordingEnd);
 		}
-        		
-		private function handleRecordingEnd(event:CoverageEvent):void
-		{
-			showMessageOverlay = true;
-			timer.delay(250, parseCoverageData);
-		}
-        
-        private function parseCoverageData():void
+		
+        public function clearCoverageData():void
         {
-        	controller.parseCoverageData();
-            showMessageOverlay = false;
+            controller.clearCoverageData();
         }
-
+        
+        public function canClearCoverageData(enabled:Boolean, 
+                                            isCoverageDataCleared:Boolean):Boolean
+        {
+        	return (enabled && !isCoverageDataCleared);
+        }
+        
         public function inputFileSelected(e:Event):void
         {
             startProcessFileArgument(File(e.target));
         }
-                
+        
         public function outputFileSelected(e:Event):void
         {
             var file:File = File(e.target);
@@ -162,6 +161,18 @@ package com.allurent.coverage.view.model
 				throw new Error("Invalid Coverage Measure");
 			}
 		}
+		
+        private function handleRecordingEnd(event:CoverageEvent):void
+        {
+            showMessageOverlay = true;
+            timer.delay(500, parseCoverageData);
+        }
+        
+        private function parseCoverageData():void
+        {
+            controller.applyCoverageData();
+            showMessageOverlay = false;
+        }		
 		
 		private function isValidCoverageMeasureIndex(index:int):Boolean
 		{

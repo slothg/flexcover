@@ -72,6 +72,8 @@ package com.allurent.coverage
         [Bindable]
         public var isRecording:Boolean = false;
         [Bindable]
+        public var isCoverageDataCleared:Boolean = true;        
+        [Bindable]
         public var currentRecording:String = "";
         public var timer:IOneTimeInterval = new OneTimeInterval();
                 
@@ -205,7 +207,7 @@ package com.allurent.coverage
                     currentRecording = element.packageName + "." + element.className
                     coverageElementsContainer.push(new CoverageElementContainer(element, count));              
                 }
-                timer.delay(5000, handleRecordingTimeout);
+                timer.delay(2000, handleRecordingTimeout);
             }
             
             if(isRecording && !this.isRecording)
@@ -237,24 +239,32 @@ package com.allurent.coverage
         	endCoverageRecording();
         }
         
-        public function parseCoverageData():void
+        public function applyCoverageData():void
         {
-        	dispatchEvent(new CoverageEvent(CoverageEvent.PARSING_START));
+        	dispatchEvent(new CoverageEvent(CoverageEvent.PARSING_START));        	
         	var container:Array = coverageElementsContainer;
-        	var len:int = container.length;
-        	for(var i:int; i < len; i++)
+        	var numberOfContainers:int = container.length;
+        	for(var i:int; i < numberOfContainers; i++)
         	{
         		var item:CoverageElementContainer = CoverageElementContainer(container[i]);
         		coverageModel.recordCoverageElement(item.element, 
         		                                      item.count, 
         		                                      constrainToModel);
-        	}        	
+        	}
+        	
+            if(numberOfContainers > 0)
+            {
+                isCoverageDataCleared = false;
+            }        	
+        	
+        	coverageElementsContainer = new Array();
         	dispatchEvent(new CoverageEvent(CoverageEvent.PARSING_END));
         }
         
         public function clearCoverageData():void
         {
             coverageModel.clearCoverageData();
+            isCoverageDataCleared = true;
         }
 
         /**

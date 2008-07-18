@@ -40,7 +40,8 @@
 		width="100%" height="100%"/>
 		
     <mx:VBox 
-    	width="100%" height="100%">
+    	width="100%" height="100%" 
+    	paddingTop="23">
 	    <mx:AdvancedDataGrid 
 	    	id="coverageGrid" 
 	    	width="100%" height="100%" 
@@ -56,6 +57,7 @@
 	 
     <view:SourceViewBox 
     	width="100%" height="100%" 
+    	paddingTop="23"
     	hasInvalidated="{contentPM.hasInvalidated}"
     	project="{contentPM.project}" 
     	classModel="{contentPM.classModel}" 
