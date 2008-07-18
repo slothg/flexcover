@@ -22,6 +22,8 @@
  */
 package com.allurent.coverage
 {
+    import com.adobe.ac.util.IOneTimeInterval;
+    import com.adobe.ac.util.OneTimeInterval;
     import com.allurent.coverage.event.CoverageEvent;
     import com.allurent.coverage.model.CoverageElement;
     import com.allurent.coverage.model.CoverageElementContainer;
@@ -68,8 +70,11 @@ package com.allurent.coverage
         [Bindable]
         public var coverageModel:CoverageModel = new CoverageModel();
         [Bindable]
-        public var isRecording:Boolean = false;        
-        
+        public var isRecording:Boolean = false;
+        [Bindable]
+        public var currentRecording:String = "";
+        public var timer:IOneTimeInterval = new OneTimeInterval();
+                
         /**
          * Flag indicating that application should exit when instrumented app is done.
          * and all pending data has been written.
@@ -87,7 +92,7 @@ package com.allurent.coverage
          */
         public var coverageOutputFile:File = null;
         
-        private var coverageElementsContainer:Array = new Array();
+        private var coverageElementsContainer:Array = new Array();        
         
         private static var _instance:Controller;
         public static function get instance():Controller
@@ -177,7 +182,7 @@ package com.allurent.coverage
             coverageModel = newCoverageModel;
             dispatchCoverageModelChangeEvent();
         }
-
+        
         /**
          * Handle a map of coverage keys and execution counts received over our LocalConnection
          * from an instrumented application.
@@ -197,20 +202,39 @@ package com.allurent.coverage
                 if (element != null)
                 {
                     var count:uint = keyMap[key];
-                    coverageElementsContainer.push(new CoverageElementContainer(element, count));
+                    currentRecording = element.packageName + "." + element.className
+                    coverageElementsContainer.push(new CoverageElementContainer(element, count));              
                 }
+                timer.delay(5000, handleRecordingTimeout);
             }
+            
             if(isRecording && !this.isRecording)
             {
-            	dispatchEvent(new CoverageEvent(CoverageEvent.RECORDING_START));
-            	this.isRecording = true;            	
+            	startCoverageRecording();
             }
             else if(!isRecording && this.isRecording)
             {
-            	this.isRecording = false;
-            	closeConnection();
-            	dispatchEvent(new CoverageEvent(CoverageEvent.RECORDING_END));
+            	endCoverageRecording();
             }
+        }
+        
+        private function startCoverageRecording():void
+        {
+            dispatchEvent(new CoverageEvent(CoverageEvent.RECORDING_START));
+            this.isRecording = true;        	
+        }
+        
+        private function endCoverageRecording():void
+        {
+	        this.isRecording = false;
+	        currentRecording = "";
+	        timer.clear();
+	        dispatchEvent(new CoverageEvent(CoverageEvent.RECORDING_END));        	
+        }
+        
+        private function handleRecordingTimeout():void
+        {
+        	endCoverageRecording();
         }
         
         public function parseCoverageData():void

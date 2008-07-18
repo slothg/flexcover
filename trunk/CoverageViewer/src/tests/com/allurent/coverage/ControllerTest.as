@@ -23,16 +23,21 @@
 package tests.com.allurent.coverage
 {
 	import com.allurent.coverage.Controller;
+	import com.allurent.coverage.event.CoverageEvent;
 	
-	import flexunit.framework.TestCase;
+	import flexunit.framework.EventfulTestCase;
 	
-	public class ControllerTest extends TestCase
+	import tests.com.adobe.ac.util.EmptyOneTimeIntervalStub;
+	import tests.com.adobe.ac.util.OneTimeIntervalStub;
+	
+	public class ControllerTest extends EventfulTestCase
 	{
 		private var controller:Controller;
 		
 		override public function setUp():void
-		{		
+		{
 			controller = Controller.instance;
+			controller.timer = new OneTimeIntervalStub();
 		}
 		
         override public function tearDown():void
@@ -43,27 +48,37 @@ package tests.com.allurent.coverage
         public function testNoRecordingOnStartup():void
         {
         	assertFalse("expected no recording", controller.isRecording);
-        }		
+        }
         
         public function testStartRecording():void
         {
+        	expectEvent(controller, CoverageEvent.RECORDING_START);
+        	
         	var keyMap:Object = new Object();
         	keyMap[1] = new Object();
-        	keyMap[2] = new Object();
+        	keyMap[2] = new Object();        	
         	controller.coverageData(keyMap);
+        	
+        	assertExpectedEventsOccurred();
         	assertTrue("expected recording to start", controller.isRecording);
         }
         
         public function testStopRecording():void
         {
             testStartRecording();
-            var keyMap:Object = new Object();
+            
+            expectEvent(controller, CoverageEvent.RECORDING_END);
+            
+            var keyMap:Object = new Object();            
             controller.coverageData(keyMap);
+            
+            assertExpectedEventsOccurred();
             assertFalse("expected recording to have stopped", controller.isRecording);
-        } 
+        }
         
         public function testStartAndResumeRecording():void
         {
+        	controller.timer = new EmptyOneTimeIntervalStub();
             testStopRecording();
             testStartRecording();
         }        

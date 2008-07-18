@@ -25,7 +25,8 @@
 	xmlns:mx="http://www.adobe.com/2006/mxml" 
 	layout="absolute"
     width="950" height="700" 
-    xmlns:view="com.allurent.coverage.view.*"
+    xmlns:view="com.allurent.coverage.view.*" 
+    preinitialize="preinitializeApplication()"
     applicationComplete="initializeApplication()"
     close="coverageViewerPM.onClose()"
     nativeDragEnter="handleDragIn(event)"
@@ -36,6 +37,7 @@
     
     <mx:Script>
         <![CDATA[
+        	import com.adobe.ac.util.OneTimeInterval;
         	import flash.utils.setTimeout;
         	import mx.events.FlexEvent;
         	import com.allurent.coverage.view.MessageOverlay;
@@ -44,10 +46,14 @@
         	import com.allurent.coverage.event.BrowserItemEvent;
             
             [Bindable]
-            private var coverageViewerPM:CoverageViewerPM = new CoverageViewerPM(Controller.instance);
-            
-            private var files:Array;           
-                            
+            private var coverageViewerPM:CoverageViewerPM;
+             
+            private function preinitializeApplication():void
+            {
+                coverageViewerPM = new CoverageViewerPM(Controller.instance, 
+                                                     new OneTimeInterval());                 	
+            }             
+                                    
             /**
              * Initialize the application by listening for an Invoke event that will communicate
              * command line options.  Also attach the LocalConnection to receive live coverage
@@ -60,49 +66,22 @@
                 addEventListener(Event.SELECT, 
                 					coverageViewerPM.contentPM.handleContentChange);
             }
-                    
+            
             private function handleDragIn(e:NativeDragEvent):void
             {
                 if (coverageViewerPM.hasValidDragInFormat(e))
                 {
                     NativeDragManager.acceptDragDrop(this);
                 }
-            }            
-           
+            }
+            
             private function handleDragDrop(e:NativeDragEvent):void
             {
 	            if (coverageViewerPM.hasValidDragInFormat(e))
 	            {  
-	                files = e.clipboard.getData(ClipboardFormats.FILE_LIST_FORMAT) as Array;
-	                showProgressMessage();
-	            }       	
-            }
-         	
-            private function performDragDrop(files:Array):void
-            {
-            	coverageViewerPM.handleDragDrop(files);
-            	hideProgressMessage();
-            }
-                        
-            private function showProgressMessage():void
-            {
-            	messageOverlayView.addEventListener(FlexEvent.SHOW, handleMessageOverlayShow);            	
-            	coverageViewerPM.showMessageOverlay = true;
-            }
-            
-            private function handleMessageOverlayShow(event:FlexEvent):void
-            {
-            	messageOverlayView.removeEventListener(event.type, handleMessageOverlayShow);
-            	
-            	//CLUNKY: SHOW isn't the correct event to wait till 
-            	//messageOverlayView is rendered.
-            	//setup second timer to make sure it's drawn to the screen.
-            	setTimeout(performDragDrop,500,files);
-            }
-            
-            private function hideProgressMessage():void
-            {
-            	coverageViewerPM.showMessageOverlay = false;
+	                var files:Array = e.clipboard.getData(ClipboardFormats.FILE_LIST_FORMAT) as Array;
+	                coverageViewerPM.handleDragDrop(files);
+	            } 	
             }
         ]]>
     </mx:Script>
@@ -143,6 +122,16 @@
         text="Recording" 
         fontWeight="bold" 
     	visible="{coverageViewerPM.controller.isRecording}" />
+    <mx:Canvas 
+    	width="100%" 
+    	horizontalScrollPolicy="off">
+	    <mx:Label 
+	        left="230" 
+	        top="33" 
+	        fontWeight="bold" 
+	        text="{coverageViewerPM.controller.currentRecording}" 
+	        visible="{coverageViewerPM.controller.isRecording}" />
+    </mx:Canvas>
 	 
 	<view:MessageOverlay 
 		id="messageOverlayView"  

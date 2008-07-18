@@ -23,7 +23,6 @@
 package com.allurent.coverage.view.model
 {
 	import com.adobe.ac.util.IOneTimeInterval;
-	import com.adobe.ac.util.OneTimeInterval;
 	import com.allurent.coverage.Controller;
 	import com.allurent.coverage.event.CoverageEvent;
 	import com.allurent.coverage.model.CoverageModel;
@@ -44,7 +43,7 @@ package com.allurent.coverage.view.model
         [Bindable]
         public var searchPM:SearchPM;
         [Bindable]
-        public var contentPM:ContentPM;
+        public var contentPM:ContentPM;        
                 
         // Top level Controller for the CoverageViewer application
         [Bindable]
@@ -58,45 +57,48 @@ package com.allurent.coverage.view.model
         }
         public function set coverageModel(value:CoverageModel):void
         {
-        	if(value.isEmpty()) return;
-        	enabled = true;
-        	_coverageModel = value;
-        	
-        	searchPM.initialize(coverageModel);
+    		if(value == null) return;
+            if(value.isEmpty()) return;
+            enabled = true;
+            _coverageModel = value;
+                   
+            searchPM.initialize(coverageModel);
         }
                 
         [Bindable]
         public var enabled:Boolean;		
 		[Bindable]
-		public var showMessageOverlay:Boolean = false;
+		public var showMessageOverlay:Boolean = false;		
 		
-		private var currentCoverageMeasureIndex:int;
-		private var timer:IOneTimeInterval = new OneTimeInterval();
-				
-		public function CoverageViewerPM(controller:Controller)
+		private var timer:IOneTimeInterval;		
+		private var currentCoverageMeasureIndex:int;		
+        
+		public function CoverageViewerPM(controller:Controller, 
+		                                 timer:IOneTimeInterval)
 		{
+			this.timer = timer;
 			this.controller = controller;
 			contentPM = new ContentPM(controller.project);
-			searchPM = new SearchPM();  
-            currentCoverageMeasureIndex = CoverageViewerPM.COVERAGE_MEASURE_BRANCH;
+			searchPM = new SearchPM();
+            currentCoverageMeasureIndex = CoverageViewerPM.COVERAGE_MEASURE_BRANCH;   
             controller.addEventListener(CoverageEvent.RECORDING_END, handleRecordingEnd);
 		}
-		
+        		
 		private function handleRecordingEnd(event:CoverageEvent):void
 		{
 			showMessageOverlay = true;
 			timer.delay(250, parseCoverageData);
 		}
-
+        
         private function parseCoverageData():void
         {
         	controller.parseCoverageData();
-            showMessageOverlay = false;      
+            showMessageOverlay = false;
         }
 
         public function inputFileSelected(e:Event):void
         {
-            processFileArgument(File(e.target));
+            startProcessFileArgument(File(e.target));
         }
                 
         public function outputFileSelected(e:Event):void
@@ -109,7 +111,7 @@ package com.allurent.coverage.view.model
         {
             for each (var f:File in files)
 	        {
-	        	processFileArgument(f);
+	        	startProcessFileArgument(f);
 	        }
         }
         
@@ -131,15 +133,21 @@ package com.allurent.coverage.view.model
          * When we get our invoke event, process options.  Only then can we attach
          * the LocalConnection (since this is option-dependent). 
          */
-        public function handleInvoke(e:InvokeEvent):void
+        public function handleInvoke(event:InvokeEvent):void
+        {
+        	showMessageOverlay = true;
+            timer.delay(250, performInvokeEvent, event);      
+        }
+        
+        public function performInvokeEvent(event:InvokeEvent):void
         {
             var parser:CommandLineOptionsParser = new CommandLineOptionsParser(controller);
             
             parser.addEventListener(
-				CoverageEvent.COVERAGE_MODEL_CHANGE, 
-				handleCoverageModelChange);
-			
-			parser.parse(e.arguments);            
+                CoverageEvent.COVERAGE_MODEL_CHANGE, 
+                handleCoverageModelChange);
+            
+            parser.parse(event.arguments);        	
         }
 				
 		public function changeCoverageMeasure(index:int):void
@@ -161,18 +169,25 @@ package com.allurent.coverage.view.model
 					|| currentCoverageMeasureIndex == CoverageViewerPM.COVERAGE_MEASURE_LINE);
 		}
 		
+        private function startProcessFileArgument(file:File):void
+        {
+        	showMessageOverlay = true;
+        	timer.delay(250, processFileArgument, file);	
+        }
+        
         private function processFileArgument(file:File):void
         {
-        	var parser:FileParser = new FileParser(controller);
-        	parser.addEventListener(
-        					CoverageEvent.COVERAGE_MODEL_CHANGE, 
-        					handleCoverageModelChange);
-        	parser.parse(file);         	
+            var parser:FileParser = new FileParser(controller);
+            parser.addEventListener(
+                            CoverageEvent.COVERAGE_MODEL_CHANGE, 
+                            handleCoverageModelChange);
+            parser.parse(file);            	
         }
         
         private function handleCoverageModelChange(event:CoverageEvent):void
 		{
 			coverageModel = event.coverageModel;
+			showMessageOverlay = false;
 		}	
 	}
 }
