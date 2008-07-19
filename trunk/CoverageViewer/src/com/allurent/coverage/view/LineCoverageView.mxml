@@ -24,22 +24,27 @@
 <mx:ViewStack 
 	xmlns:mx="http://www.adobe.com/2006/mxml"
     xmlns:view="com.allurent.coverage.view.*" 
-    selectedIndex="{ coverageViewerPM.headerPM.searchPM.searchForPackage ? 0 : 1 }" 
+    selectedIndex="{model.coverageModels.searchForPackage ? 0 : 1 }" 
     >
     
+    <mx:Metadata>
+        [Event(name="select", type="com.allurent.coverage.event.BrowserItemEvent")]
+    </mx:Metadata>    
+    
     <mx:Script>
-    	<![CDATA[
-    		import com.allurent.coverage.view.model.CoverageViewerPM;
-    		
-    		[Bindable]
-    		public var coverageViewerPM:CoverageViewerPM;
-    	]]>
+        <![CDATA[
+            import com.allurent.coverage.view.model.BrowserPM;
+            
+            [Bindable]
+            public var model:BrowserPM;      
+        ]]>
     </mx:Script>
 	
 	<view:CoverageOverview
 		width="100%" height="100%"
-	    dataProvider="{coverageViewerPM.headerPM.searchPM.linePackageSearch.content}" 
-	    coverageViewerPM="{coverageViewerPM}" 
+	    dataProvider="{model.coverageModels.linePackageModel}" 
+        coverageModel="{model.coverageModels.coverageModel}" 
+        isEnabled="{model.enabled}" 
 	    headerText="Line Coverage" 
 	    coverageDataField="lineCoverage" 
 	    uncoveredDataField="uncoveredLines"
@@ -47,8 +52,9 @@
 	    />
 	<view:CoverageOverview 
 		width="100%" height="100%"
-	    dataProvider="{coverageViewerPM.headerPM.searchPM.lineClassSearch.content}" 
-	    coverageViewerPM="{coverageViewerPM}" 
+	    dataProvider="{model.coverageModels.lineClassModel}" 
+        coverageModel="{model.coverageModels.coverageModel}" 
+        isEnabled="{model.enabled}" 
 	    headerText="Line Coverage" 
 	    coverageDataField="lineCoverage" 
 	    uncoveredDataField="uncoveredLines"

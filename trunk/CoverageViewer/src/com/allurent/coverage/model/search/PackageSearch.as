@@ -22,14 +22,15 @@
  */
 package com.allurent.coverage.model.search
 {
-	import com.allurent.coverage.model.CoverageModel;
 	import com.allurent.coverage.model.PackageModel;
+	
+	import mx.collections.IHierarchicalCollectionView;
 	
 	public class PackageSearch extends AbstractSearch
 	{
-		public function PackageSearch(coverageModel:CoverageModel)
+		public function PackageSearch(content:IHierarchicalCollectionView)
 		{
-			super(coverageModel);
+			super(content);
 			showDetail = true;
 		}
 		

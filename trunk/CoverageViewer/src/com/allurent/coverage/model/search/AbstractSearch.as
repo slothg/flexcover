@@ -22,12 +22,11 @@
  */
 package com.allurent.coverage.model.search
 {
-	import com.allurent.coverage.model.CoverageData;
 	import com.allurent.coverage.model.CoverageModel;
 	import com.allurent.coverage.model.PackageModel;
 	
-	import mx.collections.HierarchicalCollectionView;
 	import mx.collections.IHierarchicalCollectionView;
+	import mx.collections.IList;
 	
 	public class AbstractSearch implements ISearchable
 	{
@@ -37,15 +36,13 @@ package com.allurent.coverage.model.search
 		public var currentSearchInput:String;
 		[Bindable]
 		public var showDetail:Boolean;
-		public var coverageModel:CoverageModel;		
 		
 		protected var openNodes:Array;
 
-		public function AbstractSearch(coverageModel:CoverageModel)
+		public function AbstractSearch(content:IHierarchicalCollectionView)
 		{
-			this.coverageModel = coverageModel;
+			this.content = content;
 			currentSearchInput = "";
-			this.content = createContentModel(coverageModel);
 			content.filterFunction = filterBySearchInput;
 			resetOpenNodes();
 		}
@@ -98,18 +95,13 @@ package com.allurent.coverage.model.search
 			return found;
 		}
 		
-		private function createContentModel(coverageModel:CoverageModel):IHierarchicalCollectionView
-		{
-			var hierarchicalData:CoverageData = new CoverageData(coverageModel);
-			var model:IHierarchicalCollectionView = new HierarchicalCollectionView(hierarchicalData);
-			model.showRoot = false;
-			return model;	
-		}
-		
 		private function resetOpenNodes():void
 		{
 			openNodes = new Array();
-			openNodes.push(coverageModel);			
+			
+			var root:IList = IList(content.source.getRoot());
+			var coverageModel:CoverageModel = CoverageModel(root.getItemAt(0));
+			openNodes.push(coverageModel);
 		}
 	}
 }

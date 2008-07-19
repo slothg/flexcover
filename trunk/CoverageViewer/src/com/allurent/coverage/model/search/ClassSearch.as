@@ -23,17 +23,17 @@
 package com.allurent.coverage.model.search
 {
 	import com.allurent.coverage.model.ClassModel;
-	import com.allurent.coverage.model.CoverageModel;
 	import com.allurent.coverage.model.PackageModel;
 	
 	import mx.collections.ICollectionView;
+	import mx.collections.IHierarchicalCollectionView;
 	import mx.collections.IViewCursor;
 	
 	public class ClassSearch extends AbstractSearch
 	{
-		public function ClassSearch(coverageModel:CoverageModel)
+		public function ClassSearch(content:IHierarchicalCollectionView)
 		{
-			super(coverageModel);
+			super(content);
 			showDetail = false;
 		}
 		

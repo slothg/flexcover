@@ -27,6 +27,7 @@ package com.allurent.coverage.view.model
 	import com.allurent.coverage.event.CoverageEvent;
 	import com.allurent.coverage.event.HeavyOperationEvent;
 	import com.allurent.coverage.model.CoverageModel;
+	import com.allurent.coverage.model.CoverageModelManager;
 	import com.allurent.coverage.parse.CommandLineOptionsParser;
 	
 	import flash.desktop.ClipboardFormats;
@@ -34,19 +35,22 @@ package com.allurent.coverage.view.model
 	import flash.events.NativeDragEvent;
 	import flash.filesystem.File;
 	
+	import mx.events.IndexChangedEvent;
+	
 	public class CoverageViewerPM
-	{
-		public static const COVERAGE_MEASURE_BRANCH:int = 0;
-		public static const COVERAGE_MEASURE_LINE:int = 1;		
-				
-        [Bindable]
+	{	    
+	    [Bindable]
         public var headerPM:HeaderPM;
         [Bindable]
-        public var contentPM:ContentPM;       
+        public var browserPM:BrowserPM;        
+        [Bindable]
+        public var contentPM:ContentPM;
         
         // Top level Controller for the CoverageViewer application
         [Bindable]
         public var controller:Controller;
+        [Bindable]
+        public var coverageModels:CoverageModelManager;        
         
         private var _coverageModel:CoverageModel;
         [Bindable]
@@ -61,7 +65,9 @@ package com.allurent.coverage.view.model
             enabled = true;
             _coverageModel = value;
             
-            headerPM.searchPM.initialize(coverageModel);
+            coverageModels = new CoverageModelManager(coverageModel);            
+            browserPM.initialize(coverageModels);
+            headerPM.searchPM.initialize(coverageModels);
         }
         
         private var _enabled:Boolean;
@@ -74,33 +80,32 @@ package com.allurent.coverage.view.model
         {
         	_enabled = value;
             headerPM.enabled = value;
+            browserPM.enabled = value;
         }
         
 		[Bindable]
 		public var showMessageOverlay:Boolean = false;		
 		
 		private var timer:IOneTimeInterval;
-		private var currentCoverageMeasureIndex:int;		
-        
+
 		public function CoverageViewerPM(controller:Controller, 
 		                                 timer:IOneTimeInterval)
 		{
 			this.controller = controller;
-			this.timer = timer;
+            controller.addEventListener(CoverageEvent.RECORDING_END, 
+                                        handleRecordingEnd);			
+			this.timer = timer;			
 			
             headerPM = new HeaderPM(controller);
             headerPM.addEventListener(HeavyOperationEvent.EVENT_NAME, 
                                       handleHeavyOperationEvent);
             headerPM.addEventListener(CoverageEvent.COVERAGE_MODEL_CHANGE, 
                                       handleCoverageModelChange);
-                                                                          
+			
+			browserPM = new BrowserPM();        
 			contentPM = new ContentPM(controller.project);
-		    		
-            currentCoverageMeasureIndex = CoverageViewerPM.COVERAGE_MEASURE_BRANCH;   
-            controller.addEventListener(CoverageEvent.RECORDING_END, 
-                                        handleRecordingEnd);
 		}
-				
+	    
         public function handleDragDrop(files:Array):void
         {
             for each (var f:File in files)
@@ -108,7 +113,7 @@ package com.allurent.coverage.view.model
 	        	performHeavyOperation(headerPM.processFileArgument, [f]);
 	        }
         }
-                
+        
         public function hasValidDragInFormat(e:NativeDragEvent):Boolean
         {
         	return e.clipboard.hasFormat(ClipboardFormats.FILE_LIST_FORMAT);
@@ -142,19 +147,6 @@ package com.allurent.coverage.view.model
             
             parser.parse(event.arguments);        	
         }
-				
-		public function changeCoverageMeasure(index:int):void
-		{
-			if(isValidCoverageMeasureIndex(index))
-			{
-				currentCoverageMeasureIndex = index;
-				headerPM.searchPM.currentCoverageMeasureIndex = index;
-			}
-			else
-			{
-				throw new Error("Invalid Coverage Measure");
-			}
-		}
 		
         private function performHeavyOperation(callback:Function, 
                                                parameters:Array = null):void
@@ -179,13 +171,7 @@ package com.allurent.coverage.view.model
         {
             controller.applyCoverageData();
             showMessageOverlay = false;
-        }		
-		
-		private function isValidCoverageMeasureIndex(index:int):Boolean
-		{
-			return (currentCoverageMeasureIndex == CoverageViewerPM.COVERAGE_MEASURE_BRANCH
-					|| currentCoverageMeasureIndex == CoverageViewerPM.COVERAGE_MEASURE_LINE);
-		}
+        }	
         
         private function handleCoverageModelChange(event:CoverageEvent):void
 		{

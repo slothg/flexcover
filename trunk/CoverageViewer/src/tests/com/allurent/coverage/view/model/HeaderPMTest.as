@@ -24,5 +24,13 @@ package tests.com.allurent.coverage.view.model
 			model.inputFileSelected(new File());
 			assertExpectedEventsOccurred();
 		}
+		
+		public function testCanClearCoverageData():void
+		{
+			assertFalse("0", model.canClearCoverageData(false, false));
+			assertFalse("1", model.canClearCoverageData(false, true));
+            assertTrue("2", model.canClearCoverageData(true, false));
+            assertFalse("3", model.canClearCoverageData(true, true));			
+		}
 	}
 }

@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- 
+/* 
  * Copyright (c) 2008 Allurent, Inc.
  *
  * Permission is hereby granted, free of charge, to any person
@@ -20,29 +19,27 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
  * OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- -->
-<mx:WindowedApplication 
-	xmlns:mx="http://www.adobe.com/2006/mxml" 
-	xmlns:flexunit="flexunit.flexui.*"
-	width="1100" height="700" 
-	layout="vertical" 
-	creationComplete="onCreationComplete()"	>
-	
-	<mx:Script>
-		<![CDATA[
-			import tests.AllTests;
-			import flexunit.framework.TestSuite;	
-
-			private function onCreationComplete():void
-			{		
- 				testRunner.test = new AllTests();
- 				testRunner.startTest();
- 			}
-		]]>
-	</mx:Script>
-
-	<flexunit:TestRunnerBase 
-		id="testRunner" 
-		width="100%" height="100%" />
-	
-</mx:WindowedApplication>
+ */
+package com.allurent.coverage.view.model
+{
+	import com.allurent.coverage.event.BrowserItemEvent;
+	import com.allurent.coverage.model.CoverageModelManager;
+    
+	public class BrowserPM
+	{
+		[Bindable]
+		public var enabled:Boolean;
+        [Bindable]
+        public var coverageModels:CoverageModelManager;		
+		
+        public function initialize(coverageModels:CoverageModelManager):void
+        {
+        	this.coverageModels = coverageModels;
+        }
+		
+        public function changeCoverageMeasure(index:int):void
+        {
+            coverageModels.changeCoverageMeasure(index);
+        }
+	}
+}

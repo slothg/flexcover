@@ -23,20 +23,19 @@
 package com.allurent.coverage.view
 {
     import com.allurent.coverage.event.BrowserItemEvent;
+    import com.allurent.coverage.model.CoverageModel;
     import com.allurent.coverage.model.SegmentModel;
-    import com.allurent.coverage.view.model.CoverageViewerPM;
-    
-    import flash.events.Event;
     
     import mx.collections.IHierarchicalCollectionView;
     import mx.containers.VBox;
     import mx.controls.AdvancedDataGrid;
     import mx.core.IFactory;
-
+    
+    [Event(name="select", type="com.allurent.coverage.event.BrowserItemEvent")]
     public class SegmentView extends VBox
     {
     	[Bindable]
-    	public var coverageViewerPM:CoverageViewerPM;
+    	public var coverageModel:CoverageModel;    	
 		[Bindable]
 		public var headerText:String;		
 		[Bindable]
@@ -50,7 +49,7 @@ package com.allurent.coverage.view
         public var coverageGrid:AdvancedDataGrid;
         
         private var _dataProvider:IHierarchicalCollectionView;
-                
+               
         [Bindable]
         public function get dataProvider():IHierarchicalCollectionView
         {
@@ -66,13 +65,24 @@ package com.allurent.coverage.view
             }
         }
         
-        private function initializeGrid():void
+        private var _enabled:Boolean;
+        [Bindable]
+        public function get isEnabled():Boolean
+        {
+            return _enabled;
+        }        
+        public function set isEnabled(value:Boolean):void
+        {
+            _enabled = value;
+        }     
+        
+        public function initializeGrid():void
         {
             coverageGrid.dataProvider = dataProvider;   
             coverageGrid.validateNow();
-            coverageGrid.expandItem(coverageViewerPM.coverageModel, true);
+            coverageGrid.expandItem(coverageModel, true);
             _dataProvider.showRoot = true;
-        }        
+        }     
         
         public function selectItem(selection:Object):void
         {

@@ -23,6 +23,7 @@
 package tests.com.allurent.coverage.model.search
 {
 	import com.allurent.coverage.model.CoverageModel;
+	import com.allurent.coverage.model.CoverageModelManager;
 	import com.allurent.coverage.model.search.ClassSearch;
 	
 	import flexunit.framework.TestCase;
@@ -35,12 +36,12 @@ package tests.com.allurent.coverage.model.search
 		
 		override public function setUp():void
 		{
-			var coverageModel:CoverageModel = CoverageModelData.createCoverageModel();
-			model = new ClassSearch(coverageModel);
+            var coverageModels:CoverageModelManager = CoverageModelData.createCoverageModels();
+			model = new ClassSearch(coverageModels.branchClassModel);
 		}
 		
 		public function testSearchTwiceOnDifferentPackagesAndResetOutput():void
-		{		
+		{
 			model.search("ShoppingCartElement");
 			assertEquals("expected 1 top level, 1 package, 1 class", 
 								3, model.content.length);
@@ -52,7 +53,8 @@ package tests.com.allurent.coverage.model.search
 		public function testSearchTwiceOnSamePackage():void
 		{
 			var coverageModel:CoverageModel = CoverageModelData.createCoverageModelWithMultipleClassesPerPackage();
-			model = new ClassSearch(coverageModel);
+			var coverageModels:CoverageModelManager = new CoverageModelManager(coverageModel);
+			model = new ClassSearch(coverageModels.branchClassModel);
 			model.search("Product");
 			assertEquals("expected 1 top level, 1 package, 1 class", 
 								3, model.content.length);
@@ -64,7 +66,8 @@ package tests.com.allurent.coverage.model.search
 		public function testSearchAndResetOutput():void
 		{
 			var coverageModel:CoverageModel = CoverageModelData.createCoverageModelWithMultipleClassesPerPackage();
-			model = new ClassSearch(coverageModel);
+            var coverageModels:CoverageModelManager = new CoverageModelManager(coverageModel)
+            model = new ClassSearch(coverageModels.branchClassModel);
 			model.search("Product");
 			assertEquals("expected 1 top level, 1 package, 1 class", 
 								3, model.content.length);							
@@ -76,7 +79,8 @@ package tests.com.allurent.coverage.model.search
 		public function testIfNonMatchingClassesAreFilteredOut():void
 		{
 			var coverageModel:CoverageModel = CoverageModelData.createCoverageModelWithMultipleClassesPerPackage();
-			model = new ClassSearch(coverageModel);			
+            var coverageModels:CoverageModelManager = new CoverageModelManager(coverageModel)
+            model = new ClassSearch(coverageModels.branchClassModel);	
 			model.search("Product");
 			assertEquals("expected 1 top level, 1 package, 1 class", 
 								3, model.content.length);
@@ -85,7 +89,8 @@ package tests.com.allurent.coverage.model.search
 		public function testIfNonMatchingClassesAreFilteredOutProgressively():void
 		{
 			var coverageModel:CoverageModel = CoverageModelData.createCoverageModelWithMultipleClassesPerPackage();
-			model = new ClassSearch(coverageModel);
+            var coverageModels:CoverageModelManager = new CoverageModelManager(coverageModel)
+            model = new ClassSearch(coverageModels.branchClassModel);
 			model.search("Produc");
 			assertEquals("match but too short, expected 1 top level, 1 package, 1 class", 
 								3, model.content.length);
@@ -106,7 +111,8 @@ package tests.com.allurent.coverage.model.search
 		public function testIfNonMatchingClassesAreFilteredOutProgressively2():void
 		{
 			var coverageModel:CoverageModel = CoverageModelData.createCoverageModelWithMultipleClassesPerPackage();
-			model = new ClassSearch(coverageModel);			
+            var coverageModels:CoverageModelManager = new CoverageModelManager(coverageModel)
+            model = new ClassSearch(coverageModels.branchClassModel);	
 			model.search("Productx");
 			assertEquals("not matching, expected 1 top level", 
 								1, model.content.length);
@@ -124,7 +130,8 @@ package tests.com.allurent.coverage.model.search
 		public function testIfShorterButMatchingClassesAreFilteredOut():void
 		{
 			var coverageModel:CoverageModel = CoverageModelData.createCoverageModelWithMultipleClassesPerPackage();
-			model = new ClassSearch(coverageModel);			
+            var coverageModels:CoverageModelManager = new CoverageModelManager(coverageModel)
+            model = new ClassSearch(coverageModels.branchClassModel);	
 			model.search("ShoppingCartElement");
 			assertEquals("expected 1 top level, 1 package, 1 class", 
 								3, model.content.length);
@@ -133,7 +140,8 @@ package tests.com.allurent.coverage.model.search
 		public function testShowTwoClassesOfDifferentPackagePlusOneThatMatchesPartly():void
 		{
 			var coverageModel:CoverageModel = CoverageModelData.createCoverageModelWithMultipleClassesPerPackage();
-			model = new ClassSearch(coverageModel);			
+            var coverageModels:CoverageModelManager = new CoverageModelManager(coverageModel)
+            model = new ClassSearch(coverageModels.branchClassModel);
 			model.search("ShoppingCart");
 			assertEquals("expected 1 top level, 2 packages, 3 classes", 
 								6, model.content.length);

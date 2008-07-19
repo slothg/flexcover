@@ -95,7 +95,7 @@ package com.allurent.coverage
         public var coverageOutputFile:File = null;
         
         private var coverageElementsContainer:Array = new Array();        
-        
+
         private static var _instance:Controller;
         public static function get instance():Controller
         {
@@ -182,6 +182,7 @@ package com.allurent.coverage
             var newCoverageModel:CoverageModel = new CoverageModel();
             new CoverageReportParser(newCoverageModel, project).parseFile(report);
             coverageModel = newCoverageModel;
+            isCoverageDataCleared = false;
             dispatchCoverageModelChangeEvent();
         }
         

@@ -24,13 +24,14 @@
 <view:SegmentView 
 	xmlns:mx="http://www.adobe.com/2006/mxml"
     xmlns:view="com.allurent.coverage.view.*" 
+    show="initializeGrid();" 
     >
-
+    
     <mx:AdvancedDataGrid 
     	id="coverageGrid" 
     	width="100%" height="100%" 
     	openDuration="100" 
-    	enabled="{coverageViewerPM.enabled}"  
+    	enabled="{isEnabled}" 
         change="selectItem(coverageGrid.selectedItem)"> 
         <mx:columns>
             <mx:AdvancedDataGridColumn 
