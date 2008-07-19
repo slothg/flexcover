@@ -81,7 +81,7 @@
 	            {  
 	                var files:Array = e.clipboard.getData(ClipboardFormats.FILE_LIST_FORMAT) as Array;
 	                coverageViewerPM.handleDragDrop(files);
-	            } 	
+	            }
             }
         ]]>
     </mx:Script>
@@ -105,7 +105,7 @@
 	        
 	        <view:BrowserView 
 	        	id="coverageMeasureTabNavigator" 
-	        	model="{coverageViewerPM}"
+	        	model="{coverageViewerPM.browserPM}"
 	        	width="500" height="100%" 
 	        	/>
 	        <view:ContentView 

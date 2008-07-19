@@ -23,6 +23,7 @@
 package tests.com.allurent.coverage.model.search
 {
 	import com.allurent.coverage.model.CoverageModel;
+	import com.allurent.coverage.model.CoverageModelManager;
 	import com.allurent.coverage.model.search.PackageSearch;
 	
 	import flexunit.framework.TestCase;
@@ -35,8 +36,8 @@ package tests.com.allurent.coverage.model.search
 		
 		override public function setUp():void
 		{
-			var coverageModel:CoverageModel = CoverageModelData.createCoverageModel();
-			model = new PackageSearch(coverageModel);
+            var coverageModels:CoverageModelManager = CoverageModelData.createCoverageModels();
+            model = new PackageSearch(coverageModels.branchPackageModel);			
 		}
 		
 		public function testSearchForUniquePackageName():void

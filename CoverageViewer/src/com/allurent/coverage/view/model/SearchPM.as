@@ -22,32 +22,19 @@
  */
 package com.allurent.coverage.view.model
 {
-	import com.allurent.coverage.model.CoverageModel;
-	import com.allurent.coverage.model.search.ClassSearch;
+	import com.allurent.coverage.model.CoverageModelManager;
 	import com.allurent.coverage.model.search.ISearchable;
-	import com.allurent.coverage.model.search.PackageSearch;
 	
 	import mx.collections.ArrayCollection;
 	import mx.collections.IHierarchicalCollectionView;
 	import mx.collections.IList;
+	import mx.events.IndexChangedEvent;
 	
 	public class SearchPM implements ISearchable
 	{
 		public static const SEARCH_BY_PACKAGE:String = "Package";
-		public static const SEARCH_BY_CLASS:String = "Class";	
-		
-        private var _currentCoverageMeasureIndex:int;
-        [Bindable]
-        public function get currentCoverageMeasureIndex():int
-        {
-        	return _currentCoverageMeasureIndex;
-        }
-        public function set currentCoverageMeasureIndex(value:int):void
-        {
-        	_currentCoverageMeasureIndex = value;
-        	setLastSearch();
-        }
-        
+		public static const SEARCH_BY_CLASS:String = "Class";
+
         public function get content():IHierarchicalCollectionView
         {
         	return currentSearch.content;
@@ -65,15 +52,8 @@ package com.allurent.coverage.view.model
         {
         	currentSearch.showDetail = value;
         }
-		
-		[Bindable]
-		public var branchPackageSearch:ISearchable;
-		[Bindable]
-		public var branchClassSearch:ISearchable;
-		[Bindable]
-		public var linePackageSearch:ISearchable;
-		[Bindable]
-		public var lineClassSearch:ISearchable;		
+
+		private var coverageModels:CoverageModelManager	
 		
 		[Bindable]
 		public var searchByProvider:IList;
@@ -87,53 +67,45 @@ package com.allurent.coverage.view.model
 		
 		public function SearchPM()
 		{
-			currentCoverageMeasureIndex = CoverageViewerPM.COVERAGE_MEASURE_BRANCH;
 			createSearchByProvider();
 		}
 		
-		public function initialize(coverageModel:CoverageModel):void
+        public function handleCoverageMeasureChange(event:IndexChangedEvent):void
+        {
+        	updateSearchType();
+        }	
+		
+		public function initialize(coverageModels:CoverageModelManager):void
 		{
-            branchPackageSearch = new PackageSearch(coverageModel);
-            branchClassSearch = new ClassSearch(coverageModel);
-            linePackageSearch = new PackageSearch(coverageModel);
-            lineClassSearch = new ClassSearch(coverageModel);
+            this.coverageModels = coverageModels;
+            coverageModels.addEventListener(IndexChangedEvent.CHANGE, 
+                                       handleCoverageMeasureChange);
             
             initialized = true;
 
             changeSearchBy(SEARCH_BY_PACKAGE);
-            search("");
 		}
 		
-		public function setLastSearch():void
+		public function updateSearchType():void
 		{
 			if(!initialized) return;
-			setCurrentSearch();
+			currentSearch = coverageModels.getCurrentSearch(searchForPackage);			
 			getCurrentSearchInput();
+			search(currentSearchInput);
 		}
 		
 		public function changeSearchBy(searchByInput:Object):void
 		{
 			var searchBy : String = String(searchByInput);
 			searchForPackage = (searchBy == SearchPM.SEARCH_BY_PACKAGE) ? true : false;
-			setLastSearch();
+			coverageModels.searchForPackage = searchForPackage;			
+			updateSearchType();
 		}
 		
 		public function search(searchInput:String):String
 		{
 			currentSearchInput = currentSearch.search(searchInput);
 			return currentSearchInput;
-		}
-
-		private function setCurrentSearch():void
-		{
-			if(currentCoverageMeasureIndex == CoverageViewerPM.COVERAGE_MEASURE_BRANCH)
-			{
-				currentSearch = (searchForPackage) ? branchPackageSearch : branchClassSearch;
-			}
-			else if(currentCoverageMeasureIndex == CoverageViewerPM.COVERAGE_MEASURE_LINE)
-			{
-				currentSearch = (searchForPackage) ? linePackageSearch : lineClassSearch;
-			}
 		}
 		
 		private function createSearchByProvider():void

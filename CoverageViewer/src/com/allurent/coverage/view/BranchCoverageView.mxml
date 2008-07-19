@@ -24,31 +24,37 @@
 <mx:ViewStack 
 	xmlns:mx="http://www.adobe.com/2006/mxml"
     xmlns:view="com.allurent.coverage.view.*" 
-    selectedIndex="{coverageViewerPM.headerPM.searchPM.searchForPackage ? 0 : 1}" 
+    selectedIndex="{model.coverageModels.searchForPackage ? 0 : 1}" 
     >
     
+    <mx:Metadata>
+        [Event(name="select", type="com.allurent.coverage.event.BrowserItemEvent")]
+    </mx:Metadata>      
+
     <mx:Script>
     	<![CDATA[
-    		import com.allurent.coverage.view.model.CoverageViewerPM;
+    		import com.allurent.coverage.view.model.BrowserPM;
     		
     		[Bindable]
-    		public var coverageViewerPM:CoverageViewerPM;
+    		public var model:BrowserPM;
     	]]>
     </mx:Script>
-	    
+	
 	<view:CoverageOverview
 		width="100%" height="100%"
-	    dataProvider="{coverageViewerPM.headerPM.searchPM.branchPackageSearch.content}" 
-	    coverageViewerPM="{coverageViewerPM}" 
+	    dataProvider="{model.coverageModels.branchPackageModel}" 
+	    coverageModel="{model.coverageModels.coverageModel}" 
+	    isEnabled="{model.enabled}" 
 	    headerText="Branch Coverage" 
 	    coverageDataField="branchCoverage" 
 	    uncoveredDataField="uncoveredBranches"	    
-	    renderer="com.allurent.coverage.view.BranchCoverageColumnRenderer"
+	    renderer="com.allurent.coverage.view.BranchCoverageColumnRenderer" 
 	    />
 	<view:CoverageOverview 
 		width="100%" height="100%"
-	    dataProvider="{coverageViewerPM.headerPM.searchPM.branchClassSearch.content}" 
-	    coverageViewerPM="{coverageViewerPM}" 
+	    dataProvider="{model.coverageModels.branchClassModel}" 
+	    coverageModel="{model.coverageModels.coverageModel}" 
+	    isEnabled="{model.enabled}" 
 	    headerText="Branch Coverage" 
 	    coverageDataField="branchCoverage" 
 	    uncoveredDataField="uncoveredBranches"	    

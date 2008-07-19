@@ -24,14 +24,12 @@ package com.allurent.coverage.view.model
 {
 	import com.allurent.coverage.event.BrowserItemEvent;
 	import com.allurent.coverage.model.ClassModel;
-	import com.allurent.coverage.model.CoverageData;
 	import com.allurent.coverage.model.CoverageModel;
+	import com.allurent.coverage.model.CoverageModelManager;
 	import com.allurent.coverage.model.FunctionModel;
 	import com.allurent.coverage.model.PackageModel;
 	import com.allurent.coverage.model.ProjectModel;
-	import com.allurent.coverage.model.SegmentModel;
 	
-	import mx.collections.HierarchicalCollectionView;
 	import mx.collections.ICollectionView;
 	import mx.collections.IHierarchicalCollectionView;
 	import mx.collections.IViewCursor;
@@ -84,7 +82,7 @@ package com.allurent.coverage.view.model
             {
                 currentIndex = PACKAGE_VIEW;
                 packageModel = PackageModel(event.segmentModel);
-                dataProvider = createCoverageModel(packageModel);
+                dataProvider = CoverageModelManager.createContentModel(packageModel);
                 openClassNodes(dataProvider, packageModel);
             }
             else 
@@ -93,7 +91,7 @@ package com.allurent.coverage.view.model
             	hasInvalidated = true;
             }
 		}
-		          
+		
 		private function openClassNodes(dataProvider:IHierarchicalCollectionView, 
 									packageModel:PackageModel) : void
 		{
@@ -111,15 +109,7 @@ package com.allurent.coverage.view.model
 			}
 			dataProvider.openNodes = openNodes;
 		}
-        
-		private function createCoverageModel(segmentModel:SegmentModel):IHierarchicalCollectionView
-		{
-			var hierarchicalData:CoverageData = new CoverageData(segmentModel);
-			var model:IHierarchicalCollectionView = new HierarchicalCollectionView(hierarchicalData);
-			model.showRoot = false;
-			return model;	
-		}
-        
+
         private function reset():void
         {
          	classModel = null;

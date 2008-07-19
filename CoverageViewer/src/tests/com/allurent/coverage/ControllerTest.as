@@ -43,7 +43,7 @@ package tests.com.allurent.coverage
         override public function tearDown():void
         {
         	Controller.resetForTesting();        	
-        }	
+        }
 		
         public function testNoRecordingOnStartup():void
         {

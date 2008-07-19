@@ -22,34 +22,48 @@
  */
 package tests.com.allurent.coverage.view.model
 {
-	import com.allurent.coverage.view.model.CoverageViewerPM;
+	import com.allurent.coverage.model.CoverageModelManager;
+	import com.allurent.coverage.view.model.BrowserPM;
 	import com.allurent.coverage.view.model.SearchPM;
 	
 	import flexunit.framework.TestCase;
+	
+	import mx.events.IndexChangedEvent;
 	
 	import tests.com.allurent.coverage.CoverageModelData;
 
 	public class SearchPMTest extends TestCase
 	{
 		private var model:SearchPM;
+		private var coverageModels:CoverageModelManager;
 		
 		override public function setUp():void
 		{
 			model = new SearchPM();
-			model.initialize(CoverageModelData.createCoverageModel());
+			coverageModels = CoverageModelData.createCoverageModels();
+			model.initialize(coverageModels);
 		}
 		
 		public function testInitialization():void
 		{
-			assertEquals("expected branch coverage model is default", 
-										CoverageViewerPM.COVERAGE_MEASURE_BRANCH, 
-										model.currentCoverageMeasureIndex);
 			assertTrue("expected package search is default", 
-										model.searchForPackage);
-			assertEquals("expected branchPackageSearch is default", 
-										model.branchPackageSearch, 
-										model.currentSearch);													
+										model.searchForPackage);											
 		}
+		
+        public function testToggleSearchTypesAndTestSearchForPackage():void
+        {
+        	model.changeSearchBy(SearchPM.SEARCH_BY_CLASS);
+            assertFalse("expected class search", 
+                                        model.searchForPackage);
+            assertFalse("expected class search on coverageModels", 
+                                        coverageModels.searchForPackage);
+                                        
+            model.changeSearchBy(SearchPM.SEARCH_BY_PACKAGE);                            
+            assertTrue("expected package search", 
+                                        model.searchForPackage);
+            assertTrue("expected package search on coverageModels", 
+                                        coverageModels.searchForPackage);                                                                       
+        }
 		
 		public function testTogglePackageSearchAndMaintainSearchInput():void
 		{
@@ -112,9 +126,11 @@ package tests.com.allurent.coverage.view.model
 		public function testTogglePackageSearchAndCoverageMeasureAndMaintainSearchInput():void
 		{
 			testTogglePackageSearchAndMaintainSearchInput();
-			model.currentCoverageMeasureIndex = CoverageViewerPM.COVERAGE_MEASURE_LINE;
+            
+            coverageModels.changeCoverageMeasure(CoverageModelManager.LINE_MEASURE);
 			assertEquals("expected empty search input", "", model.currentSearchInput);
-			model.currentCoverageMeasureIndex = CoverageViewerPM.COVERAGE_MEASURE_BRANCH;
+
+            coverageModels.changeCoverageMeasure(CoverageModelManager.BRANCH_MEASURE);
 			assertEquals("expected last search input to be restored", 
 												"c", model.currentSearchInput);			
 		}

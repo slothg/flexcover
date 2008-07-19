@@ -24,15 +24,24 @@ package tests.com.allurent.coverage
 {
 	import com.allurent.coverage.model.ClassModel;
 	import com.allurent.coverage.model.CoverageModel;
+	import com.allurent.coverage.model.CoverageModelManager;
 	import com.allurent.coverage.model.FunctionModel;
 	import com.allurent.coverage.model.PackageModel;
 	import com.allurent.coverage.model.SegmentModel;
 	
 	import mx.collections.ArrayCollection;
+	import mx.collections.IHierarchicalCollectionView;
 	import mx.collections.IList;
 	
 	public class CoverageModelData
 	{
+        public static function createCoverageModels():CoverageModelManager
+        {
+            var coverageModel:CoverageModel = new CoverageModel();
+            addChildren(coverageModel, createCoverageModelChildren());
+            return new CoverageModelManager(coverageModel);
+        }
+		
 		public static function createCoverageModel():CoverageModel
 		{
 			var coverageModel:CoverageModel = new CoverageModel();

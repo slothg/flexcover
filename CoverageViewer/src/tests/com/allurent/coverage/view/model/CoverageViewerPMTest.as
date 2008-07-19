@@ -23,53 +23,80 @@
 package tests.com.allurent.coverage.view.model
 {
 	import com.allurent.coverage.Controller;
+	import com.allurent.coverage.event.CoverageEvent;
 	import com.allurent.coverage.view.model.CoverageViewerPM;
 	
-	import flexunit.framework.TestCase;
+	import flash.events.InvokeEvent;
+	import flash.filesystem.File;
 	
-	import mx.collections.IHierarchicalCollectionView;
+	import flexunit.framework.EventfulTestCase;
 	
+	import tests.com.adobe.ac.util.EmptyOneTimeIntervalStub;
 	import tests.com.adobe.ac.util.OneTimeIntervalStub;
+	import tests.com.allurent.coverage.CoverageModelData;
 
-	public class CoverageViewerPMTest extends TestCase
+	public class CoverageViewerPMTest extends EventfulTestCase
 	{
 		private var model:CoverageViewerPM;
-		private var branchCoverageModel : IHierarchicalCollectionView;
-		private var lineCoverageModel : IHierarchicalCollectionView;
-		
+        
 		override public function setUp():void
 		{
 			model = new CoverageViewerPM(Controller.instance, 
 			                             new OneTimeIntervalStub());
 		}
 		
-		public function testInvalidCoverageMeasure():void
+        override public function tearDown():void
+        {
+            Controller.resetForTesting();           
+        }
+        
+        public function testInitializeCoverageManager():void
+        {
+        	assertNull("expected no coverageModels", model.coverageModels);
+        	var event:CoverageEvent = new CoverageEvent(
+        	                               CoverageEvent.COVERAGE_MODEL_CHANGE, 
+        	                               CoverageModelData.createCoverageModel()
+        	                               );
+        	
+        	model.headerPM.dispatchEvent(event);
+        	assertNotNull("expected coverageModels", model.coverageModels);
+        }
+		
+		public function testIfHeaderGetsEnabled():void
 		{
-			try
-			{
-				model.changeCoverageMeasure(-1);
-				fail("expected error when invalid coverage measure given");
-			}
-			catch(e:Error)
-			{
-				
-			}
-		}
-				
-		public function testDefaultCoverageMeasure():void
-		{
-			model.changeCoverageMeasure(0);
-			assertEquals("should propagate coverage measure to SearchPM", 
-						0, 
-						model.headerPM.searchPM.currentCoverageMeasureIndex);	
+			model.enabled = true;
+			assertTrue("expected enabled", model.headerPM.enabled);
 		}
 		
-		public function testChangeOfCurrentCoverageModel():void
-		{
-			model.changeCoverageMeasure(1);
-			assertEquals("should propagate coverage measure to SearchPM", 
-						1, 
-						model.headerPM.searchPM.currentCoverageMeasureIndex);		
-		}
+        public function testIfBrowserGetsEnabled():void
+        {
+            model.enabled = true;
+            assertTrue("expected enabled", model.browserPM.enabled);
+        }
+        
+        public function testNoMessageOverlayAtStartup():void
+        {
+            assertFalse("expected no showMessageOverlay", model.showMessageOverlay);        	
+        }
+        
+        public function testHandleInvokeEvent():void
+        {
+            model = new CoverageViewerPM(Controller.instance, 
+                                         new EmptyOneTimeIntervalStub());        	
+        	  	
+        	var event:InvokeEvent = new InvokeEvent(InvokeEvent.INVOKE);
+        	model.handleInvoke(event);
+        	assertTrue("expected showMessageOverlay", model.showMessageOverlay);
+        }
+        
+        public function testHandleDragDrop():void
+        {
+            model = new CoverageViewerPM(Controller.instance, 
+                                         new EmptyOneTimeIntervalStub());         	
+        	
+            var event:InvokeEvent = new InvokeEvent(InvokeEvent.INVOKE);
+            model.handleDragDrop(new Array(new File()));
+            assertTrue("expected showMessageOverlay", model.showMessageOverlay);
+        }
 	}
 }

@@ -180,7 +180,7 @@
     	enabled="{model.enabled}" 
     	click="saveOutput()"/>
     <mx:Button 
-    	label="Clear Coverage Data" 
+    	label="Reset Recording" 
     	enabled="{model.canClearCoverageData(
     	                   model.enabled, 
     	                   model.controller.isCoverageDataCleared )}" 

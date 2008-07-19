@@ -33,6 +33,7 @@ package tests.com.allurent.coverage.model
 		{
 			addTest(new TestSuite(PackageSearchTest));
 			addTest(new TestSuite(ClassSearchTest));
+			addTest(new TestSuite(CoverageModelManagerTest));
 		}
 
 	}
