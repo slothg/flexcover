@@ -27,6 +27,7 @@
 	
 	<mx:Script>
 		<![CDATA[
+			import com.allurent.coverage.model.search.ISearchable;
 			import com.allurent.coverage.view.model.HeaderPM;
 			import com.adobe.ac.util.OneTimeInterval;
 			import com.adobe.ac.util.IOneTimeInterval;
@@ -48,8 +49,14 @@
 			{
 				model.searchPM.changeSearchBy(item);
 				createFilterMenu();
-				searchInput.setFocus();
-				searchInput.setSelection(0, searchInput.text.length);
+				setFocusOnSearch(model.searchPM.currentSearch);
+			}
+			
+			private function setFocusOnSearch(currentSearch:ISearchable):void
+			{
+				if(!model.enabled) return;
+                searchInput.setFocus();
+                searchInput.setSelection(0, currentSearch.currentSearchInput.length);				
 			}
 
 			private function createFilterMenu():void
@@ -150,12 +157,11 @@
             }
 		]]>
 	</mx:Script>
-	
-	<ac:ObserveValue 
-		source="{model.enabled}" 
-		handler="{searchInput.setFocus}" 
-		value="{true}" 
-		/>
+
+    <ac:Observe 
+        source="{model.searchPM.currentSearch}" 
+        handler="{setFocusOnSearch}" 
+        />
 	
 	<mx:Label text="Search By:"/>
 	<mx:ToggleButtonBar 

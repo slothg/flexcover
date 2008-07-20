@@ -24,7 +24,6 @@
 <view:SegmentView 
 	xmlns:mx="http://www.adobe.com/2006/mxml"
     xmlns:view="com.allurent.coverage.view.*" 
-    show="initializeGrid();" 
     >
     
     <mx:AdvancedDataGrid 

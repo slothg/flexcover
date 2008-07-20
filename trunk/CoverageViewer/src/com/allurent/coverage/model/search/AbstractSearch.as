@@ -45,6 +45,7 @@ package com.allurent.coverage.model.search
 			currentSearchInput = "";
 			content.filterFunction = filterBySearchInput;
 			resetOpenNodes();
+			search(currentSearchInput);
 		}
 		
 		public function search(searchInput:String):String

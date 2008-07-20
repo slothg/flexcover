@@ -43,7 +43,6 @@
 	<view:CoverageOverview
 		width="100%" height="100%"
 	    dataProvider="{model.coverageModels.branchPackageModel}" 
-	    coverageModel="{model.coverageModels.coverageModel}" 
 	    isEnabled="{model.enabled}" 
 	    headerText="Branch Coverage" 
 	    coverageDataField="branchCoverage" 
@@ -53,7 +52,6 @@
 	<view:CoverageOverview 
 		width="100%" height="100%"
 	    dataProvider="{model.coverageModels.branchClassModel}" 
-	    coverageModel="{model.coverageModels.coverageModel}" 
 	    isEnabled="{model.enabled}" 
 	    headerText="Branch Coverage" 
 	    coverageDataField="branchCoverage" 
