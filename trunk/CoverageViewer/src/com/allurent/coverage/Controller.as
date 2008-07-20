@@ -23,11 +23,11 @@
 package com.allurent.coverage
 {
     import com.adobe.ac.util.IOneTimeInterval;
-    import com.adobe.ac.util.OneTimeInterval;
     import com.allurent.coverage.event.CoverageEvent;
     import com.allurent.coverage.model.CoverageElement;
     import com.allurent.coverage.model.CoverageElementContainer;
     import com.allurent.coverage.model.CoverageModel;
+    import com.allurent.coverage.model.ElementModel;
     import com.allurent.coverage.model.ProjectModel;
     import com.allurent.coverage.parse.CoverageReportParser;
     import com.allurent.coverage.parse.MetadataParser;
@@ -39,7 +39,6 @@ package com.allurent.coverage
     import flash.filesystem.FileMode;
     import flash.filesystem.FileStream;
     import flash.net.LocalConnection;
-    import flash.utils.getQualifiedClassName;
     
     import mx.controls.Alert;
     
@@ -65,61 +64,50 @@ package com.allurent.coverage
     public class Controller extends EventDispatcher
     {
         [Bindable]
-        public var project:ProjectModel = new ProjectModel();
+        public var project:ProjectModel;
         
         [Bindable]
-        public var coverageModel:CoverageModel = new CoverageModel();
+        public var coverageModel:CoverageModel;
         [Bindable]
-        public var isRecording:Boolean = false;
+        public var isRecording:Boolean;
         [Bindable]
-        public var isCoverageDataCleared:Boolean = true;        
+        public var isCoverageDataCleared:Boolean;        
         [Bindable]
-        public var currentRecording:String = "";
-        public var timer:IOneTimeInterval = new OneTimeInterval();
-                
+        public var currentRecording:String;
+                        
         /**
          * Flag indicating that application should exit when instrumented app is done.
          * and all pending data has been written.
          */ 
-        public var autoExit:Boolean = false;
+        public var autoExit:Boolean;
         
         /**
          * Flag indicating that coverage data should only be recorded internally for
          * coverage elements possessing loaded metadata from compilation.
          */
-        public var constrainToModel:Boolean = true;
+        public var constrainToModel:Boolean;
         
         /**
          * Output file to which coverage data should be written when application is done.
          */
-        public var coverageOutputFile:File = null;
+        public var coverageOutputFile:File;
         
-        private var coverageElementsContainer:Array = new Array();        
-
-        private static var _instance:Controller;
-        public static function get instance():Controller
-        {
-            if (_instance == null)
-            {
-                _instance = new Controller(new SingletonEnforcer());
-            }   	
-        	return _instance;
-        }
-        
-        public static function resetForTesting():void
-        {
-        	_instance = null
-        }
+        private var coverageElementsContainer:Array;
         
         // LocalConnection open for receiving coverage data from live instrumented apps
         private var conn:LocalConnection;
         
-        public function Controller(enforcer:SingletonEnforcer)
+        private var timer:IOneTimeInterval;
+        
+        public function Controller(timer:IOneTimeInterval)
         {
-			if ( getQualifiedClassName( super ) != "com.allurent.coverage::Controller" ) 
-			{
-				throw new Error( "Invalid Singleton access." );
-			}
+        	this.timer = timer;
+        	project = new ProjectModel();
+        	coverageModel = new CoverageModel();
+        	currentRecording = "";
+        	isCoverageDataCleared = true;
+        	constrainToModel = true;
+        	coverageElementsContainer = new Array()
         }
         
         /**
@@ -173,7 +161,7 @@ package com.allurent.coverage
         {
             new TraceLogParser(coverageModel, project).parseFile(traceLog);
         }
-
+        
         /**
          * Load a coverage report into the project. 
          */
@@ -205,10 +193,14 @@ package com.allurent.coverage
                 if (element != null)
                 {
                     var count:uint = keyMap[key];
-                    currentRecording = element.packageName + "." + element.className
-                    coverageElementsContainer.push(new CoverageElementContainer(element, count));              
+                    currentRecording = element.packageName + "." + element.className;
+                    
+                    coverageElementsContainer.push(
+                        new CoverageElementContainer(
+                            ElementModel(coverageModel.resolveCoverageElement(element, !constrainToModel)), 
+                            count));                     
                 }
-                timer.delay(2000, handleRecordingTimeout);
+                timer.delay(4000, handleRecordingTimeout);
             }
             
             if(isRecording && !this.isRecording)
@@ -248,9 +240,7 @@ package com.allurent.coverage
         	for(var i:int; i < numberOfContainers; i++)
         	{
         		var item:CoverageElementContainer = CoverageElementContainer(container[i]);
-        		coverageModel.recordCoverageElement(item.element, 
-        		                                      item.count, 
-        		                                      constrainToModel);
+                coverageModel.addExecutionCount(item.element, item.count);
         	}
         	
             if(numberOfContainers > 0)
@@ -332,12 +322,6 @@ package com.allurent.coverage
             }
         }
         
-        public function closeConnection():void
-        {
-        	if(conn == null) return;
-        	conn.close();     	
-        }  
-        
         /**
          * Write accumulated coverage data to an output file if specified. 
          */
@@ -357,5 +341,3 @@ package com.allurent.coverage
         }
     }
 }
-
-class SingletonEnforcer{}

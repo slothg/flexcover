@@ -36,14 +36,8 @@ package tests.com.allurent.coverage
 		
 		override public function setUp():void
 		{
-			controller = Controller.instance;
-			controller.timer = new OneTimeIntervalStub();
+			controller = new Controller(new OneTimeIntervalStub());
 		}
-		
-        override public function tearDown():void
-        {
-        	Controller.resetForTesting();        	
-        }
 		
         public function testNoRecordingOnStartup():void
         {
@@ -78,7 +72,7 @@ package tests.com.allurent.coverage
         
         public function testStartAndResumeRecording():void
         {
-        	controller.timer = new EmptyOneTimeIntervalStub();
+        	controller = new Controller(new EmptyOneTimeIntervalStub());
             testStopRecording();
             testStartRecording();
         }        

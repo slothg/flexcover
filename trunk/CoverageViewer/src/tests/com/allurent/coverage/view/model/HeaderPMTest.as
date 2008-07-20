@@ -7,7 +7,8 @@ package tests.com.allurent.coverage.view.model
 	import flash.filesystem.File;
 	
 	import flexunit.framework.EventfulTestCase;
-	import flash.events.Event;
+	
+	import tests.com.adobe.ac.util.OneTimeIntervalStub;
 
 	public class HeaderPMTest extends EventfulTestCase
 	{
@@ -15,7 +16,7 @@ package tests.com.allurent.coverage.view.model
 		
 		override public function setUp():void
 		{
-			model = new HeaderPM(Controller.instance);
+			model = new HeaderPM(new Controller(new OneTimeIntervalStub()));
 		}
 		
 		public function testInputFileSelected():void

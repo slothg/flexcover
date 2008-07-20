@@ -50,8 +50,9 @@
             
             private function preinitializeApplication():void
             {
-                coverageViewerPM = new CoverageViewerPM(Controller.instance, 
-                                                     new OneTimeInterval());                 	
+            	var controller:Controller = new Controller(new OneTimeInterval());
+                coverageViewerPM = new CoverageViewerPM(controller, 
+                                                        new OneTimeInterval());                 	
             }
             
             /**
