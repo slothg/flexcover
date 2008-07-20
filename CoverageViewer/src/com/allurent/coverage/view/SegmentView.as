@@ -23,7 +23,6 @@
 package com.allurent.coverage.view
 {
     import com.allurent.coverage.event.BrowserItemEvent;
-    import com.allurent.coverage.model.CoverageModel;
     import com.allurent.coverage.model.SegmentModel;
     
     import mx.collections.IHierarchicalCollectionView;
@@ -34,8 +33,6 @@ package com.allurent.coverage.view
     [Event(name="select", type="com.allurent.coverage.event.BrowserItemEvent")]
     public class SegmentView extends VBox
     {
-    	[Bindable]
-    	public var coverageModel:CoverageModel;    	
 		[Bindable]
 		public var headerText:String;		
 		[Bindable]
@@ -74,15 +71,13 @@ package com.allurent.coverage.view
         public function set isEnabled(value:Boolean):void
         {
             _enabled = value;
-        }     
-        
+        }
+
         public function initializeGrid():void
         {
-            coverageGrid.dataProvider = dataProvider;   
-            coverageGrid.validateNow();
-            coverageGrid.expandItem(coverageModel, true);
+            coverageGrid.dataProvider = dataProvider;
             _dataProvider.showRoot = true;
-        }     
+        }
         
         public function selectItem(selection:Object):void
         {

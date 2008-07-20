@@ -47,13 +47,13 @@
             
             [Bindable]
             private var coverageViewerPM:CoverageViewerPM;
-             
+            
             private function preinitializeApplication():void
             {
                 coverageViewerPM = new CoverageViewerPM(Controller.instance, 
                                                      new OneTimeInterval());                 	
-            }             
-                                    
+            }
+            
             /**
              * Initialize the application by listening for an Invoke event that will communicate
              * command line options.  Also attach the LocalConnection to receive live coverage

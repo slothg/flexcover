@@ -61,6 +61,7 @@ package com.allurent.coverage.view.model
 		public var currentSearchInput:String;
 		[Bindable]
 		public var searchForPackage:Boolean;
+		[Bindable]
 		public var currentSearch:ISearchable;
 		
 		private var initialized:Boolean;
@@ -73,7 +74,7 @@ package com.allurent.coverage.view.model
         public function handleCoverageMeasureChange(event:IndexChangedEvent):void
         {
         	updateSearchType();
-        }	
+        }
 		
 		public function initialize(coverageModels:CoverageModelManager):void
 		{
@@ -84,6 +85,7 @@ package com.allurent.coverage.view.model
             initialized = true;
 
             changeSearchBy(SEARCH_BY_PACKAGE);
+            search(currentSearchInput);
 		}
 		
 		public function updateSearchType():void
@@ -91,7 +93,6 @@ package com.allurent.coverage.view.model
 			if(!initialized) return;
 			currentSearch = coverageModels.getCurrentSearch(searchForPackage);			
 			getCurrentSearchInput();
-			search(currentSearchInput);
 		}
 		
 		public function changeSearchBy(searchByInput:Object):void

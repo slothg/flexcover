@@ -22,6 +22,7 @@
  */
 package com.allurent.coverage.model
 {
+	import com.allurent.coverage.model.search.AbstractSearch;
 	import com.allurent.coverage.model.search.ClassSearch;
 	import com.allurent.coverage.model.search.ISearchable;
 	import com.allurent.coverage.model.search.PackageSearch;
@@ -40,7 +41,7 @@ package com.allurent.coverage.model
 		
         [Bindable]
         public var coverageModel:CoverageModel;  
-						
+		
         [Bindable]
         public var branchPackageModel:IHierarchicalCollectionView;
         [Bindable]
@@ -49,11 +50,6 @@ package com.allurent.coverage.model
         public var linePackageModel:IHierarchicalCollectionView;
         [Bindable]
         public var lineClassModel:IHierarchicalCollectionView;	
-
-        private var branchPackageSearch:ISearchable;
-        private var branchClassSearch:ISearchable;
-        private var linePackageSearch:ISearchable;
-        private var lineClassSearch:ISearchable;
         	    
         private var _currentMeasureIndex:int;
         [Bindable("currentMeasureIndexChange")]
@@ -64,6 +60,46 @@ package com.allurent.coverage.model
 		
 		[Bindable]
 		public var searchForPackage:Boolean;
+		
+        private var _branchPackageSearch:ISearchable;
+        private function get branchPackageSearch():ISearchable
+        {
+            if(_branchPackageSearch == null)
+            {
+                _branchPackageSearch = new PackageSearch(branchPackageModel) 
+            }
+            return _branchPackageSearch;
+        }
+        
+        private var _branchClassSearch:ISearchable;
+        private function get branchClassSearch():ISearchable
+        {
+            if(_branchClassSearch == null)
+            {
+                _branchClassSearch = new ClassSearch(branchClassModel) 
+            }                       
+            return _branchClassSearch;       
+        }
+        
+        private var _linePackageSearch:ISearchable;
+        private function get linePackageSearch():ISearchable
+        {
+            if(_linePackageSearch == null)
+            {
+                _linePackageSearch = new PackageSearch(linePackageModel) 
+            }                 
+            return _linePackageSearch;   
+        }
+        
+        private var _lineClassSearch:ISearchable;
+        private function get lineClassSearch():ISearchable
+        {
+            if(_lineClassSearch == null)
+            {
+                _lineClassSearch = new ClassSearch(lineClassModel) 
+            }                               
+            return _lineClassSearch;        
+        }		
 		
         public static function createContentModel(segmentModel:SegmentModel):IHierarchicalCollectionView
         {
@@ -78,16 +114,9 @@ package com.allurent.coverage.model
 			this.coverageModel = coverageModel;
             
             branchPackageModel = createContentModel(coverageModel);
-            branchPackageSearch = new PackageSearch(branchPackageModel);
-            
-            branchClassModel = createContentModel(coverageModel);
-            branchClassSearch = new ClassSearch(branchClassModel);
-            
+            branchClassModel = createContentModel(coverageModel);         
             linePackageModel = createContentModel(coverageModel);
-            linePackageSearch = new PackageSearch(linePackageModel);
-            
             lineClassModel = createContentModel(coverageModel);
-			lineClassSearch = new ClassSearch(lineClassModel);	
 		}
 		
         public function changeCoverageMeasure(index:int):void
@@ -104,33 +133,19 @@ package com.allurent.coverage.model
             else
             {
                 throw new Error("Invalid Coverage Measure");
-            }            
+            }
         }   
-               
+        
         public function getCurrentSearch(searchForPackage:Boolean):ISearchable
         {
         	var currentSearch:ISearchable;
             if(currentMeasureIndex == BRANCH_MEASURE)
             {
-                if(searchForPackage)
-                {
-                    currentSearch = branchPackageSearch;
-                }
-                else
-                {
-                    currentSearch = branchClassSearch;
-                }
+            	currentSearch = (searchForPackage) ? branchPackageSearch : branchClassSearch;
             }
             else if(currentMeasureIndex == LINE_MEASURE)
-            {        
-                if(searchForPackage)
-                {
-                    currentSearch = linePackageSearch;
-                }
-                else
-                {
-                    currentSearch = lineClassSearch;
-                }       
+            {
+            	currentSearch = (searchForPackage) ? linePackageSearch : lineClassSearch;
             }
             return currentSearch;
         }
@@ -138,7 +153,7 @@ package com.allurent.coverage.model
         private function isValidCoverageMeasureIndex(index:int):Boolean
         {
             return (currentMeasureIndex == BRANCH_MEASURE
-                    || currentMeasureIndex == LINE_MEASURE);
+                    || currentMeasureIndex == LINE_MEASURE);       
         }            
 	}
 }

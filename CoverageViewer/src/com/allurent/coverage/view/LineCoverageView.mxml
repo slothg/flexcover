@@ -43,7 +43,6 @@
 	<view:CoverageOverview
 		width="100%" height="100%"
 	    dataProvider="{model.coverageModels.linePackageModel}" 
-        coverageModel="{model.coverageModels.coverageModel}" 
         isEnabled="{model.enabled}" 
 	    headerText="Line Coverage" 
 	    coverageDataField="lineCoverage" 
@@ -53,7 +52,6 @@
 	<view:CoverageOverview 
 		width="100%" height="100%"
 	    dataProvider="{model.coverageModels.lineClassModel}" 
-        coverageModel="{model.coverageModels.coverageModel}" 
         isEnabled="{model.enabled}" 
 	    headerText="Line Coverage" 
 	    coverageDataField="lineCoverage" 
