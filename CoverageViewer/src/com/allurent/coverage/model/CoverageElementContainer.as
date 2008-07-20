@@ -24,10 +24,10 @@ package com.allurent.coverage.model
 {
 	public class CoverageElementContainer
 	{
-		public var element:CoverageElement;
+		public var element:ElementModel;
 		public var count:uint;
 		
-		public function CoverageElementContainer(element:CoverageElement, count:uint)
+		public function CoverageElementContainer(element:ElementModel, count:uint)
 		{
 			this.element = element;
 			this.count = count;

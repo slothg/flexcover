@@ -24,7 +24,7 @@
 <mx:TabNavigator 
 	xmlns:mx="http://www.adobe.com/2006/mxml" 
 	xmlns:view="com.allurent.coverage.view.*" 
-	creationPolicy="all" 
+	creationPolicy="all"  
 	enabled="{model.enabled}"
 	selectedIndex="{model.coverageModels.currentMeasureIndex}" 
 	change="model.changeCoverageMeasure(selectedIndex)"	

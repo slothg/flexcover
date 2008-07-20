@@ -41,15 +41,10 @@ package tests.com.allurent.coverage.view.model
         
 		override public function setUp():void
 		{
-			model = new CoverageViewerPM(Controller.instance, 
+			model = new CoverageViewerPM(new Controller(new OneTimeIntervalStub()), 
 			                             new OneTimeIntervalStub());
 		}
-		
-        override public function tearDown():void
-        {
-            Controller.resetForTesting();           
-        }
-        
+
         public function testInitializeCoverageManager():void
         {
         	assertNull("expected no coverageModels", model.coverageModels);
@@ -81,7 +76,7 @@ package tests.com.allurent.coverage.view.model
         
         public function testHandleInvokeEvent():void
         {
-            model = new CoverageViewerPM(Controller.instance, 
+            model = new CoverageViewerPM(new Controller(new OneTimeIntervalStub()), 
                                          new EmptyOneTimeIntervalStub());        	
         	  	
         	var event:InvokeEvent = new InvokeEvent(InvokeEvent.INVOKE);
@@ -91,7 +86,7 @@ package tests.com.allurent.coverage.view.model
         
         public function testHandleDragDrop():void
         {
-            model = new CoverageViewerPM(Controller.instance, 
+            model = new CoverageViewerPM(new Controller(new OneTimeIntervalStub()), 
                                          new EmptyOneTimeIntervalStub());         	
         	
             var event:InvokeEvent = new InvokeEvent(InvokeEvent.INVOKE);
