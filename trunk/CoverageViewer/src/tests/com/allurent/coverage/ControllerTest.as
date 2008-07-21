@@ -27,6 +27,8 @@ package tests.com.allurent.coverage
 	
 	import flexunit.framework.EventfulTestCase;
 	
+	import mx.formatters.NumberFormatter;
+	
 	import tests.com.adobe.ac.util.EmptyOneTimeIntervalStub;
 	import tests.com.adobe.ac.util.OneTimeIntervalStub;
 	
@@ -43,7 +45,7 @@ package tests.com.allurent.coverage
         {
         	assertFalse("expected no recording", controller.isRecording);
         }
-        
+ 
         public function testStartRecording():void
         {
         	expectEvent(controller, CoverageEvent.RECORDING_START);
