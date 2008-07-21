@@ -22,7 +22,6 @@
  */
 package com.allurent.coverage.model
 {
-	import com.allurent.coverage.model.search.AbstractSearch;
 	import com.allurent.coverage.model.search.ClassSearch;
 	import com.allurent.coverage.model.search.ISearchable;
 	import com.allurent.coverage.model.search.PackageSearch;

@@ -21,20 +21,27 @@
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
  * OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  -->
-<mx:Canvas 
+<mx:VBox 
 	xmlns:mx="http://www.adobe.com/2006/mxml" 
-	width="400" height="300">
+	width="100%" 
+	height="100%" 
+	horizontalAlign="center" 
+	verticalAlign="middle">
 	
 	<mx:Script>
 		<![CDATA[
 			[Bindable]
-			public var message:String = "Initializing...";
+			public var header:String = "Initializing...";
+            [Bindable]
+            public var message:String = "";
 		]]>
 	</mx:Script>
 	
 	<mx:Label 
-		text="{message}" 
-		fontSize="18" 
-		verticalCenter="0" 
-		horizontalCenter="0"/>
-</mx:Canvas>
+		text="{header}" 
+		fontSize="18" />
+    <mx:Label 
+        text="{message}" 
+        fontSize="10" />
+        		
+</mx:VBox>

@@ -41,6 +41,7 @@ package com.allurent.coverage
     import flash.net.LocalConnection;
     
     import mx.controls.Alert;
+    import mx.formatters.NumberFormatter;
     
     /** This event is dispatched when the coverage model is updated with new metadata. */
     [Event(name="coverageModelChange",
@@ -74,7 +75,9 @@ package com.allurent.coverage
         public var isCoverageDataCleared:Boolean;        
         [Bindable]
         public var currentRecording:String;
-                        
+        [Bindable]
+        public var currentStatusMessage:String;
+                          
         /**
          * Flag indicating that application should exit when instrumented app is done.
          * and all pending data has been written.
@@ -105,6 +108,7 @@ package com.allurent.coverage
         	project = new ProjectModel();
         	coverageModel = new CoverageModel();
         	currentRecording = "";
+        	currentStatusMessage = "";
         	isCoverageDataCleared = true;
         	constrainToModel = true;
         	coverageElementsContainer = new Array()
@@ -224,7 +228,27 @@ package com.allurent.coverage
 	        this.isRecording = false;
 	        currentRecording = "";
 	        timer.clear();
-	        dispatchEvent(new CoverageEvent(CoverageEvent.RECORDING_END));        	
+	        createStatusMessage();
+	        dispatchEvent(new CoverageEvent(CoverageEvent.RECORDING_END));
+        }
+        
+        private function createStatusMessage():void
+        {
+        	var numberOfElements:int = coverageElementsContainer.length;
+        	var formatter:NumberFormatter = new NumberFormatter();
+        	var formattedNumber:String = formatter.format(numberOfElements);
+            
+            var timeMessage:String;
+        	var expectedSeconds:Number = (numberOfElements / 220000 * 15) + 1;
+        	if(expectedSeconds < 60)
+        	{
+        		timeMessage =  "~" + expectedSeconds.toFixed(1) + " seconds.";
+        	}
+        	else
+        	{
+        		timeMessage =  "~" + (expectedSeconds / 60).toFixed(0) + " minutes.";
+        	}
+        	currentStatusMessage = formattedNumber + " elements. " + timeMessage;
         }
         
         private function handleRecordingTimeout():void
@@ -249,6 +273,7 @@ package com.allurent.coverage
             }        	
         	
         	coverageElementsContainer = new Array();
+        	currentStatusMessage = "";
         	dispatchEvent(new CoverageEvent(CoverageEvent.PARSING_END));
         }
         

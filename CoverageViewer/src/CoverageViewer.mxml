@@ -23,15 +23,16 @@
  -->
 <mx:WindowedApplication 
 	xmlns:mx="http://www.adobe.com/2006/mxml" 
-	layout="absolute"
-    width="950" height="700"
-    xmlns:view="com.allurent.coverage.view.*" 
+	xmlns:view="com.allurent.coverage.view.*" 
+	layout="absolute" 
+    width="950" height="700"  
     preinitialize="preinitializeApplication()"
     applicationComplete="initializeApplication()"
     close="coverageViewerPM.onClose()"
     nativeDragEnter="handleDragIn(event)"
     nativeDragOver="handleDragIn(event)"
-    nativeDragDrop="handleDragDrop(event)">
+    nativeDragDrop="handleDragDrop(event)" 
+    viewSourceURL="srcview/index.html">
     
     <!-- Main CoverageViewer MXML Application View -->
     
@@ -138,6 +139,7 @@
 		id="messageOverlayView"  
 		verticalCenter="0" 
 		horizontalCenter="0" 
+		message="{coverageViewerPM.controller.currentStatusMessage}" 
 		visible="{coverageViewerPM.showMessageOverlay}" />
-			
+				
 </mx:WindowedApplication>
