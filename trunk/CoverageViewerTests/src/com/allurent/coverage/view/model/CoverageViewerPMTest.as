@@ -20,20 +20,18 @@
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
  * OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package tests.com.allurent.coverage.view.model
+package com.allurent.coverage.view.model
 {
+	import com.adobe.ac.util.EmptyOneTimeIntervalStub;
+	import com.adobe.ac.util.OneTimeIntervalStub;
 	import com.allurent.coverage.Controller;
+	import com.allurent.coverage.CoverageModelData;
 	import com.allurent.coverage.event.CoverageEvent;
-	import com.allurent.coverage.view.model.CoverageViewerPM;
 	
 	import flash.events.InvokeEvent;
 	import flash.filesystem.File;
 	
 	import flexunit.framework.EventfulTestCase;
-	
-	import tests.com.adobe.ac.util.EmptyOneTimeIntervalStub;
-	import tests.com.adobe.ac.util.OneTimeIntervalStub;
-	import tests.com.allurent.coverage.CoverageModelData;
 
 	public class CoverageViewerPMTest extends EventfulTestCase
 	{

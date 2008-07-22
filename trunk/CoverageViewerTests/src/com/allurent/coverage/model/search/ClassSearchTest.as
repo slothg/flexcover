@@ -20,15 +20,13 @@
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
  * OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package tests.com.allurent.coverage.model.search
+package com.allurent.coverage.model.search
 {
+	import com.allurent.coverage.CoverageModelData;
 	import com.allurent.coverage.model.CoverageModel;
 	import com.allurent.coverage.model.CoverageModelManager;
-	import com.allurent.coverage.model.search.ClassSearch;
 	
 	import flexunit.framework.TestCase;
-	
-	import tests.com.allurent.coverage.CoverageModelData;
 	
 	public class ClassSearchTest extends TestCase
 	{

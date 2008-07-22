@@ -30,9 +30,6 @@
 	
 	<mx:Script>
 		<![CDATA[
-			import tests.AllTests;
-			import flexunit.framework.TestSuite;	
-
 			private function onCreationComplete():void
 			{		
  				testRunner.test = new AllTests();
