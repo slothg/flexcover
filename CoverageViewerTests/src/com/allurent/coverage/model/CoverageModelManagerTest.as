@@ -20,17 +20,14 @@
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
  * OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package tests.com.allurent.coverage.model
+package com.allurent.coverage.model
 {
-	import com.allurent.coverage.model.CoverageModelManager;
+	import com.allurent.coverage.CoverageModelData;
 	import com.allurent.coverage.model.search.ISearchable;
-	import com.allurent.coverage.view.model.BrowserPM;
 	
 	import flexunit.framework.EventfulTestCase;
 	
 	import mx.events.IndexChangedEvent;
-	
-	import tests.com.allurent.coverage.CoverageModelData;
 
 	public class CoverageModelManagerTest extends EventfulTestCase
 	{

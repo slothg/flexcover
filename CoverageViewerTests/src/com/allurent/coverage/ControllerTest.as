@@ -20,17 +20,13 @@
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
  * OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package tests.com.allurent.coverage
+package com.allurent.coverage
 {
-	import com.allurent.coverage.Controller;
+	import com.adobe.ac.util.EmptyOneTimeIntervalStub;
+	import com.adobe.ac.util.OneTimeIntervalStub;
 	import com.allurent.coverage.event.CoverageEvent;
 	
 	import flexunit.framework.EventfulTestCase;
-	
-	import mx.formatters.NumberFormatter;
-	
-	import tests.com.adobe.ac.util.EmptyOneTimeIntervalStub;
-	import tests.com.adobe.ac.util.OneTimeIntervalStub;
 	
 	public class ControllerTest extends EventfulTestCase
 	{

@@ -1,14 +1,12 @@
-package tests.com.allurent.coverage.view.model
+package com.allurent.coverage.view.model
 {
+	import com.adobe.ac.util.OneTimeIntervalStub;
 	import com.allurent.coverage.Controller;
 	import com.allurent.coverage.event.HeavyOperationEvent;
-	import com.allurent.coverage.view.model.HeaderPM;
 	
 	import flash.filesystem.File;
 	
 	import flexunit.framework.EventfulTestCase;
-	
-	import tests.com.adobe.ac.util.OneTimeIntervalStub;
 
 	public class HeaderPMTest extends EventfulTestCase
 	{

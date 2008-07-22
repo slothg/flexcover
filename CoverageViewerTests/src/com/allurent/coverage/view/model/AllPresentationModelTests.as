@@ -20,21 +20,19 @@
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
  * OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package tests.com.allurent.coverage.model
+package com.allurent.coverage.view.model
 {
 	import flexunit.framework.TestSuite;
 	
-	import tests.com.allurent.coverage.model.search.ClassSearchTest;
-	import tests.com.allurent.coverage.model.search.PackageSearchTest;
-	
-	public class AllDomainModelTests extends TestSuite
+	public class AllPresentationModelTests extends TestSuite
 	{
-		public function AllDomainModelTests()
+		public function AllPresentationModelTests()
 		{
-			addTest(new TestSuite(PackageSearchTest));
-			addTest(new TestSuite(ClassSearchTest));
-			addTest(new TestSuite(CoverageModelManagerTest));
+			addTest(new TestSuite(BrowserPMTest));
+			addTest(new TestSuite(ContentPMTest));
+			addTest(new TestSuite(CoverageViewerPMTest));
+			addTest(new TestSuite(HeaderPMTest));
+			addTest(new TestSuite(SearchPMTest));
 		}
-
 	}
 }

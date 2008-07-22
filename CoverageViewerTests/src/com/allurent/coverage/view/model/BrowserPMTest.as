@@ -20,14 +20,12 @@
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
  * OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package tests.com.allurent.coverage.view.model
+package com.allurent.coverage.view.model
 {
+	import com.allurent.coverage.CoverageModelData;
 	import com.allurent.coverage.model.CoverageModelManager;
-	import com.allurent.coverage.view.model.BrowserPM;
 	
 	import flexunit.framework.TestCase;
-	
-	import tests.com.allurent.coverage.CoverageModelData;
     
 	public class BrowserPMTest extends TestCase
 	{

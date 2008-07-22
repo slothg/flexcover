@@ -20,7 +20,7 @@
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
  * OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package tests.com.allurent.coverage
+package com.allurent.coverage
 {
 	import com.allurent.coverage.model.ClassModel;
 	import com.allurent.coverage.model.CoverageModel;
@@ -30,7 +30,6 @@ package tests.com.allurent.coverage
 	import com.allurent.coverage.model.SegmentModel;
 	
 	import mx.collections.ArrayCollection;
-	import mx.collections.IHierarchicalCollectionView;
 	import mx.collections.IList;
 	
 	public class CoverageModelData

@@ -20,10 +20,8 @@
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
  * OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package tests.com.adobe.ac.util
+package com.adobe.ac.util
 {
-	import com.adobe.ac.util.IOneTimeInterval;
-	
 	public class OneTimeIntervalStub implements IOneTimeInterval
 	{
         public function delay( time : Number, 
