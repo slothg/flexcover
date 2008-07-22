@@ -290,6 +290,7 @@ package com.allurent.coverage
         {
             if (coverageOutputFile != null)
             {
+                applyCoverageData();
                 writeReport(coverageOutputFile);
             }
             if (autoExit)
@@ -306,6 +307,7 @@ package com.allurent.coverage
         {
             if (coverageOutputFile != null)
             {
+                applyCoverageData();
                 writeReport(coverageOutputFile);
             }
             NativeApplication.nativeApplication.exit();
@@ -355,6 +357,7 @@ package com.allurent.coverage
             var out:FileStream = new FileStream();
             out.open(f, FileMode.WRITE);
             out.writeUTFBytes(coverageModel.toXML().toXMLString());
+            out.writeUTFBytes("\n");
             out.close();
         }
         
