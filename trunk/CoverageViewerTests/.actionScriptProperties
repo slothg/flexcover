@@ -10,7 +10,9 @@
 </libraryPath>
 <sourceAttachmentPath/>
 </compiler>
-<applications/>
+<applications>
+<application path="TestRunner.mxml"/>
+</applications>
 <modules/>
 <buildCSSFiles/>
 </actionScriptProperties>
