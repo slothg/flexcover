@@ -4,6 +4,7 @@
     <property name="flex.mxmlc.options" value="-coverage=false"/>
     <property name="testlib.dir" value="testlib"/>
     <property name="runtest.dir" location="stage"/>
+    <property name="project.dir" location="."/>
 
     <!-- Common properties and targets -->
     <import file="../build-imports.xml"/>
@@ -39,6 +40,9 @@
             <filesmatch file1="stage/log.out" file2="baseline/log.out"/>
         </condition>
         <fail message="Instrumentation report failed to match baseline!" unless="InstrumentationTest.log.ok"/>
+
+        <replace file="testlib/bin/testlib.cvm" token="${project.dir}" value="[project.dir]"/>
+        <replace file="testlib/bin/testlib.cvm" token="\" value="/"/>
         <condition property="InstrumentationTest.cvm.ok">
             <filesmatch file1="testlib/bin/testlib.cvm" file2="baseline/testlib.cvm"/>
         </condition>
