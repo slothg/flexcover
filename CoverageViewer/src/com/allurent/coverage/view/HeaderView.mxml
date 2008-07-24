@@ -132,17 +132,17 @@
             private function openInput():void
             {
                 var file:File = new File();
-                file.addEventListener(Event.SELECT, handleInputFileSelected);
+                file.addEventListener(FileListEvent.SELECT_MULTIPLE, handleInputFilesSelected);
                 var filter0:FileFilter = new FileFilter("All Files", "*.*");
                 var filter1:FileFilter = new FileFilter("Coverage Metadata (.cvm)", "*.cvm");
                 var filter2:FileFilter = new FileFilter("Coverage Report (.cvr)", "*.cvr");
-                file.browseForOpen("Open File", [filter0, filter1, filter2]);
+                file.browseForOpenMultiple("Open File(s)", [filter0, filter1, filter2]);
             }
             
-            private function handleInputFileSelected(event:Event):void
-            {
-                model.inputFileSelected(File(event.target));
-            }            
+            private function handleInputFilesSelected(e:FileListEvent):void
+            {             
+                model.inputFilesSelected(e.files);
+            }
             
             private function saveOutput():void
             {
@@ -178,7 +178,7 @@
 		change="search(searchInput.text);" />
 	
     <mx:Button 
-    	label="Load File..." 
+    	label="Load Files..." 
     	enabled="{!model.controller.isRecording}" 
     	click="openInput()"/>
     <mx:Button 

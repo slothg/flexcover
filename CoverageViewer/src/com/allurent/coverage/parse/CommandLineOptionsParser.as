@@ -59,40 +59,7 @@ package com.allurent.coverage.parse
                 }
                 else if (option != null)
                 {
-                    // All non-option strings are treated as arguments to be processed in light
-                    // of the last option string that was seen.  There's no argument
-                    // that is not associated with some option.
-                    //
-                    switch(option)
-                    {
-                        case "output":
-                            controller.coverageOutputFile = new File(arg);
-                            controller.autoExit = true;
-                            break;
-                            
-                        case "coverage-metadata":
-                            controller.loadMetadata(new File(arg));
-                            break;
-                            
-                        case "trace-log":
-                            controller.loadTraceLog(new File(arg));
-                            break;
-                            
-                        case "source-path":
-                            controller.project.sourcePath.addItem(new File(arg));
-                            break;
-                            
-                        case "coverage-output":
-                            // TODO: set up output filename for coverage data.
-                            break;
-                            
-                        case "connection-name":
-                            connectionName = arg;
-                            break;
-                        
-                        default:
-                            Alert.show("Unknown option: " + option);
-                    }
+                    processOption(option, arg);
                     option = null;
                 }
                 else
@@ -104,7 +71,12 @@ package com.allurent.coverage.parse
 		        	parser.parse(new File(arg));
                 }
             }
-            
+
+            if (option != null)
+            {
+                processOption(option, null);
+            }            
+
             // After processing all options, load the models up from the project
             // and display the top-level report view.
             dispatchCoverageModelChange(controller.coverageModel);
@@ -112,6 +84,48 @@ package com.allurent.coverage.parse
             controller.attachConnection(connectionName);
 		}
         
+        private function processOption(option:String, arg:String):void
+        {
+            // All non-option strings are treated as arguments to be processed in light
+            // of the last option string that was seen.  There's no argument
+            // that is not associated with some option.
+            //
+            switch(option)
+            {
+                case "output":
+                    controller.coverageOutputFile = new File(arg);
+                    controller.autoExit = true;
+                    break;
+                    
+                case "coverage-metadata":
+                    controller.loadMetadata(new File(arg));
+                    break;
+                    
+                case "trace-log":
+                    controller.loadTraceLog(new File(arg));
+                    break;
+                    
+                case "source-path":
+                    controller.project.sourcePath.addItem(new File(arg));
+                    break;
+                    
+                case "coverage-output":
+                    // TODO: set up output filename for coverage data.
+                    break;
+                    
+                case "connection-name":
+                    connectionName = arg;
+                    break;
+                    
+                case "quit":
+                    controller.close();
+                    break;
+                
+                default:
+                    Alert.show("Unknown option: " + option);
+            }
+        }
+
         private function dispatchCoverageModelChange(model:CoverageModel):void
         {
             dispatchEvent(new CoverageEvent(

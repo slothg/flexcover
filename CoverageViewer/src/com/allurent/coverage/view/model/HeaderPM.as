@@ -41,10 +41,10 @@ package com.allurent.coverage.view.model
             return (enabled && !isCoverageDataCleared);
         }
         
-        public function inputFileSelected(file:File):void
+        public function inputFilesSelected(files:Array):void
         {
             dispatchEvent(new HeavyOperationEvent(processFileArgument, 
-						                          [file]));
+						                          [files]));
         }
         
         public function outputFileSelected(file:File):void
@@ -52,13 +52,16 @@ package com.allurent.coverage.view.model
             controller.writeReport(file);
         }
         
-        public function processFileArgument(file:File):void
+        public function processFileArgument(files:Array):void
         {
             var parser:FileParser = new FileParser(controller);
             parser.addEventListener(
                             CoverageEvent.COVERAGE_MODEL_CHANGE, 
                             dispatchEvent);
-            parser.parse(file);
+            for each (var f:File in files)
+            {
+                parser.parse(f);
+            }
         }
 	}
 }
