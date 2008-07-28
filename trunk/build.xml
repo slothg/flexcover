@@ -3,7 +3,7 @@
     <!-- ======================================================== -->
     <!-- Properties relating to distribution creation             -->
     <!-- ======================================================== -->
-    <property name="version" value="0.50"/>
+    <property name="version" value="0.60"/>
     <property name="dist.dir" value="flexcover-${version}"/>
 
     <import file="buildtools/build-master-targets.xml" />

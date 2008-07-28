@@ -8,6 +8,7 @@
         import flash.filesystem.FileStream;
 
         import pkg.InstrumentedClass;
+        import pkg.topThis;
         import com.allurent.coverage.runtime.CoverageManager;
 
         private function initializeApplication():void
@@ -34,6 +35,7 @@
             ic.branchTest(3, 0);
             ic.branchTest(4, 2);
             ic.branchTest(2, 3);
+            topThis("foobar");
             coverage("End test");
 
             var logResult:String = InstrumentedClass.log.join("\n") + "\n";

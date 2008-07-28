@@ -426,4 +426,9 @@ pkg:InstrumentedClass/branchTest@94
 pkg:InstrumentedClass/branchTest@98
 after do
 pkg:InstrumentedClass/branchTest@99
+pkg:topThis@3
+pkg:topThis@+3.22
+pkg:topThis@5
+topThis: foobar
+pkg:topThis@6
 End test

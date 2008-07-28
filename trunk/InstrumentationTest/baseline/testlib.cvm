@@ -89,3 +89,7 @@ pkg:InstrumentedClass/branchTest@-97.29
 pkg:InstrumentedClass/branchTest@+97.29
 pkg:InstrumentedClass/branchTest@98
 pkg:InstrumentedClass/branchTest@99
+pkg:topThis@3;[project.dir]/testlib/src/pkg/topThis.as
+pkg:topThis@+3.22
+pkg:topThis@5
+pkg:topThis@6

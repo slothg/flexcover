@@ -47,7 +47,7 @@ package com.allurent.coverage.model
         /**
          * Construct a CoverageElement from an instrumentation or metadata string of this form:
          * 
-         *    <package> ":" <class> "/" <function> "@" [ <line> | ("+" | "-") <line> ":" <column> ]
+         *    [ <package> ":" ] [ <class> "/" ] <function> "@" [ <line> | ("+" | "-") <line> ":" <column> ]
          * 
          * Note that <function> may itself contain slashes for getter and setter suffixes of
          * "/get" and "/set" respectively.
@@ -66,35 +66,53 @@ package com.allurent.coverage.model
                 pathname = s.substring(firstSemi+1);
                 s = s.substring(0, firstSemi);
             }
-            
-            var firstSlash:int = s.indexOf("/");
-            if (firstSlash < 0)
-            {
-                return null;
-            }
-            else
-            {
-                var fullClass:String = s.substring(0, firstSlash);
-                var colon:int = fullClass.indexOf(":");
-                if (colon < 0)
-                { 
-                    className = fullClass;
-                    packageName = "";
-                }
-                else
-                {
-                    packageName = fullClass.substring(0, colon);
-                    className = fullClass.substring(colon+1);
-                }
-            }
+
+            // Find the location of the "@" token.  This is a mandatory element and must be present.            
             var lastAt:int = s.lastIndexOf("@");
             if (lastAt < 0)
             {
                 return null;
             }
 
+            var firstSlash:int = s.indexOf("/");
+            var colon:int;
+            if (firstSlash < 0)
+            {
+                // In this case, there is no class name because it's a top-level function.
+                // Use the function as a pseudo-class name for reporting purposes.
+
+                var qualifiedFunction:String = s.substring(0, lastAt);
+                colon = qualifiedFunction.indexOf(":");
+                if (colon < 0)
+                { 
+                    functionName = qualifiedFunction;
+                    packageName = "";
+                }
+                else
+                {
+                    packageName = qualifiedFunction.substring(0, colon);
+                    functionName = qualifiedFunction.substring(colon+1);
+                }
+                className = functionName;
+            }
+            else
+            {
+                var qualifiedClass:String = s.substring(0, firstSlash);
+                colon = qualifiedClass.indexOf(":");
+                if (colon < 0)
+                { 
+                    className = qualifiedClass;
+                    packageName = "";
+                }
+                else
+                {
+                    packageName = qualifiedClass.substring(0, colon);
+                    className = qualifiedClass.substring(colon+1);
+                }
+                functionName = s.substring(firstSlash+1, lastAt);
+            }
+
             var location:String = s.substring(lastAt+1); 
-            functionName = s.substring(firstSlash+1, lastAt);
 
             // For some reason this gets stuck in by the compiler.
             if (functionName.substring(0, 8) == "private:")
