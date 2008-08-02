@@ -64,7 +64,11 @@ package com.allurent.coverage.view.model
 		
 		public function handleContentChange(event:BrowserItemEvent):void
 		{
-        	if(event.segmentModel is CoverageModel) return;
+        	if(event.segmentModel is CoverageModel)
+        	{
+        		currentIndex = EMPTY_VIEW;
+        		return;
+        	}
         	
         	reset();
             if (event.segmentModel is ClassModel)
