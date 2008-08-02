@@ -121,6 +121,9 @@ package com.allurent.coverage.model
             model.changeCoverageMeasure(CoverageModelManager.LINE_MEASURE);
             var search:ISearchable = model.getCurrentSearch(true);
             assertNotNull("expected linePackageSearch", search);
+            
+            var search2:ISearchable = model.getCurrentSearch(true);
+            assertEquals("expected same", search, search2);
         }
         
         public function testForLineClassSearch():void
@@ -128,6 +131,9 @@ package com.allurent.coverage.model
             model.changeCoverageMeasure(CoverageModelManager.LINE_MEASURE);
             var search:ISearchable = model.getCurrentSearch(false);
             assertNotNull("expected lineClassSearch", search);
+            
+            var search2:ISearchable = model.getCurrentSearch(false);
+            assertEquals("expected same", search, search2);         
         }
 	}
 }

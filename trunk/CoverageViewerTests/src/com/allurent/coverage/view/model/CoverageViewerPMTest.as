@@ -27,6 +27,7 @@ package com.allurent.coverage.view.model
 	import com.allurent.coverage.Controller;
 	import com.allurent.coverage.CoverageModelData;
 	import com.allurent.coverage.event.CoverageEvent;
+	import com.allurent.coverage.model.CoverageModel;
 	
 	import flash.events.InvokeEvent;
 	import flash.filesystem.File;
@@ -54,6 +55,62 @@ package com.allurent.coverage.view.model
         	model.headerPM.dispatchEvent(event);
         	assertNotNull("expected coverageModels", model.coverageModels);
         }
+        
+        public function testInitializeCoverageManagerWithEmtpyData():void
+        {
+        	var empty:CoverageModel = CoverageModelData.createCoverageModel();
+        	empty.clear();
+            assertNull("expected no coverageModels", model.coverageModels);
+            var event:CoverageEvent = new CoverageEvent(
+                                           CoverageEvent.COVERAGE_MODEL_CHANGE, 
+                                           empty
+                                           );
+            
+            model.headerPM.dispatchEvent(event);
+            assertNull("expected coverageModels", model.coverageModels);
+        }
+        
+        public function testInitializeCoverageManagerWithoutData():void
+        {
+            assertNull("expected no coverageModels", model.coverageModels);
+            var event:CoverageEvent = new CoverageEvent(
+                                           CoverageEvent.COVERAGE_MODEL_CHANGE, 
+                                           null
+                                           );
+            
+            model.headerPM.dispatchEvent(event);
+            assertNull("expected coverageModels", model.coverageModels);
+        }               
+        
+        public function testHandleRecordingEndAndApplyCoverageData():void
+        {
+            var event:CoverageEvent = new CoverageEvent(
+                                           CoverageEvent.RECORDING_END
+                                           );
+            
+            expectEvents(model.controller, 
+                         CoverageEvent.PARSING_START, 
+                         CoverageEvent.PARSING_END);
+            
+            model.controller.dispatchEvent(event);
+            
+            assertExpectedEventsOccurred();
+            assertFalse("expected showMessageOverlay", model.showMessageOverlay);
+        }
+        
+        public function testShowMessageOverlayOnHandlingRecordingEnd():void
+        {
+            model = new CoverageViewerPM(new Controller(new OneTimeIntervalStub()), 
+                                         new EmptyOneTimeIntervalStub());        	
+        	
+            var event:CoverageEvent = new CoverageEvent(
+                                           CoverageEvent.RECORDING_END
+                                           );
+
+            model.controller.dispatchEvent(event);
+
+            assertTrue("expected showMessageOverlay", model.showMessageOverlay);
+        }        
 		
 		public function testIfHeaderGetsEnabled():void
 		{
@@ -82,7 +139,7 @@ package com.allurent.coverage.view.model
         	assertTrue("expected showMessageOverlay", model.showMessageOverlay);
         }
         
-        public function testHandleDragDrop():void
+        public function testIfMessageOverlayIsShownOnFileDragDrop():void
         {
             model = new CoverageViewerPM(new Controller(new OneTimeIntervalStub()), 
                                          new EmptyOneTimeIntervalStub());         	
@@ -90,6 +147,28 @@ package com.allurent.coverage.view.model
             var event:InvokeEvent = new InvokeEvent(InvokeEvent.INVOKE);
             model.handleDragDrop(new Array(new File()));
             assertTrue("expected showMessageOverlay", model.showMessageOverlay);
+        }
+        
+        public function testIfParsingStartsOnFileDragDrop():void
+        {
+            model = new CoverageViewerPM(new Controller(new OneTimeIntervalStub()), 
+                                         new OneTimeIntervalStub());           
+            
+            var event:InvokeEvent = new InvokeEvent(InvokeEvent.INVOKE);
+            
+            //in the real world we would drop one or more File types.
+            //Here, we test if the expected error has been thrown on the 
+            //underlying parser. This tells us that the parser has been invoked.          
+            var dropSource:Array = new Array(null);
+            try
+            {
+            	model.handleDragDrop(dropSource);
+            	fail("parser is expected to throw a runtime for a null argument");
+            }
+            catch(error:ArgumentError)
+            {
+            	
+            }    
         }
 	}
 }

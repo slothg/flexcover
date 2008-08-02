@@ -25,6 +25,7 @@ package com.allurent.coverage.view.model
 	import com.allurent.coverage.CoverageModelData;
 	import com.allurent.coverage.event.BrowserItemEvent;
 	import com.allurent.coverage.model.ClassModel;
+	import com.allurent.coverage.model.CoverageModel;
 	import com.allurent.coverage.model.FunctionModel;
 	import com.allurent.coverage.model.PackageModel;
 	import com.allurent.coverage.model.ProjectModel;
@@ -48,6 +49,23 @@ package com.allurent.coverage.view.model
 							ContentPM.EMPTY_VIEW, 
 							model.currentIndex );
 		}
+		
+        public function testDoNothingOnCoverageModelEvent():void
+        {
+            var segmentModel:CoverageModel = new CoverageModel();
+            var event:BrowserItemEvent = new BrowserItemEvent(segmentModel);
+            
+            model.handleContentChange(event);
+            
+            //expected initial state
+            testDisplayEmtpyViewByDefault();
+        }
+        
+        public function testDisplayNothingOnCoverageModelEvent():void
+        {
+        	testDisplaySourceCodeViewOnClassModelEvent();        	
+            testDoNothingOnCoverageModelEvent();
+        }
 		
 		public function testDisplaySourceCodeViewOnClassModelEvent():void
 		{
