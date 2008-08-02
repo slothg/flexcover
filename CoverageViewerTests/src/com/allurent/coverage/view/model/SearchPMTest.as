@@ -45,6 +45,13 @@ package com.allurent.coverage.view.model
 										model.searchForPackage);											
 		}
 		
+        public function testShowDetails():void
+        {
+        	assertEquals("showDetails", model.currentSearch.showDetail, model.showDetail);
+            model.showDetail = false;
+            assertEquals("showDetails", model.currentSearch.showDetail, model.showDetail);                         
+        }
+		
         public function testToggleSearchTypesAndTestSearchForPackage():void
         {
         	model.changeSearchBy(SearchPM.SEARCH_BY_CLASS);

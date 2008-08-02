@@ -20,9 +20,16 @@ package com.allurent.coverage.view.model
 		public function testInputFileSelected():void
 		{
 			expectEvent(model, HeavyOperationEvent.EVENT_NAME);
-			model.inputFileSelected(new File());
+			model.inputFilesSelected([new File(), new File()]);
 			assertExpectedEventsOccurred();
 		}
+		
+        public function testClearCoverageData():void
+        {
+            model.controller.isCoverageDataCleared = false;
+            model.clearCoverageData();
+            assertTrue("expected controller to be cleared", model.controller.isCoverageDataCleared);
+        }
 		
 		public function testCanClearCoverageData():void
 		{
