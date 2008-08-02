@@ -87,14 +87,7 @@ package com.allurent.coverage.view.model
             changeSearchBy(SEARCH_BY_PACKAGE);
             search(currentSearchInput);
 		}
-		
-		public function updateSearchType():void
-		{
-			if(!initialized) return;
-			currentSearch = coverageModels.getCurrentSearch(searchForPackage);			
-			getCurrentSearchInput();
-		}
-		
+				
 		public function changeSearchBy(searchByInput:Object):void
 		{
 			var searchBy : String = String(searchByInput);
@@ -108,6 +101,13 @@ package com.allurent.coverage.view.model
 			currentSearchInput = currentSearch.search(searchInput);
 			return currentSearchInput;
 		}
+		
+        private function updateSearchType():void
+        {
+            if(!initialized) return;
+            currentSearch = coverageModels.getCurrentSearch(searchForPackage);          
+            getCurrentSearchInput();
+        }		
 		
 		private function createSearchByProvider():void
 		{

@@ -40,16 +40,20 @@ package com.allurent.coverage.parse
 			this.controller = controller;
 		}
 		
-        public function parse(f:File):void
+        public function parse(file:File):void
         {
-            if (f.name.match(/\.cvm$/))
+        	if(file == null)
+        	{
+        		throw new ArgumentError("Cannot accept null");
+        	}
+            if (file.name.match(/\.cvm$/))
             {
-                controller.loadMetadata(f);
+                controller.loadMetadata(file);
                 dispatchCoverageModelChange(controller.coverageModel);
             }
-            else if (f.name.match(/\.cvr/))
+            else if (file.name.match(/\.cvr/))
             {
-                controller.loadCoverageReport(f);
+                controller.loadCoverageReport(file);
                 dispatchCoverageModelChange(controller.coverageModel);
             }
         }

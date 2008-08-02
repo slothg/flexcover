@@ -108,10 +108,7 @@ package com.allurent.coverage.view.model
 	    
         public function handleDragDrop(files:Array):void
         {
-            for each (var f:File in files)
-	        {
-	        	performHeavyOperation(headerPM.processFileArgument, [f]);
-	        }
+	        performHeavyOperation(headerPM.processFileArgument, [files]);
         }
         
         public function hasValidDragInFormat(e:NativeDragEvent):Boolean
