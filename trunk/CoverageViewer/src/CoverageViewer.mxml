@@ -51,7 +51,7 @@
             
             private function preinitializeApplication():void
             {
-            	var controller:Controller = new Controller(new OneTimeInterval());
+            	var controller:Controller = new Controller();
                 coverageViewerPM = new CoverageViewerPM(controller, 
                                                         new OneTimeInterval());                 	
             }
@@ -123,7 +123,7 @@
     	top="32" 
         text="Recording" 
         fontWeight="bold" 
-    	visible="{coverageViewerPM.controller.isRecording}" />
+    	visible="{coverageViewerPM.controller.recorder.isRecording}" />
     <mx:Canvas 
     	width="100%" 
     	horizontalScrollPolicy="off">
@@ -131,8 +131,8 @@
 	        left="230" 
 	        top="32" 
 	        fontWeight="bold" 
-	        text="{coverageViewerPM.controller.currentRecording}" 
-	        visible="{coverageViewerPM.controller.isRecording}" />
+	        text="{coverageViewerPM.controller.recorder.currentRecording}" 
+	        visible="{coverageViewerPM.controller.recorder.isRecording}" />
     </mx:Canvas>
 	 
 	<view:MessageOverlay 
