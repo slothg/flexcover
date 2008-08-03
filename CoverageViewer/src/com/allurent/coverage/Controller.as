@@ -22,14 +22,13 @@
  */
 package com.allurent.coverage
 {
-    import com.adobe.ac.util.IOneTimeInterval;
+    import com.adobe.ac.util.OneTimeInterval;
     import com.allurent.coverage.event.CoverageEvent;
-    import com.allurent.coverage.model.CoverageElement;
-    import com.allurent.coverage.model.CoverageElementContainer;
     import com.allurent.coverage.model.CoverageModel;
-    import com.allurent.coverage.model.ElementModel;
     import com.allurent.coverage.model.ProjectModel;
+    import com.allurent.coverage.model.Recorder;
     import com.allurent.coverage.parse.CoverageReportParser;
+    import com.allurent.coverage.parse.FileParser;
     import com.allurent.coverage.parse.MetadataParser;
     import com.allurent.coverage.parse.TraceLogParser;
     
@@ -41,23 +40,10 @@ package com.allurent.coverage
     import flash.net.LocalConnection;
     
     import mx.controls.Alert;
-    import mx.formatters.NumberFormatter;
     
     /** This event is dispatched when the coverage model is updated with new metadata. */
     [Event(name="coverageModelChange",
-            type="com.allurent.coverage.event.CoverageEvent")]
-    /** Recording of coverage data started. */
-    [Event(name="recordingStart",
-            type="com.allurent.coverage.event.CoverageEvent")]
-    /** Recording of coverage data ended. */
-    [Event(name="recordingEnd",
-            type="com.allurent.coverage.event.CoverageEvent")]
-    /** Applying recorded coverage data to coverage model starts. */
-    [Event(name="parsingStart",
-            type="com.allurent.coverage.event.CoverageEvent")]
-    /** Applying recorded coverage data to coverage model ends. */
-    [Event(name="parsingEnd",
-            type="com.allurent.coverage.event.CoverageEvent")]                            
+            type="com.allurent.coverage.event.CoverageEvent")]                       
     /**
      * Overall Controller for actions in the Coverage Viewer application. 
      * 
@@ -66,52 +52,51 @@ package com.allurent.coverage
     {
         [Bindable]
         public var project:ProjectModel;
-        
+        [Bindable]
+        public var recorder:Recorder;
         [Bindable]
         public var coverageModel:CoverageModel;
         [Bindable]
-        public var isRecording:Boolean;
+        public var isCoverageDataCleared:Boolean;
+        
         [Bindable]
-        public var isCoverageDataCleared:Boolean;        
-        [Bindable]
-        public var currentRecording:String;
-        [Bindable]
-        public var currentStatusMessage:String;
-                          
+        public var currentStatusMessage:String;        
+                    
         /**
          * Flag indicating that application should exit when instrumented app is done.
          * and all pending data has been written.
          */ 
         public var autoExit:Boolean;
-        
-        /**
-         * Flag indicating that coverage data should only be recorded internally for
-         * coverage elements possessing loaded metadata from compilation.
-         */
-        public var constrainToModel:Boolean;
-        
+                
         /**
          * Output file to which coverage data should be written when application is done.
          */
         public var coverageOutputFile:File;
-        
-        private var coverageElementsContainer:Array;
-        
+                
         // LocalConnection open for receiving coverage data from live instrumented apps
-        private var conn:LocalConnection;
+        private var conn:LocalConnection;              
         
-        private var timer:IOneTimeInterval;
-        
-        public function Controller(timer:IOneTimeInterval)
+        public function Controller()
         {
-        	this.timer = timer;
         	project = new ProjectModel();
         	coverageModel = new CoverageModel();
-        	currentRecording = "";
+        	recorder = new Recorder(this, coverageModel, new OneTimeInterval());
+        	recorder.addEventListener(CoverageEvent.RECORDING_END, handleRecorderEvents);
+        	recorder.addEventListener(CoverageEvent.PARSING_END, handleRecorderEvents);
         	currentStatusMessage = "";
-        	isCoverageDataCleared = true;
-        	constrainToModel = true;
-        	coverageElementsContainer = new Array()
+        	isCoverageDataCleared = true;        		
+        }
+                
+        public function processFileArgument(files:Array):void
+        {
+            var parser:FileParser = new FileParser(this);
+            parser.addEventListener(
+                            CoverageEvent.COVERAGE_MODEL_CHANGE, 
+                            dispatchEvent);
+            for each (var f:File in files)
+            {
+                parser.parse(f);
+            }
         }
         
         /**
@@ -188,93 +173,12 @@ package com.allurent.coverage
          */
         public function coverageData(keyMap:Object):void
         {
-        	var isRecording:Boolean = false;
-        	
-            for (var key:String in keyMap)
-            {
-            	isRecording = true;
-                var element:CoverageElement = CoverageElement.fromString(key);
-                if (element != null)
-                {
-                    var count:uint = keyMap[key];
-                    currentRecording = element.packageName + "." + element.className;
-                    
-                    coverageElementsContainer.push(
-                        new CoverageElementContainer(
-                            ElementModel(coverageModel.resolveCoverageElement(element, !constrainToModel)), 
-                            count));                     
-                }
-                timer.delay(4000, handleRecordingTimeout);
-            }
-            
-            if(isRecording && !this.isRecording)
-            {
-            	startCoverageRecording();
-            }
-            else if(!isRecording && this.isRecording)
-            {
-            	endCoverageRecording();
-            }
-        }
-        
-        private function startCoverageRecording():void
-        {
-            dispatchEvent(new CoverageEvent(CoverageEvent.RECORDING_START));
-            this.isRecording = true;        	
-        }
-        
-        private function endCoverageRecording():void
-        {
-	        this.isRecording = false;
-	        currentRecording = "";
-	        timer.clear();
-	        createStatusMessage();
-	        dispatchEvent(new CoverageEvent(CoverageEvent.RECORDING_END));
-        }
-        
-        private function createStatusMessage():void
-        {
-        	var numberOfElements:int = coverageElementsContainer.length;
-        	var formatter:NumberFormatter = new NumberFormatter();
-        	var formattedNumber:String = formatter.format(numberOfElements);
-            
-            var timeMessage:String;
-        	var expectedSeconds:Number = (numberOfElements / 220000 * 15) + 1;
-        	if(expectedSeconds < 60)
-        	{
-        		timeMessage =  "~" + expectedSeconds.toFixed(1) + " seconds.";
-        	}
-        	else
-        	{
-        		timeMessage =  "~" + (expectedSeconds / 60).toFixed(0) + " minutes.";
-        	}
-        	currentStatusMessage = formattedNumber + " elements. " + timeMessage;
-        }
-        
-        private function handleRecordingTimeout():void
-        {
-        	endCoverageRecording();
+            recorder.record(keyMap);
         }
         
         public function applyCoverageData():void
         {
-        	dispatchEvent(new CoverageEvent(CoverageEvent.PARSING_START));        	
-        	var container:Array = coverageElementsContainer;
-        	var numberOfContainers:int = container.length;
-        	for(var i:int; i < numberOfContainers; i++)
-        	{
-        		var item:CoverageElementContainer = CoverageElementContainer(container[i]);
-                coverageModel.addExecutionCount(item.element, item.count);
-        	}
-        	
-            if(numberOfContainers > 0)
-            {
-                isCoverageDataCleared = false;
-            }        	
-        	
-        	coverageElementsContainer = new Array();
-        	currentStatusMessage = "";
-        	dispatchEvent(new CoverageEvent(CoverageEvent.PARSING_END));
+        	recorder.applyCoverageData();
         }
         
         public function clearCoverageData():void
@@ -360,6 +264,11 @@ package com.allurent.coverage
             out.writeUTFBytes("\n");
             out.close();
         }
+        
+        private function handleRecorderEvents(event:CoverageEvent):void
+        {
+            currentStatusMessage = Recorder(event.currentTarget).currentStatusMessage;
+        }        
         
         private function dispatchCoverageModelChangeEvent():void
         {

@@ -43,25 +43,13 @@ package com.allurent.coverage.view.model
         
         public function inputFilesSelected(files:Array):void
         {
-            dispatchEvent(new HeavyOperationEvent(processFileArgument, 
+            dispatchEvent(new HeavyOperationEvent(controller.processFileArgument, 
 						                          [files]));
         }
         
         public function outputFileSelected(file:File):void
         {
             controller.writeReport(file);
-        }
-        
-        public function processFileArgument(files:Array):void
-        {
-            var parser:FileParser = new FileParser(controller);
-            parser.addEventListener(
-                            CoverageEvent.COVERAGE_MODEL_CHANGE, 
-                            dispatchEvent);
-            for each (var f:File in files)
-            {
-                parser.parse(f);
-            }
         }
 	}
 }

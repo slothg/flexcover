@@ -179,7 +179,7 @@
 	
     <mx:Button 
     	label="Load Files..." 
-    	enabled="{!model.controller.isRecording}" 
+    	enabled="{!model.controller.recorder.isRecording}" 
     	click="openInput()"/>
     <mx:Button 
     	label="Save Report..." 

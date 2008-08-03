@@ -92,14 +92,14 @@ package com.allurent.coverage.view.model
 		                                 timer:IOneTimeInterval)
 		{
 			this.controller = controller;
-            controller.addEventListener(CoverageEvent.RECORDING_END, 
-                                        handleRecordingEnd);			
+            controller.recorder.addEventListener(CoverageEvent.RECORDING_END, 
+                                                handleRecordingEnd);			
 			this.timer = timer;			
 			
             headerPM = new HeaderPM(controller);
             headerPM.addEventListener(HeavyOperationEvent.EVENT_NAME, 
                                       handleHeavyOperationEvent);
-            headerPM.addEventListener(CoverageEvent.COVERAGE_MODEL_CHANGE, 
+            controller.addEventListener(CoverageEvent.COVERAGE_MODEL_CHANGE, 
                                       handleCoverageModelChange);
 			
 			browserPM = new BrowserPM();        
@@ -108,7 +108,7 @@ package com.allurent.coverage.view.model
 	    
         public function handleDragDrop(files:Array):void
         {
-	        performHeavyOperation(headerPM.processFileArgument, [files]);
+	        performHeavyOperation(controller.processFileArgument, [files]);
         }
         
         public function hasValidDragInFormat(e:NativeDragEvent):Boolean
