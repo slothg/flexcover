@@ -14,7 +14,7 @@ package com.allurent.coverage.view.model
 		
 		override public function setUp():void
 		{
-			model = new HeaderPM(new Controller(new OneTimeIntervalStub()));
+			model = new HeaderPM(new Controller());
 		}
 		
 		public function testInputFileSelected():void

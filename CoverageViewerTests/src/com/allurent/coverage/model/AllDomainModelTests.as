@@ -22,10 +22,10 @@
  */
 package com.allurent.coverage.model
 {
-	import flexunit.framework.TestSuite;
-	
 	import com.allurent.coverage.model.search.ClassSearchTest;
 	import com.allurent.coverage.model.search.PackageSearchTest;
+	
+	import flexunit.framework.TestSuite;
 	
 	public class AllDomainModelTests extends TestSuite
 	{
@@ -34,6 +34,7 @@ package com.allurent.coverage.model
 			addTest(new TestSuite(PackageSearchTest));
 			addTest(new TestSuite(ClassSearchTest));
 			addTest(new TestSuite(CoverageModelManagerTest));
+			addTest(new TestSuite(RecorderTest));
 		}
 
 	}

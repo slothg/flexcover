@@ -22,57 +22,59 @@
  */
 package com.allurent.coverage
 {
-	import com.adobe.ac.util.EmptyOneTimeIntervalStub;
-	import com.adobe.ac.util.OneTimeIntervalStub;
-	import com.allurent.coverage.event.CoverageEvent;
+	import flash.filesystem.File;
 	
 	import flexunit.framework.EventfulTestCase;
 	
 	public class ControllerTest extends EventfulTestCase
 	{
-		private var controller:Controller;
+		private var model:Controller;
 		
 		override public function setUp():void
 		{
-			controller = new Controller(new OneTimeIntervalStub());
+			model = new Controller();
 		}
-		
-        public function testNoRecordingOnStartup():void
-        {
-        	assertFalse("expected no recording", controller.isRecording);
-        }
- 
-        public function testStartRecording():void
-        {
-        	expectEvent(controller, CoverageEvent.RECORDING_START);
-        	
-        	var keyMap:Object = new Object();
-        	keyMap[1] = new Object();
-        	keyMap[2] = new Object();        	
-        	controller.coverageData(keyMap);
-        	
-        	assertExpectedEventsOccurred();
-        	assertTrue("expected recording to start", controller.isRecording);
+        
+        public function testIfParsingStartsOnFileDragDrop():void
+        { 
+            //in the real world we would pass one or more File types.
+            //Here, we test if the expected error has been thrown on the 
+            //underlying parser. This tells us that the parser has been invoked.          
+            
+            var dropSource:Array = new Array(null);            
+            try
+            {
+                model.processFileArgument(dropSource);
+                fail("parser is expected to throw a runtime for a null argument");
+            }
+            catch(error:ArgumentError)
+            {
+                
+            }
         }
         
-        public function testStopRecording():void
+        public function testLoadProject():void
         {
-            testStartRecording();
-            
-            expectEvent(controller, CoverageEvent.RECORDING_END);
-            
-            var keyMap:Object = new Object();            
-            controller.coverageData(keyMap);
-            
-            assertExpectedEventsOccurred();
-            assertFalse("expected recording to have stopped", controller.isRecording);
+            try
+            {
+                model.loadProject(new File());
+                fail("controller is expected to throw a runtime for invalid File");
+            }
+            catch(error:Error)
+            {
+                
+            }
         }
         
-        public function testStartAndResumeRecording():void
+        public function testClearCoverageData():void
         {
-        	controller = new Controller(new EmptyOneTimeIntervalStub());
-            testStopRecording();
-            testStartRecording();
-        }        
+        	assertTrue("expected coverage data cleared at startup", model.isCoverageDataCleared);
+        	
+            //a loadCoverageReport would set it to false
+            model.isCoverageDataCleared = false;
+            
+            model.clearCoverageData();
+            assertTrue("expected coverage data cleared", model.isCoverageDataCleared);
+        }   
 	}
 }
