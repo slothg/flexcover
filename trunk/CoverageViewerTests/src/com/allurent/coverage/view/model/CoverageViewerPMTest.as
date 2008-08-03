@@ -40,7 +40,7 @@ package com.allurent.coverage.view.model
         
 		override public function setUp():void
 		{
-			model = new CoverageViewerPM(new Controller(new OneTimeIntervalStub()), 
+			model = new CoverageViewerPM(new Controller(), 
 			                             new OneTimeIntervalStub());
 		}
 
@@ -52,7 +52,7 @@ package com.allurent.coverage.view.model
         	                               CoverageModelData.createCoverageModel()
         	                               );
         	
-        	model.headerPM.dispatchEvent(event);
+        	model.controller.dispatchEvent(event);
         	assertNotNull("expected coverageModels", model.coverageModels);
         }
         
@@ -88,11 +88,11 @@ package com.allurent.coverage.view.model
                                            CoverageEvent.RECORDING_END
                                            );
             
-            expectEvents(model.controller, 
+            expectEvents(model.controller.recorder, 
                          CoverageEvent.PARSING_START, 
                          CoverageEvent.PARSING_END);
             
-            model.controller.dispatchEvent(event);
+            model.controller.recorder.dispatchEvent(event);
             
             assertExpectedEventsOccurred();
             assertFalse("expected showMessageOverlay", model.showMessageOverlay);
@@ -100,15 +100,15 @@ package com.allurent.coverage.view.model
         
         public function testShowMessageOverlayOnHandlingRecordingEnd():void
         {
-            model = new CoverageViewerPM(new Controller(new OneTimeIntervalStub()), 
+            model = new CoverageViewerPM(new Controller(), 
                                          new EmptyOneTimeIntervalStub());        	
         	
             var event:CoverageEvent = new CoverageEvent(
                                            CoverageEvent.RECORDING_END
                                            );
 
-            model.controller.dispatchEvent(event);
-
+            model.controller.recorder.dispatchEvent(event);
+            
             assertTrue("expected showMessageOverlay", model.showMessageOverlay);
         }        
 		
@@ -131,7 +131,7 @@ package com.allurent.coverage.view.model
         
         public function testHandleInvokeEvent():void
         {
-            model = new CoverageViewerPM(new Controller(new OneTimeIntervalStub()), 
+            model = new CoverageViewerPM(new Controller(),
                                          new EmptyOneTimeIntervalStub());        	
         	  	
         	var event:InvokeEvent = new InvokeEvent(InvokeEvent.INVOKE);
@@ -141,7 +141,7 @@ package com.allurent.coverage.view.model
         
         public function testIfMessageOverlayIsShownOnFileDragDrop():void
         {
-            model = new CoverageViewerPM(new Controller(new OneTimeIntervalStub()), 
+            model = new CoverageViewerPM(new Controller(), 
                                          new EmptyOneTimeIntervalStub());         	
         	
             var event:InvokeEvent = new InvokeEvent(InvokeEvent.INVOKE);
@@ -151,7 +151,7 @@ package com.allurent.coverage.view.model
         
         public function testIfParsingStartsOnFileDragDrop():void
         {
-            model = new CoverageViewerPM(new Controller(new OneTimeIntervalStub()), 
+            model = new CoverageViewerPM(new Controller(), 
                                          new OneTimeIntervalStub());           
             
             var event:InvokeEvent = new InvokeEvent(InvokeEvent.INVOKE);
