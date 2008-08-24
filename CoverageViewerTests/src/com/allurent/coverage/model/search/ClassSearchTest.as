@@ -35,7 +35,7 @@ package com.allurent.coverage.model.search
 		override public function setUp():void
 		{
             var coverageModels:CoverageModelManager = CoverageModelData.createCoverageModels();
-			model = new ClassSearch(coverageModels.branchClassModel);
+			model = new ClassSearch(coverageModels.branchModel);
 		}
 		
 		public function testSearchTwiceOnDifferentPackagesAndResetOutput():void
@@ -52,7 +52,7 @@ package com.allurent.coverage.model.search
 		{
 			var coverageModel:CoverageModel = CoverageModelData.createCoverageModelWithMultipleClassesPerPackage();
 			var coverageModels:CoverageModelManager = new CoverageModelManager(coverageModel);
-			model = new ClassSearch(coverageModels.branchClassModel);
+			model = new ClassSearch(coverageModels.branchModel);
 			model.search("Product");
 			assertEquals("expected 1 top level, 1 package, 1 class", 
 								3, model.content.length);
@@ -65,7 +65,7 @@ package com.allurent.coverage.model.search
 		{
 			var coverageModel:CoverageModel = CoverageModelData.createCoverageModelWithMultipleClassesPerPackage();
             var coverageModels:CoverageModelManager = new CoverageModelManager(coverageModel)
-            model = new ClassSearch(coverageModels.branchClassModel);
+            model = new ClassSearch(coverageModels.branchModel);
 			model.search("Product");
 			assertEquals("expected 1 top level, 1 package, 1 class", 
 								3, model.content.length);							
@@ -78,7 +78,7 @@ package com.allurent.coverage.model.search
 		{
 			var coverageModel:CoverageModel = CoverageModelData.createCoverageModelWithMultipleClassesPerPackage();
             var coverageModels:CoverageModelManager = new CoverageModelManager(coverageModel)
-            model = new ClassSearch(coverageModels.branchClassModel);	
+            model = new ClassSearch(coverageModels.branchModel);	
 			model.search("Product");
 			assertEquals("expected 1 top level, 1 package, 1 class", 
 								3, model.content.length);
@@ -88,7 +88,7 @@ package com.allurent.coverage.model.search
 		{
 			var coverageModel:CoverageModel = CoverageModelData.createCoverageModelWithMultipleClassesPerPackage();
             var coverageModels:CoverageModelManager = new CoverageModelManager(coverageModel)
-            model = new ClassSearch(coverageModels.branchClassModel);
+            model = new ClassSearch(coverageModels.branchModel);
 			model.search("Produc");
 			assertEquals("match but too short, expected 1 top level, 1 package, 1 class", 
 								3, model.content.length);
@@ -110,7 +110,7 @@ package com.allurent.coverage.model.search
 		{
 			var coverageModel:CoverageModel = CoverageModelData.createCoverageModelWithMultipleClassesPerPackage();
             var coverageModels:CoverageModelManager = new CoverageModelManager(coverageModel)
-            model = new ClassSearch(coverageModels.branchClassModel);	
+            model = new ClassSearch(coverageModels.branchModel);	
 			model.search("Productx");
 			assertEquals("not matching, expected 1 top level", 
 								1, model.content.length);
@@ -129,7 +129,7 @@ package com.allurent.coverage.model.search
 		{
 			var coverageModel:CoverageModel = CoverageModelData.createCoverageModelWithMultipleClassesPerPackage();
             var coverageModels:CoverageModelManager = new CoverageModelManager(coverageModel)
-            model = new ClassSearch(coverageModels.branchClassModel);	
+            model = new ClassSearch(coverageModels.branchModel);	
 			model.search("ShoppingCartElement");
 			assertEquals("expected 1 top level, 1 package, 1 class", 
 								3, model.content.length);
@@ -139,7 +139,7 @@ package com.allurent.coverage.model.search
 		{
 			var coverageModel:CoverageModel = CoverageModelData.createCoverageModelWithMultipleClassesPerPackage();
             var coverageModels:CoverageModelManager = new CoverageModelManager(coverageModel)
-            model = new ClassSearch(coverageModels.branchClassModel);
+            model = new ClassSearch(coverageModels.branchModel);
 			model.search("ShoppingCart");
 			assertEquals("expected 1 top level, 2 packages, 3 classes", 
 								6, model.content.length);

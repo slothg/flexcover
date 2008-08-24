@@ -34,7 +34,7 @@ package com.allurent.coverage.model.search
 		override public function setUp():void
 		{
             var coverageModels:CoverageModelManager = CoverageModelData.createCoverageModels();
-            model = new PackageSearch(coverageModels.branchPackageModel);			
+            model = new PackageSearch(coverageModels.branchModel);			
 		}
 		
 		public function testSearchForUniquePackageName():void

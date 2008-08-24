@@ -39,102 +39,20 @@ package com.allurent.coverage.view.model
 			model.initialize(coverageModels);
 		}
 		
-		public function testInitialization():void
-		{
-			assertTrue("expected package search is default", 
-										model.searchForPackage);											
-		}
-		
         public function testShowDetails():void
         {
         	assertEquals("showDetails", model.currentSearch.showDetail, model.showDetail);
             model.showDetail = false;
-            assertEquals("showDetails", model.currentSearch.showDetail, model.showDetail);                         
+            assertEquals("showDetails 2", model.currentSearch.showDetail, model.showDetail);                         
         }
-		
-        public function testToggleSearchTypesAndTestSearchForPackage():void
+        
+        public function testToggleDetail():void
         {
-        	model.changeSearchBy(SearchPM.SEARCH_BY_CLASS);
-            assertFalse("expected class search", 
-                                        model.searchForPackage);
-            assertFalse("expected class search on coverageModels", 
-                                        coverageModels.searchForPackage);
-                                        
-            model.changeSearchBy(SearchPM.SEARCH_BY_PACKAGE);                            
-            assertTrue("expected package search", 
-                                        model.searchForPackage);
-            assertTrue("expected package search on coverageModels", 
-                                        coverageModels.searchForPackage);                                                                       
-        }
-		
-		public function testTogglePackageSearchAndMaintainSearchInput():void
-		{
-			model.changeSearchBy(SearchPM.SEARCH_BY_PACKAGE);
-			model.search("c");
-			assertEquals("expected current search input", "c", model.currentSearchInput);
-			
-			model.changeSearchBy(SearchPM.SEARCH_BY_CLASS);
-			model.search("S");
-			model.changeSearchBy(SearchPM.SEARCH_BY_PACKAGE);
-			assertEquals("expected last search input to be restored", 
-												"c", model.currentSearchInput);
-		}
-		
-		public function testTogglePackageSearchAndMaintainStateOfSearchContent():void
-		{
-			model.changeSearchBy(SearchPM.SEARCH_BY_PACKAGE);
-			model.search("c");
-			assertEquals("expected first list state change; " + 
-					"1 top level, 2 packages which both include one class", 
-											5, model.currentSearch.content.length);
-			model.changeSearchBy(SearchPM.SEARCH_BY_CLASS);
-			model.search("S");
-			model.changeSearchBy(SearchPM.SEARCH_BY_PACKAGE);
-			assertEquals("expected last search state of list to be restored; " + 
-					"1 top level, 2 packages which both include one class", 
-											5, model.currentSearch.content.length);
-		}
-		
-		public function testToggleClassSearchAndMaintainSearchInput():void
-		{
-			model.changeSearchBy(SearchPM.SEARCH_BY_CLASS);
-			model.search("S");
-			assertEquals("expected current search input", "S", model.currentSearchInput);
-			
-			model.changeSearchBy(SearchPM.SEARCH_BY_PACKAGE);
-			model.search("c");
-			model.changeSearchBy(SearchPM.SEARCH_BY_CLASS);
-			assertEquals("expected last search input to be restored", 
-												"S", model.currentSearchInput);
-		}
-		
-		public function testToggleClassSearchAndMaintainStateOfSearchContent():void
-		{
-			model.changeSearchBy(SearchPM.SEARCH_BY_CLASS);
-			model.showDetail = true;
-			model.search("S");
-			assertEquals("expected first list state change; " + 
-					"expected 1 top level, 2 packages, 2 classes, 2 members", 
-								7, model.currentSearch.content.length);
-													
-			model.changeSearchBy(SearchPM.SEARCH_BY_PACKAGE);
-			model.search("com.adobe.ac.util");
-			model.changeSearchBy(SearchPM.SEARCH_BY_CLASS);
-			assertEquals("expected last search state of list to be restored; " + 
-					"expected 1 top level, 2 packages, 2 classes, 2 members", 
-								7, model.currentSearch.content.length);					
-		}
-		
-		public function testTogglePackageSearchAndCoverageMeasureAndMaintainSearchInput():void
-		{
-			testTogglePackageSearchAndMaintainSearchInput();
-            
-            coverageModels.changeCoverageMeasure(CoverageModelManager.LINE_MEASURE);
-			assertEquals("expected empty search input", "", model.currentSearchInput);
-
-            coverageModels.changeCoverageMeasure(CoverageModelManager.BRANCH_MEASURE);
-			assertEquals("expected last search input to be restored", 
-												"c", model.currentSearchInput);			
-		}
+            assertFalse("expected not to show details on default", model.currentSearch.showDetail);
+            model.toggleDetail();
+            assertTrue("expected to show default on toggle", model.currentSearch.showDetail); 
+            model.toggleDetail(); 
+            assertFalse("expected no show details after second toggle", model.currentSearch.showDetail);                      
+        }      
 	}
 }

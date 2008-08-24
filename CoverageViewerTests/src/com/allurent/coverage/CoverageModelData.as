@@ -34,6 +34,13 @@ package com.allurent.coverage
 	
 	public class CoverageModelData
 	{
+        public static function createCoverageModelsForFunction(myFunction:Function):CoverageModelManager
+        {
+            var coverageModel:CoverageModel = new CoverageModel();
+            addChildren(coverageModel, myFunction());
+            return new CoverageModelManager(coverageModel);
+        }		
+		
         public static function createCoverageModels():CoverageModelManager
         {
             var coverageModel:CoverageModel = new CoverageModel();
@@ -48,6 +55,39 @@ package com.allurent.coverage
 			return coverageModel;
 		}
 		
+		
+        
+        public static function addClassToPackage(packageModel:PackageModel, 
+                                                classModel:ClassModel):void
+        {
+            classModel.parent = packageModel;
+            if(packageModel.isEmpty())
+            {               
+                packageModel.children = new ArrayCollection([classModel]);
+            }
+            else
+            {
+                packageModel.children.addItem(classModel);
+            }
+        }
+        
+        public static function createPackage(name:String):PackageModel
+        {
+            var packageModel:PackageModel = new PackageModel();
+            packageModel.name = name;
+            return packageModel;
+        }
+        
+        public static function createClass(name:String):ClassModel
+        {
+            var classModel:ClassModel = new ClassModel();
+            classModel.name = name;
+            classModel.children = new ArrayCollection([new FunctionModel()]);
+            return classModel;
+        }		
+		
+		
+		//coverage data used by ClassSearch and PackageSearch 		
 		public static function createPackageModel():PackageModel
 		{
 			var acControls:PackageModel = createPackage("com.adobe.ac.controls");						
@@ -95,44 +135,14 @@ package com.allurent.coverage
 			addClassToPackage(acControls, shoppingCartElement);
 			
 			return new ArrayCollection([topLevel, acUtil, acControls]);
-		}
-		
+		}		
+	    
 		private static function addChildren(coverageModel:CoverageModel, collection:IList):void
 		{
 			for each(var child:SegmentModel in collection)
 			{
 				coverageModel.addChild(child);
 			}
-		}
-		
-		private static function addClassToPackage(packageModel:PackageModel, 
-												classModel:ClassModel):void
-		{
-			classModel.parent = packageModel;
-			if(packageModel.isEmpty())
-			{				
-				packageModel.children = new ArrayCollection([classModel]);
-			}
-			else
-			{
-				packageModel.children.addItem(classModel);
-			}
-		}
-		
-		private static function createPackage(name:String):PackageModel
-		{
-			var packageModel:PackageModel = new PackageModel();
-			packageModel.name = name;
-			return packageModel;
-		}
-		
-		private static function createClass(name:String):ClassModel
-		{
-			var classModel:ClassModel = new ClassModel();
-			classModel.name = name;
-			classModel.children = new ArrayCollection([new FunctionModel()]);
-			return classModel;
-		}
-		
+		}		
 	}
 }
