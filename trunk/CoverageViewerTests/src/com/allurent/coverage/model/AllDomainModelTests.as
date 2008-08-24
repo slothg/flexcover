@@ -23,6 +23,7 @@
 package com.allurent.coverage.model
 {
 	import com.allurent.coverage.model.search.ClassSearchTest;
+	import com.allurent.coverage.model.search.FullSearchTest;
 	import com.allurent.coverage.model.search.PackageSearchTest;
 	
 	import flexunit.framework.TestSuite;
@@ -31,6 +32,7 @@ package com.allurent.coverage.model
 	{
 		public function AllDomainModelTests()
 		{
+			addTest(new TestSuite(FullSearchTest));
 			addTest(new TestSuite(PackageSearchTest));
 			addTest(new TestSuite(ClassSearchTest));
 			addTest(new TestSuite(CoverageModelManagerTest));

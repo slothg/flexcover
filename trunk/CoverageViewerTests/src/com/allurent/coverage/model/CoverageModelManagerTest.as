@@ -78,62 +78,36 @@ package com.allurent.coverage.model
         }
         
         
-        public function testForBranchPackageModel():void
+        public function testForBranchModel():void
         {
-            assertNotNull("expected branchPackageModel", 
-                              model.branchPackageModel);
+            assertNotNull("expected branchModel", 
+                              model.branchModel);
         }
-        
-        public function testForBranchClassModel():void
+
+        public function testForLineModel():void
         {
-            assertNotNull("expected branchClassModel", 
-                              model.branchClassModel);
-        }
-            
-        public function testForLinePackageModel():void
-        {
-            assertNotNull("expected linePackageModel", 
-                              model.linePackageModel);
-        }
-        
-        public function testForLineClassModel():void
-        {
-            assertNotNull("expected lineClassModel", 
-                              model.lineClassModel);
+            assertNotNull("expected lineModel", 
+                              model.lineModel);
         }
 		
-		public function testForBranchPackageSearch():void
+		public function testForBranchSearch():void
 		{
 			model.changeCoverageMeasure(CoverageModelManager.BRANCH_MEASURE);
-		    var search:ISearchable = model.getCurrentSearch(true);
+		    var search:ISearchable = model.getCurrentSearch();
 		    assertNotNull("expected branchPackageSearch", search);
+		    
+            var search2:ISearchable = model.getCurrentSearch();
+            assertEquals("expected same", search, search2);		    
 		}
-		
-        public function testForBranchClassSearch():void
-        {
-            model.changeCoverageMeasure(CoverageModelManager.BRANCH_MEASURE);
-            var search:ISearchable = model.getCurrentSearch(false);
-            assertNotNull("expected branchClassSearch", search);
-        }
         	
-        public function testForLinePackageSearch():void
+        public function testForLineSearch():void
         {
             model.changeCoverageMeasure(CoverageModelManager.LINE_MEASURE);
-            var search:ISearchable = model.getCurrentSearch(true);
+            var search:ISearchable = model.getCurrentSearch();
             assertNotNull("expected linePackageSearch", search);
             
-            var search2:ISearchable = model.getCurrentSearch(true);
+            var search2:ISearchable = model.getCurrentSearch();
             assertEquals("expected same", search, search2);
-        }
-        
-        public function testForLineClassSearch():void
-        {
-            model.changeCoverageMeasure(CoverageModelManager.LINE_MEASURE);
-            var search:ISearchable = model.getCurrentSearch(false);
-            assertNotNull("expected lineClassSearch", search);
-            
-            var search2:ISearchable = model.getCurrentSearch(false);
-            assertEquals("expected same", search, search2);         
         }
 	}
 }
