@@ -42,7 +42,7 @@ package com.allurent.coverage.model.search
 			return findClass(packageModel);
 		}
 		
-		private function findClass(packageModel:PackageModel) : Boolean
+		private function findClass(packageModel:PackageModel):Boolean
 		{
 			var keepPackage:Boolean = false;
 			var classChildren:ICollectionView = content.getChildren(packageModel);
@@ -51,7 +51,7 @@ package com.allurent.coverage.model.search
 			{
 				var isClassFound:Boolean;
 				var classModel:ClassModel = ClassModel(cursor.current);
-				isClassFound = findString(classModel.displayName);
+				isClassFound = findFirstStringNonCaseSensitive(classModel.displayName);
 				
 				if(isClassFound)
 				{
@@ -88,7 +88,7 @@ package com.allurent.coverage.model.search
 		private function filteroutFunction(item:Object):Boolean
 		{
 			var classModel:ClassModel = ClassModel(item);
-			return findString(classModel.displayName);
+			return findFirstStringNonCaseSensitive(classModel.displayName);
 		}
 	}
 }

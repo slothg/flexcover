@@ -32,23 +32,13 @@
 			import com.adobe.ac.util.OneTimeInterval;
 			import com.adobe.ac.util.IOneTimeInterval;
 			import mx.events.ListEvent;
-			import mx.controls.Menu;
-			import mx.controls.NavBar;
-			import mx.events.MenuEvent;
             
             [Bindable]
             public var model:HeaderPM;
 			private var timer:IOneTimeInterval = new OneTimeInterval();            
-            
-			private function createSelectedIndex(buttonBar:NavBar):void
-			{
-				buttonBar.selectedIndex = 0;
-			}
 			
 			private function changeSearchBy(item:Object):void
 			{
-				model.searchPM.changeSearchBy(item);
-				createFilterMenu();
 				setFocusOnSearch(model.searchPM.currentSearch);
 			}
 			
@@ -58,67 +48,7 @@
                 searchInput.setFocus();
                 searchInput.setSelection(0, currentSearch.currentSearchInput.length);				
 			}
-
-			private function createFilterMenu():void
-			{
-				if(model.searchPM.searchForPackage)
-				{
-                    drawFilterMenu("Only show packages", 
-                                   "Show packages and classes", 
-                                   0, 
-                                   searchByCombo.height);
-				}
-				else
-				{
-					drawFilterMenu("Only show classes", 
-					               "Show classes and members", 
-					               searchByCombo.x, 
-					               searchByCombo.height);
-				}
-			}
-			
-            private function drawFilterMenu(detailLabel:String, 
-                                            noDetailLabel:String, 
-                                            targetX:Number,
-                                            targetY:Number):void
-            {
-                var searchByMenu:Menu = Menu.createMenu(this, null, false);
-                searchByMenu.setStyle("openDuration", 100);
-                var label:String;
-                var point:Point = new Point();
-                 	
-                if(model.searchPM.showDetail)
-                {
-                    label = detailLabel;                        
-                    searchByMenu.addEventListener(ListEvent.ITEM_CLICK, handleHideDetailChoice);
-                }
-                else
-                {
-                    label = noDetailLabel;
-                    searchByMenu.addEventListener(ListEvent.ITEM_CLICK, handleShowDetailChoice);
-                }
-                
-                searchByMenu.dataProvider = label;
-                point = new Point();
-                point.x = targetX;
-                point.y = targetY;
-                point = searchByCombo.localToGlobal(point);
-                searchByMenu.show(point.x, point.y);
-                searchByMenu.setFocus();
-            }			
-			
-			private function handleShowDetailChoice(event:MenuEvent):void
-			{
-				model.searchPM.showDetail = true;
-				model.searchPM.search(model.searchPM.currentSearchInput);
-			}
-			
-			private function handleHideDetailChoice(event:MenuEvent):void
-			{
-				model.searchPM.showDetail = false;
-				model.searchPM.search(model.searchPM.currentSearchInput);
-			}
-	        
+				        
 			private function search(searchInput:String):void
 			{
 				timer.delay(500, onSearch, searchInput);
@@ -163,13 +93,15 @@
         handler="{setFocusOnSearch}" 
         />
 	
+    <mx:Button 
+        label="Show details" 
+        enabled="{model.enabled}" 
+        toggle="true" 
+        selected="{model.searchPM.currentSearch.showDetail}" 
+        click="model.searchPM.toggleDetail()"/>
+	
 	<mx:Label text="Search By:"/>
-	<mx:ToggleButtonBar 
-		id="searchByCombo" 
-		dataProvider="{model.searchPM.searchByProvider}" 
-		enabled="{model.enabled}"
-		creationComplete="createSelectedIndex(searchByCombo);" 
-		itemClick="changeSearchBy(event.item);"/>		
+    
 	<mx:TextInput 
 		id="searchInput" 
 		width="100%" 

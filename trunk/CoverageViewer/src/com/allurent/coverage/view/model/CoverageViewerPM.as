@@ -33,9 +33,8 @@ package com.allurent.coverage.view.model
 	import flash.desktop.ClipboardFormats;
 	import flash.events.InvokeEvent;
 	import flash.events.NativeDragEvent;
-	import flash.filesystem.File;
 	
-	import mx.events.IndexChangedEvent;
+	import mx.controls.Alert;
 	
 	public class CoverageViewerPM
 	{	    
@@ -136,6 +135,7 @@ package com.allurent.coverage.view.model
         
         public function performInvokeEvent(event:InvokeEvent):void
         {
+        	//Alert.show("performInvokeEvent " + event.arguments);
             var parser:CommandLineOptionsParser = new CommandLineOptionsParser(controller);
             
             parser.addEventListener(

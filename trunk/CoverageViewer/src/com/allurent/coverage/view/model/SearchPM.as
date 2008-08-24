@@ -25,16 +25,11 @@ package com.allurent.coverage.view.model
 	import com.allurent.coverage.model.CoverageModelManager;
 	import com.allurent.coverage.model.search.ISearchable;
 	
-	import mx.collections.ArrayCollection;
 	import mx.collections.IHierarchicalCollectionView;
-	import mx.collections.IList;
 	import mx.events.IndexChangedEvent;
 	
 	public class SearchPM implements ISearchable
 	{
-		public static const SEARCH_BY_PACKAGE:String = "Package";
-		public static const SEARCH_BY_CLASS:String = "Class";
-
         public function get content():IHierarchicalCollectionView
         {
         	return currentSearch.content;
@@ -43,7 +38,7 @@ package com.allurent.coverage.view.model
         {
         	currentSearch.content = value;
         }        
-		
+
         public function get showDetail():Boolean
         {
         	return currentSearch.showDetail;
@@ -54,9 +49,7 @@ package com.allurent.coverage.view.model
         }
 
 		private var coverageModels:CoverageModelManager	
-		
-		[Bindable]
-		public var searchByProvider:IList;
+
 		[Bindable]
 		public var currentSearchInput:String;
 		[Bindable]
@@ -65,12 +58,7 @@ package com.allurent.coverage.view.model
 		public var currentSearch:ISearchable;
 		
 		private var initialized:Boolean;
-		
-		public function SearchPM()
-		{
-			createSearchByProvider();
-		}
-		
+
         public function handleCoverageMeasureChange(event:IndexChangedEvent):void
         {
         	updateSearchType();
@@ -83,17 +71,15 @@ package com.allurent.coverage.view.model
                                        handleCoverageMeasureChange);
             
             initialized = true;
-
-            changeSearchBy(SEARCH_BY_PACKAGE);
+            
+            updateSearchType();
             search(currentSearchInput);
 		}
-				
-		public function changeSearchBy(searchByInput:Object):void
+		
+		public function toggleDetail():void
 		{
-			var searchBy : String = String(searchByInput);
-			searchForPackage = (searchBy == SearchPM.SEARCH_BY_PACKAGE) ? true : false;
-			coverageModels.searchForPackage = searchForPackage;			
-			updateSearchType();
+	       currentSearch.showDetail = (currentSearch.showDetail) ? false : true;
+	       currentSearch.search(currentSearchInput);
 		}
 		
 		public function search(searchInput:String):String
@@ -105,16 +91,9 @@ package com.allurent.coverage.view.model
         private function updateSearchType():void
         {
             if(!initialized) return;
-            currentSearch = coverageModels.getCurrentSearch(searchForPackage);          
+            currentSearch = coverageModels.getCurrentSearch();          
             getCurrentSearchInput();
         }		
-		
-		private function createSearchByProvider():void
-		{
-			searchByProvider = new ArrayCollection();
-			searchByProvider.addItem(SearchPM.SEARCH_BY_PACKAGE);
-			searchByProvider.addItem(SearchPM.SEARCH_BY_CLASS);
-		}
 		
 		private function getCurrentSearchInput():void
 		{

@@ -71,11 +71,17 @@ package com.allurent.coverage.model.search
 			throw new Error("Abstract");
 		}
 		
-		protected function findString(name:String):Boolean
+		protected function findFirstStringNonCaseSensitive(name:String):Boolean
 		{
 			var pattern:RegExp = new RegExp("^" + currentSearchInput, "i");
 			return pattern.test(name);
 		}
+		
+        protected function findAnyStringNonCaseSensitive(name:String):Boolean
+        {
+            var pattern:RegExp = new RegExp(currentSearchInput, "i");
+            return pattern.test(name);
+        }
 		
 		protected function isTopLevel(displayName:String):Boolean
 		{
