@@ -22,9 +22,8 @@
  */
 package com.allurent.coverage.model
 {
-	import com.allurent.coverage.model.search.ClassSearch;
+	import com.allurent.coverage.model.search.FullSearch;
 	import com.allurent.coverage.model.search.ISearchable;
-	import com.allurent.coverage.model.search.PackageSearch;
 	
 	import flash.events.EventDispatcher;
 	
@@ -42,13 +41,9 @@ package com.allurent.coverage.model
         public var coverageModel:CoverageModel;  
 		
         [Bindable]
-        public var branchPackageModel:IHierarchicalCollectionView;
+        public var branchModel:IHierarchicalCollectionView;
         [Bindable]
-        public var branchClassModel:IHierarchicalCollectionView;
-        [Bindable]
-        public var linePackageModel:IHierarchicalCollectionView;
-        [Bindable]
-        public var lineClassModel:IHierarchicalCollectionView;	
+        public var lineModel:IHierarchicalCollectionView;
         	    
         private var _currentMeasureIndex:int;
         [Bindable("currentMeasureIndexChange")]
@@ -60,45 +55,25 @@ package com.allurent.coverage.model
 		[Bindable]
 		public var searchForPackage:Boolean;
 		
-        private var _branchPackageSearch:ISearchable;
-        private function get branchPackageSearch():ISearchable
+        private var _branchSearch:ISearchable;
+        private function get branchSearch():ISearchable
         {
-            if(_branchPackageSearch == null)
+            if(_branchSearch == null)
             {
-                _branchPackageSearch = new PackageSearch(branchPackageModel) 
+                _branchSearch = new FullSearch(branchModel) 
             }
-            return _branchPackageSearch;
+            return _branchSearch;
         }
         
-        private var _branchClassSearch:ISearchable;
-        private function get branchClassSearch():ISearchable
+        private var _lineSearch:ISearchable;
+        private function get lineSearch():ISearchable
         {
-            if(_branchClassSearch == null)
+            if(_lineSearch == null)
             {
-                _branchClassSearch = new ClassSearch(branchClassModel) 
-            }                       
-            return _branchClassSearch;       
-        }
-        
-        private var _linePackageSearch:ISearchable;
-        private function get linePackageSearch():ISearchable
-        {
-            if(_linePackageSearch == null)
-            {
-                _linePackageSearch = new PackageSearch(linePackageModel) 
+                _lineSearch = new FullSearch(lineModel) 
             }                 
-            return _linePackageSearch;   
+            return _lineSearch;   
         }
-        
-        private var _lineClassSearch:ISearchable;
-        private function get lineClassSearch():ISearchable
-        {
-            if(_lineClassSearch == null)
-            {
-                _lineClassSearch = new ClassSearch(lineClassModel) 
-            }                               
-            return _lineClassSearch;        
-        }		
 		
         public static function createContentModel(segmentModel:SegmentModel):IHierarchicalCollectionView
         {
@@ -112,10 +87,8 @@ package com.allurent.coverage.model
 		{
 			this.coverageModel = coverageModel;
             
-            branchPackageModel = createContentModel(coverageModel);
-            branchClassModel = createContentModel(coverageModel);         
-            linePackageModel = createContentModel(coverageModel);
-            lineClassModel = createContentModel(coverageModel);
+            branchModel = createContentModel(coverageModel);     
+            lineModel = createContentModel(coverageModel);
 		}
 		
         public function changeCoverageMeasure(index:int):void
@@ -135,16 +108,16 @@ package com.allurent.coverage.model
             }
         }   
         
-        public function getCurrentSearch(searchForPackage:Boolean):ISearchable
+        public function getCurrentSearch():ISearchable
         {
         	var currentSearch:ISearchable;
             if(currentMeasureIndex == BRANCH_MEASURE)
             {
-            	currentSearch = (searchForPackage) ? branchPackageSearch : branchClassSearch;
+            	currentSearch = branchSearch;
             }
             else if(currentMeasureIndex == LINE_MEASURE)
             {
-            	currentSearch = (searchForPackage) ? linePackageSearch : lineClassSearch;
+            	currentSearch = lineSearch;
             }
             return currentSearch;
         }

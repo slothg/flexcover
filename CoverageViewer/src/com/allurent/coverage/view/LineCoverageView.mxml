@@ -21,10 +21,16 @@
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
  * OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  -->
-<mx:ViewStack 
+<view:CoverageOverview 
 	xmlns:mx="http://www.adobe.com/2006/mxml"
     xmlns:view="com.allurent.coverage.view.*" 
-    selectedIndex="{model.coverageModels.searchForPackage ? 0 : 1 }" 
+    width="100%" height="100%"
+    dataProvider="{model.coverageModels.lineModel}" 
+    isEnabled="{model.enabled}" 
+    headerText="Line Coverage" 
+    coverageDataField="lineCoverage" 
+    uncoveredDataField="uncoveredLines"
+    renderer="com.allurent.coverage.view.LineCoverageColumnRenderer"    
     >
     
     <mx:Metadata>
@@ -39,24 +45,5 @@
             public var model:BrowserPM;      
         ]]>
     </mx:Script>
-	
-	<view:CoverageOverview
-		width="100%" height="100%"
-	    dataProvider="{model.coverageModels.linePackageModel}" 
-        isEnabled="{model.enabled}" 
-	    headerText="Line Coverage" 
-	    coverageDataField="lineCoverage" 
-	    uncoveredDataField="uncoveredLines"
-	    renderer="com.allurent.coverage.view.LineCoverageColumnRenderer"
-	    />
-	<view:CoverageOverview 
-		width="100%" height="100%"
-	    dataProvider="{model.coverageModels.lineClassModel}" 
-        isEnabled="{model.enabled}" 
-	    headerText="Line Coverage" 
-	    coverageDataField="lineCoverage" 
-	    uncoveredDataField="uncoveredLines"
-	    renderer="com.allurent.coverage.view.LineCoverageColumnRenderer" 
-	    />
 
-</mx:ViewStack>
+</view:CoverageOverview>

@@ -41,7 +41,7 @@ package com.allurent.coverage.model.search
 		
 		private function findPackage(packageModel:PackageModel):Boolean
 		{
-			var found:Boolean = findString(packageModel.displayName);
+			var found:Boolean = findFirstStringNonCaseSensitive(packageModel.displayName);
 			if(found)
 			{
 				if(showDetail)
