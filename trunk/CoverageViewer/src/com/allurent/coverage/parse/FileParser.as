@@ -51,12 +51,10 @@ package com.allurent.coverage.parse
             if (file.name.match(/\.cvm$/))
             {
                 controller.loadMetadata(file);
-                dispatchCoverageModelChange(controller.coverageModel);
             }
             else if (file.name.match(/\.cvr/))
             {
                 controller.loadCoverageReport(file);
-                dispatchCoverageModelChange(controller.coverageModel);
             }
             else
             {
