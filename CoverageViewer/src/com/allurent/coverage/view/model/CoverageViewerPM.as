@@ -34,8 +34,6 @@ package com.allurent.coverage.view.model
 	import flash.events.InvokeEvent;
 	import flash.events.NativeDragEvent;
 	
-	import mx.controls.Alert;
-	
 	public class CoverageViewerPM
 	{	    
 	    [Bindable]
@@ -58,11 +56,11 @@ package com.allurent.coverage.view.model
         	return _coverageModel;
         }
         public function set coverageModel(value:CoverageModel):void
-        {
-        	enabled = true;
-        	
-    		if(value == null) return;
+        { 
+    		if(value == null) return;    		
             if(value.isEmpty()) return;
+            
+            enabled = true;           
             
             _coverageModel = value;
             
@@ -137,7 +135,6 @@ package com.allurent.coverage.view.model
         
         public function performInvokeEvent(event:InvokeEvent):void
         {
-        	//Alert.show("performInvokeEvent " + event.arguments);
             var parser:CommandLineOptionsParser = new CommandLineOptionsParser(controller);
             
             parser.addEventListener(
