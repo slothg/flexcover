@@ -28,6 +28,8 @@ package com.allurent.coverage.parse
 	
 	import flash.events.EventDispatcher;
 	import flash.filesystem.File;
+	
+	import mx.controls.Alert;
 
 	[Event(name="coverageModelChange",
 			type="com.allurent.coverage.event.CoverageEvent")]
@@ -55,6 +57,11 @@ package com.allurent.coverage.parse
             {
                 controller.loadCoverageReport(file);
                 dispatchCoverageModelChange(controller.coverageModel);
+            }
+            else
+            {
+            	Alert.show("File name must contain either cvm or cvr. Found: "+file.name, "Error");
+            	dispatchCoverageModelChange(controller.coverageModel);
             }
         }
         
