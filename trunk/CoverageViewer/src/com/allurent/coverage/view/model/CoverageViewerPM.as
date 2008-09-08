@@ -59,9 +59,11 @@ package com.allurent.coverage.view.model
         }
         public function set coverageModel(value:CoverageModel):void
         {
+        	enabled = true;
+        	
     		if(value == null) return;
             if(value.isEmpty()) return;
-            enabled = true;
+            
             _coverageModel = value;
             
             coverageModels = new CoverageModelManager(coverageModel);            
