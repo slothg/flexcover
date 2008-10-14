@@ -35,10 +35,8 @@ package com.allurent.coverage.parse
 			type="com.allurent.coverage.event.CoverageEvent")]	
 	public class CommandLineOptionsParser extends EventDispatcher
 	{
-		private var controller:Controller;		
-        // Name of LocalConnection to use for receiving data
-        private var connectionName:String = "_flexcover";
-        	
+		private var controller:Controller;
+        
 		public function CommandLineOptionsParser(controller:Controller)
 		{
 			this.controller = controller;
@@ -76,12 +74,12 @@ package com.allurent.coverage.parse
             {
                 processOption(option, null);
             }            
-
+            
             // After processing all options, load the models up from the project
             // and display the top-level report view.
             dispatchCoverageModelChange(controller.coverageModel);
             
-            controller.attachConnection(connectionName);
+            controller.communicator.attachConnection();
 		}
         
         private function processOption(option:String, arg:String):void
@@ -114,7 +112,7 @@ package com.allurent.coverage.parse
                     break;
                     
                 case "connection-name":
-                    connectionName = arg;
+                    controller.communicator.coverageDataConnectionName = arg;
                     break;
                     
                 case "quit":

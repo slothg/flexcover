@@ -23,12 +23,12 @@
 package com.allurent.coverage.view.model
 {
 	import com.adobe.ac.util.IOneTimeInterval;
-	import com.allurent.coverage.Controller;
+	import com.adobe.ac.util.service.FileBrowser;
+	import com.allurent.coverage.IController;
 	import com.allurent.coverage.event.CoverageEvent;
 	import com.allurent.coverage.event.HeavyOperationEvent;
 	import com.allurent.coverage.model.CoverageModel;
 	import com.allurent.coverage.model.CoverageModelManager;
-	import com.allurent.coverage.parse.CommandLineOptionsParser;
 	
 	import flash.desktop.ClipboardFormats;
 	import flash.events.InvokeEvent;
@@ -45,7 +45,7 @@ package com.allurent.coverage.view.model
         
         // Top level Controller for the CoverageViewer application
         [Bindable]
-        public var controller:Controller;
+        public var controller:IController;
         [Bindable]
         public var coverageModels:CoverageModelManager;        
         
@@ -65,8 +65,8 @@ package com.allurent.coverage.view.model
             _coverageModel = value;
             
             coverageModels = new CoverageModelManager(coverageModel);            
-            browserPM.initialize(coverageModels);
-            headerPM.searchPM.initialize(coverageModels);
+            browserPM.setup(coverageModels);
+            headerPM.searchPM.setup(coverageModels);
         }
         
         private var _enabled:Boolean;
@@ -86,23 +86,28 @@ package com.allurent.coverage.view.model
 		public var showMessageOverlay:Boolean = false;		
 		
 		private var timer:IOneTimeInterval;
-
-		public function CoverageViewerPM(controller:Controller, 
+        
+		public function CoverageViewerPM(controller:IController, 
 		                                 timer:IOneTimeInterval)
 		{
 			this.controller = controller;
-            controller.recorder.addEventListener(CoverageEvent.RECORDING_END, 
-                                                handleRecordingEnd);			
-			this.timer = timer;			
-			
-            headerPM = new HeaderPM(controller);
+			this.timer = timer;
+		}
+		
+		public function setup():void
+		{
+            controller.setup();
+            controller.addEventListener(CoverageEvent.COVERAGE_MODEL_CHANGE, 
+                                      handleCoverageModelChange);           
+            controller.addEventListener(CoverageEvent.RECORDING_END, 
+                                        handleRecordingEnd);
+            
+            headerPM = new HeaderPM(controller, new FileBrowser());
             headerPM.addEventListener(HeavyOperationEvent.EVENT_NAME, 
                                       handleHeavyOperationEvent);
-            controller.addEventListener(CoverageEvent.COVERAGE_MODEL_CHANGE, 
-                                      handleCoverageModelChange);
-			
-			browserPM = new BrowserPM();        
-			contentPM = new ContentPM(controller.project);
+            
+            browserPM = new BrowserPM();        
+            contentPM = new ContentPM(controller.project);			
 		}
 	    
         public function handleDragDrop(files:Array):void
@@ -135,13 +140,7 @@ package com.allurent.coverage.view.model
         
         public function performInvokeEvent(event:InvokeEvent):void
         {
-            var parser:CommandLineOptionsParser = new CommandLineOptionsParser(controller);
-            
-            parser.addEventListener(
-                CoverageEvent.COVERAGE_MODEL_CHANGE, 
-                handleCoverageModelChange);
-            
-            parser.parse(event.arguments);        	
+            controller.processCommandLineArguments(event.arguments);
         }
 		
         private function performHeavyOperation(callback:Function, 

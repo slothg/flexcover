@@ -64,7 +64,7 @@ package com.allurent.coverage.view.model
         	updateSearchType();
         }
 		
-		public function initialize(coverageModels:CoverageModelManager):void
+		public function setup(coverageModels:CoverageModelManager):void
 		{
             this.coverageModels = coverageModels;
             coverageModels.addEventListener(IndexChangedEvent.CHANGE, 

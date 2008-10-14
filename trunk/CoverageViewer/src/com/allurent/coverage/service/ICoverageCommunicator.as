@@ -1,5 +1,5 @@
 /* 
- * Copyright (c) 2008 Adobe Systems Incorporated.
+ * Copyright (c) 2008 Allurent, Inc.
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -20,13 +20,13 @@
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
  * OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package com.adobe.ac.util
+package com.allurent.coverage.service
 {
-	public interface IOneTimeInterval
+	import flash.events.IEventDispatcher;
+	
+	public interface ICoverageCommunicator extends ICoverageReceiver, IEventDispatcher
 	{
-		function delay( time : Number, 
-                        callback : Function, 
-                        ... rest ) : void;
-        function clear() : void;              
+		function set coverageDataConnectionName(value:String):void;
+		function attachConnection(connectionName:String=null):void;		
 	}
 }
