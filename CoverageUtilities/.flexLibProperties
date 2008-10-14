@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flexLibProperties version="1">
+<includeClasses>
+<classEntry path="com.adobe.ac.util.IOneTimeInterval"/>
+<classEntry path="com.adobe.ac.util.OneTimeInterval"/>
+<classEntry path="com.adobe.ac.util.service.FileBrowser"/>
+<classEntry path="com.adobe.ac.util.service.IFileBrowser"/>
+<classEntry path="com.adobe.ac.util.service.ILocalConnection"/>
+<classEntry path="com.adobe.ac.util.service.IReceivingLocalConnection"/>
+<classEntry path="com.adobe.ac.util.service.ISendingLocalConnection"/>
+<classEntry path="com.adobe.ac.util.service.LocalConnectionWrapper"/>
+<classEntry path="com.adobe.ac.util.EmptyOneTimeIntervalStub"/>
+<classEntry path="com.adobe.ac.util.OneTimeIntervalStub"/>
+<classEntry path="com.adobe.ac.util.service.FileBrowserStub"/>
+<classEntry path="com.adobe.ac.util.service.LocalConnectionMock"/>
+</includeClasses>
+<includeResources/>
+<namespaceManifests/>
+</flexLibProperties>
