@@ -31,16 +31,11 @@
 			import com.allurent.coverage.view.model.HeaderPM;
 			import com.adobe.ac.util.OneTimeInterval;
 			import com.adobe.ac.util.IOneTimeInterval;
-			import mx.events.ListEvent;
             
             [Bindable]
             public var model:HeaderPM;
+			[Bindable]
 			private var timer:IOneTimeInterval = new OneTimeInterval();            
-			
-			private function changeSearchBy(item:Object):void
-			{
-				setFocusOnSearch(model.searchPM.currentSearch);
-			}
 			
 			private function setFocusOnSearch(currentSearch:ISearchable):void
 			{
@@ -48,46 +43,13 @@
                 searchInput.setFocus();
                 searchInput.setSelection(0, currentSearch.currentSearchInput.length);				
 			}
-				        
-			private function search(searchInput:String):void
-			{
-				timer.delay(500, onSearch, searchInput);
-			}
-			
-			private function onSearch(searchInput:String):void
-			{
-				model.searchPM.search(searchInput);
-			}
-						
-            private function openInput():void
-            {
-                var file:File = new File();
-                file.addEventListener(FileListEvent.SELECT_MULTIPLE, handleInputFilesSelected);
-                var filter0:FileFilter = new FileFilter("All Files", "*.*");
-                var filter1:FileFilter = new FileFilter("Coverage Metadata (.cvm)", "*.cvm");
-                var filter2:FileFilter = new FileFilter("Coverage Report (.cvr)", "*.cvr");
-                file.browseForOpenMultiple("Open File(s)", [filter0, filter1, filter2]);
-            }
-            
-            private function handleInputFilesSelected(e:FileListEvent):void
-            {             
-                model.inputFilesSelected(e.files);
-            }
-            
-            private function saveOutput():void
-            {
-                var file:File = new File();
-                file.addEventListener(Event.SELECT, handleOutputFileSelected);
-                file.browseForSave("Save XML Coverage Report");
-            }
-            
-            private function handleOutputFileSelected(event:Event):void
-            {
-                model.outputFileSelected(File(event.target));
-            }
 		]]>
 	</mx:Script>
 
+    <ac:Observe 
+        source="{timer}" 
+        handler="{model.setSearchDelay}" 
+        />    	
     <ac:Observe 
         source="{model.searchPM.currentSearch}" 
         handler="{setFocusOnSearch}" 
@@ -107,16 +69,16 @@
 		width="100%" 
 		text="{model.searchPM.currentSearchInput}" 
 		enabled="{model.enabled}"
-		change="search(searchInput.text);" />
+		change="model.search(searchInput.text);" />
 	
     <mx:Button 
     	label="Load Files..." 
     	enabled="{!model.controller.recorder.isRecording}" 
-    	click="openInput()"/>
+    	click="model.openInput()"/>
     <mx:Button 
     	label="Save Report..." 
     	enabled="{model.enabled}" 
-    	click="saveOutput()"/>
+    	click="model.saveOutput()"/>
     <mx:Button 
     	label="Reset Recording" 
     	enabled="{model.canClearCoverageData(

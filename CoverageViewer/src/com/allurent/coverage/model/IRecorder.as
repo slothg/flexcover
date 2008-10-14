@@ -20,26 +20,18 @@
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
  * OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package com.allurent.coverage.view.model
+package com.allurent.coverage.model
 {
-	import com.allurent.coverage.event.BrowserItemEvent;
-	import com.allurent.coverage.model.CoverageModelManager;
-    
-	public class BrowserPM
+	import flash.events.IEventDispatcher;
+
+	public interface IRecorder extends IEventDispatcher
 	{
-		[Bindable]
-		public var enabled:Boolean;
-        [Bindable]
-        public var coverageModels:CoverageModelManager;		
+	    [Bindable("propertyChange")]
+		function get isRecording():Boolean;
+        [Bindable("propertyChange")]
+        function get currentRecording():String;
 		
-        public function setup(coverageModels:CoverageModelManager):void
-        {
-        	this.coverageModels = coverageModels;
-        }
-		
-        public function changeCoverageMeasure(index:int):void
-        {
-            coverageModels.changeCoverageMeasure(index);
-        }
+		function record(keyMap:Object):void;
+		function applyCoverageData():void;
 	}
 }

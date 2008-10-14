@@ -1,3 +1,25 @@
+/* 
+ * Copyright (c) 2008 Allurent, Inc.
+ *
+ * Permission is hereby granted, free of charge, to any person
+ * obtaining a copy of this software and associated documentation
+ * files (the "Software"), to deal in the Software without restriction,
+ * including without limitation the rights to use, copy, modify,
+ * merge, publish, distribute, sublicense, and/or sell copies of the
+ * Software, and to permit persons to whom the Software is furnished
+ * to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+ * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+ * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+ * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+ * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
+ * OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
 package com.allurent.coverage.model
 {
 	import com.adobe.ac.util.IOneTimeInterval;
@@ -20,19 +42,21 @@ package com.allurent.coverage.model
     /** Applying recorded coverage data to coverage model ends. */
     [Event(name="parsingEnd",
             type="com.allurent.coverage.event.CoverageEvent")]	
-	public class Recorder extends EventDispatcher
-	{
+	public class Recorder extends EventDispatcher implements IRecorder
+	{		
         [Bindable]
-        public var isRecording:Boolean;		
+        public var isRecording:Boolean;
         [Bindable]
-        public var currentRecording:String;	   
+        public var currentRecording:String;
+        public var currentStatusMessage:String;
+        
         /**
          * Flag indicating that coverage data should only be recorded internally for
          * coverage elements possessing loaded metadata from compilation.
          */
-        public var constrainToModel:Boolean;             
-		public var currentStatusMessage:String;
+        public var constrainToModel:Boolean;
 		
+		private var recordingTimeout:Number;
 		private var controller:Controller;
         private var coverageModel:CoverageModel;		
         private var coverageElementsContainer:Array;		
@@ -48,15 +72,16 @@ package com.allurent.coverage.model
 			this.timer = timer;
 			currentRecording = "";
 			coverageElementsContainer = new Array();
+			recordingTimeout = 2000;
 		}
 
 		public function record(keyMap:Object):void	
 		{
-            var isRecording:Boolean = false;
+            var isEmpty:Boolean = true;
             
             for (var key:String in keyMap)
             {
-                isRecording = true;
+                isEmpty = false;
                 var element:CoverageElement = CoverageElement.fromString(key);
                 if (element != null)
                 {
@@ -68,17 +93,18 @@ package com.allurent.coverage.model
                             ElementModel(coverageModel.resolveCoverageElement(element, !constrainToModel)), 
                             count));                     
                 }
-                timer.delay(4000, handleRecordingTimeout);
             }
             
-            if(isRecording && !this.isRecording)
+            var hasReceivedDataAndHasNotStartedYet : Boolean = (!isEmpty && !isRecording);
+            if(hasReceivedDataAndHasNotStartedYet)
             {
                 startCoverageRecording();
             }
-            else if(!isRecording && this.isRecording)
+            
+            if(!isEmpty)
             {
-                endCoverageRecording();
-            }			
+            	timer.delay(recordingTimeout, handleRecordingTimeout);
+            }          
 		}
 		
         public function applyCoverageData():void
@@ -139,7 +165,7 @@ package com.allurent.coverage.model
         private function handleRecordingTimeout():void
         {
             endCoverageRecording();
-        }		
+        }
 
 	}
 }

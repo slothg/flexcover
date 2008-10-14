@@ -25,35 +25,44 @@ package com.allurent.coverage
     import com.adobe.ac.util.OneTimeInterval;
     import com.allurent.coverage.event.CoverageEvent;
     import com.allurent.coverage.model.CoverageModel;
+    import com.allurent.coverage.model.IRecorder;
     import com.allurent.coverage.model.ProjectModel;
     import com.allurent.coverage.model.Recorder;
+    import com.allurent.coverage.parse.CommandLineOptionsParser;
     import com.allurent.coverage.parse.CoverageReportParser;
     import com.allurent.coverage.parse.FileParser;
     import com.allurent.coverage.parse.MetadataParser;
     import com.allurent.coverage.parse.TraceLogParser;
+    import com.allurent.coverage.service.CoverageCommunicator;
+    import com.allurent.coverage.service.ICoverageCommunicator;
     
     import flash.desktop.NativeApplication;
+    import flash.events.Event;
     import flash.events.EventDispatcher;
     import flash.filesystem.File;
     import flash.filesystem.FileMode;
     import flash.filesystem.FileStream;
-    import flash.net.LocalConnection;
-    
-    import mx.controls.Alert;
     
     /** This event is dispatched when the coverage model is updated with new metadata. */
     [Event(name="coverageModelChange",
             type="com.allurent.coverage.event.CoverageEvent")]                       
+    /** Recording of coverage data ended. Bubbled up from Recorder */
+    [Event(name="recordingEnd",
+            type="com.allurent.coverage.event.CoverageEvent")]    
+    
+    
     /**
      * Overall Controller for actions in the Coverage Viewer application. 
      * 
      */
-    public class Controller extends EventDispatcher
+    public class Controller extends EventDispatcher implements IController
     {
         [Bindable]
         public var project:ProjectModel;
         [Bindable]
-        public var recorder:Recorder;
+        public var recorder:IRecorder;
+        public var communicator:ICoverageCommunicator;
+        
         [Bindable]
         public var coverageModel:CoverageModel;
         [Bindable]
@@ -61,32 +70,44 @@ package com.allurent.coverage
         
         [Bindable]
         public var currentStatusMessage:String;        
-                    
+        
         /**
          * Flag indicating that application should exit when instrumented app is done.
          * and all pending data has been written.
          */ 
         public var autoExit:Boolean;
-                
+        
         /**
          * Output file to which coverage data should be written when application is done.
          */
-        public var coverageOutputFile:File;
-                
-        // LocalConnection open for receiving coverage data from live instrumented apps
-        private var conn:LocalConnection;              
+        public var coverageOutputFile:File;        
         
         public function Controller()
         {
-        	project = new ProjectModel();
-        	coverageModel = new CoverageModel();
-        	recorder = new Recorder(this, coverageModel, new OneTimeInterval());
-        	recorder.addEventListener(CoverageEvent.RECORDING_END, handleRecorderEvents);
-        	recorder.addEventListener(CoverageEvent.PARSING_END, handleRecorderEvents);
         	currentStatusMessage = "";
-        	isCoverageDataCleared = true;        		
+        	isCoverageDataCleared = true;
         }
-                
+        
+        public function setup():void
+        {
+            project = new ProjectModel();
+            coverageModel = new CoverageModel();
+            
+            recorder = new Recorder(this, coverageModel, new OneTimeInterval());
+            recorder.addEventListener(CoverageEvent.RECORDING_END, handleRecorderEvents);
+            recorder.addEventListener(CoverageEvent.PARSING_END, handleRecorderEvents);
+             
+            communicator = new CoverageCommunicator(recorder);
+            communicator.addEventListener(CoverageCommunicator.COVERAGE_END_EVENT, onCoverageEnd);      	
+        }        
+        
+        public function processCommandLineArguments(arguments:Array):void
+        {
+            var parser:CommandLineOptionsParser = new CommandLineOptionsParser(this);            
+            parser.addEventListener(CoverageEvent.COVERAGE_MODEL_CHANGE, dispatchEvent);            
+            parser.parse(arguments);        	
+        }
+        
         public function processFileArgument(files:Array):void
         {
             var parser:FileParser = new FileParser(this);
@@ -163,19 +184,6 @@ package com.allurent.coverage
             dispatchCoverageModelChangeEvent();
         }
         
-        /**
-         * Handle a map of coverage keys and execution counts received over our LocalConnection
-         * from an instrumented application.
-         *  
-         * @param keyMap a map whose keys are coverage keys (see CoverageElement) and whose values
-         * are incremental execution counts for those same keys since the last transmission from
-         * the instrumented app.
-         */
-        public function coverageData(keyMap:Object):void
-        {
-            recorder.record(keyMap);
-        }
-        
         public function applyCoverageData():void
         {
         	recorder.applyCoverageData();
@@ -185,22 +193,6 @@ package com.allurent.coverage
         {
             coverageModel.clearCoverageData();
             isCoverageDataCleared = true;
-        }
-
-        /**
-         * Handler called by instrumented program when coverage ends. 
-         */
-        public function coverageEnd():void
-        {
-            if (coverageOutputFile != null)
-            {
-                applyCoverageData();
-                writeReport(coverageOutputFile);
-            }
-            if (autoExit)
-            {
-                NativeApplication.nativeApplication.exit();
-            }
         }
 
         /**
@@ -216,42 +208,6 @@ package com.allurent.coverage
             }
             NativeApplication.nativeApplication.exit();
         }
-
-        /**
-         * Set up the LocalConnection that listens for incoming coverage data from an instrumented program.
-         * @param connectionName the name to use for the connection.
-         */
-        public function attachConnection(connectionName:String):void
-        {
-            if (conn != null)
-            {
-                // Don't set this up multiple times.
-                return;
-            }
-            
-            // Set up our LocalConnection.  Note that the Controller handles
-            conn = new LocalConnection();
-            conn.allowDomain("*");
-            conn.client = this;
-            try
-            {
-                conn.connect(connectionName);        
-            }
-            catch (error:ArgumentError)
-            {
-                if (error.errorID == 2082)
-                {
-                    Alert.show("Another program has already opened a LocalConnection with id '"
-                                + connectionName + "'.  No coverage data will be recorded.",
-                                "Coverage Recording Error");
-                }
-                else
-                {
-                    Alert.show(error.message, "Coverage Recording Error");
-                }
-                conn == null;
-            }
-        }
         
         /**
          * Write accumulated coverage data to an output file if specified. 
@@ -265,10 +221,24 @@ package com.allurent.coverage
             out.close();
         }
         
+        private function onCoverageEnd(event:Event):void
+        {
+            if (coverageOutputFile != null)
+            {
+                applyCoverageData();
+                writeReport(coverageOutputFile);
+            }
+            if (autoExit)
+            {
+                NativeApplication.nativeApplication.exit();
+            }
+        }        
+        
         private function handleRecorderEvents(event:CoverageEvent):void
         {
             currentStatusMessage = Recorder(event.currentTarget).currentStatusMessage;
-        }        
+            dispatchEvent(event);
+        }
         
         private function dispatchCoverageModelChangeEvent():void
         {
