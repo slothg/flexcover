@@ -22,11 +22,12 @@
  */
 package
 {
-	import flexunit.framework.TestSuite;
-	
 	import com.allurent.coverage.ControllerTest;
 	import com.allurent.coverage.model.AllDomainModelTests;
+	import com.allurent.coverage.service.CoverageCommunicatorTest;
 	import com.allurent.coverage.view.model.AllPresentationModelTests;
+	
+	import flexunit.framework.TestSuite;
 
 	public class AllTests extends TestSuite
 	{
@@ -36,6 +37,7 @@ package
 			addTest(new AllDomainModelTests());
 			addTest(new AllPresentationModelTests());
 			addTest(new TestSuite(ControllerTest));
+			addTest(new TestSuite(CoverageCommunicatorTest));			
 		}
 		
 	}

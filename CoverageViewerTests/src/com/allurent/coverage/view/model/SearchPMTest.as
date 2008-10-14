@@ -36,7 +36,7 @@ package com.allurent.coverage.view.model
 		{
 			model = new SearchPM();
 			coverageModels = CoverageModelData.createCoverageModels();
-			model.initialize(coverageModels);
+			model.setup(coverageModels);
 		}
 		
         public function testShowDetails():void

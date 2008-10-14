@@ -33,6 +33,7 @@ package com.allurent.coverage
 		override public function setUp():void
 		{
 			model = new Controller();
+			model.setup();
 		}
         
         public function testIfParsingStartsOnFileDragDrop():void

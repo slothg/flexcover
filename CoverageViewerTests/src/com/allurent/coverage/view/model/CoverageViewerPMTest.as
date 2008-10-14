@@ -42,9 +42,24 @@ package com.allurent.coverage.view.model
 		{
 			model = new CoverageViewerPM(new Controller(), 
 			                             new OneTimeIntervalStub());
+			model.setup();                             
 		}
+		
+        public function testIfHeaderGetsEnabled():void
+        {
+            model.enabled = true;
+            assertTrue("expected enabled", model.headerPM.enabled);
+        }
+        
+        public function testIfBrowserGetsEnabled():void
+        {
+            model.enabled = true;
+            assertTrue("expected enabled", model.browserPM.enabled);
+        }		
 
-        public function testInitializeCoverageManager():void
+
+
+        public function testHandleCoverageModelChange():void
         {
         	assertNull("expected no coverageModels", model.coverageModels);
         	var event:CoverageEvent = new CoverageEvent(
@@ -56,7 +71,7 @@ package com.allurent.coverage.view.model
         	assertNotNull("expected coverageModels", model.coverageModels);
         }
         
-        public function testInitializeCoverageManagerWithEmtpyData():void
+        public function testHandleCoverageModelChangeWithEmptyModel():void
         {
         	var empty:CoverageModel = CoverageModelData.createCoverageModel();
         	empty.clear();
@@ -66,11 +81,11 @@ package com.allurent.coverage.view.model
                                            empty
                                            );
             
-            model.headerPM.dispatchEvent(event);
+            model.controller.dispatchEvent(event);
             assertNull("expected coverageModels", model.coverageModels);
         }
         
-        public function testInitializeCoverageManagerWithoutData():void
+        public function testHandleCoverageModelChangeWithoutModel():void
         {
             assertNull("expected no coverageModels", model.coverageModels);
             var event:CoverageEvent = new CoverageEvent(
@@ -78,62 +93,38 @@ package com.allurent.coverage.view.model
                                            null
                                            );
             
-            model.headerPM.dispatchEvent(event);
+            model.controller.dispatchEvent(event);
             assertNull("expected coverageModels", model.coverageModels);
-        }               
+        }  
         
-        public function testHandleRecordingEndAndApplyCoverageData():void
+        
+        public function testNoMessageOverlayAtStartup():void
         {
-            var event:CoverageEvent = new CoverageEvent(
-                                           CoverageEvent.RECORDING_END
-                                           );
-            
-            expectEvents(model.controller.recorder, 
-                         CoverageEvent.PARSING_START, 
-                         CoverageEvent.PARSING_END);
-            
-            model.controller.recorder.dispatchEvent(event);
-            
-            assertExpectedEventsOccurred();
-            assertFalse("expected showMessageOverlay", model.showMessageOverlay);
+            assertFalse("expected no showMessageOverlay", model.showMessageOverlay);            
         }
-        
+                
         public function testShowMessageOverlayOnHandlingRecordingEnd():void
         {
             model = new CoverageViewerPM(new Controller(), 
                                          new EmptyOneTimeIntervalStub());        	
         	
+            model.setup();
+            
             var event:CoverageEvent = new CoverageEvent(
                                            CoverageEvent.RECORDING_END
                                            );
-
-            model.controller.recorder.dispatchEvent(event);
+            
+            model.controller.dispatchEvent(event);
             
             assertTrue("expected showMessageOverlay", model.showMessageOverlay);
-        }        
-		
-		public function testIfHeaderGetsEnabled():void
-		{
-			model.enabled = true;
-			assertTrue("expected enabled", model.headerPM.enabled);
-		}
-		
-        public function testIfBrowserGetsEnabled():void
-        {
-            model.enabled = true;
-            assertTrue("expected enabled", model.browserPM.enabled);
-        }
+        }	
         
-        public function testNoMessageOverlayAtStartup():void
-        {
-            assertFalse("expected no showMessageOverlay", model.showMessageOverlay);        	
-        }
-        
-        public function testHandleInvokeEvent():void
+        public function testBlockScreenWhileCommandlineOptionsAreProcessed():void
         {
             model = new CoverageViewerPM(new Controller(),
                                          new EmptyOneTimeIntervalStub());        	
-        	  	
+
+        	//The entry level MXML will dispatch this event.
         	var event:InvokeEvent = new InvokeEvent(InvokeEvent.INVOKE);
         	model.handleInvoke(event);
         	assertTrue("expected showMessageOverlay", model.showMessageOverlay);
@@ -170,5 +161,6 @@ package com.allurent.coverage.view.model
             	
             }    
         }
+      
 	}
 }
