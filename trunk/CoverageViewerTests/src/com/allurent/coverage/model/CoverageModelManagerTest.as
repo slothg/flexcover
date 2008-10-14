@@ -47,11 +47,11 @@ package com.allurent.coverage.model
         
         public function testEventDispatchOnChangeOfCurrentCoverageMeasure():void
         {
-            expectEvent(model, IndexChangedEvent.CHANGE);      
+            listenForEvent(model, IndexChangedEvent.CHANGE);      
             
             model.changeCoverageMeasure(CoverageModelManager.LINE_MEASURE);
             
-            assertExpectedEventsOccurred();
+            assertEvents();
         }
         
         public function testChangeOfCurrentCoverageMeasure():void

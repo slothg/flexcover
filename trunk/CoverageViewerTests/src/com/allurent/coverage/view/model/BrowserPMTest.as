@@ -34,7 +34,7 @@ package com.allurent.coverage.view.model
 		override public function BrowserPMTest()
 		{
 			model = new BrowserPM();
-			model.initialize(CoverageModelData.createCoverageModels());
+			model.setup(CoverageModelData.createCoverageModels());
 		}
 		
         public function testDefaultCoverageMeasure():void

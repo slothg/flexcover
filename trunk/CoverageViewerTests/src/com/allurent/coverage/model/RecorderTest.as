@@ -13,9 +13,22 @@ package com.allurent.coverage.model
         
         override public function setUp():void
         {
-        	var controller:Controller = new Controller();
-            model = new Recorder(controller, new CoverageModel(), new OneTimeIntervalStub());
+        	createFixtureWithEmptyOneTimeInterval();
         }
+        
+        private function createFixtureWithEmptyOneTimeInterval():void
+        {
+        	//this fixture will prevent a timeout.
+            var controller:Controller = new Controller();
+            model = new Recorder(controller, new CoverageModel(), new EmptyOneTimeIntervalStub());           
+        }
+        
+        private function createFixtureWithOneTimeInterval():void
+        {
+        	//this fixture will force a timeout.
+            var controller:Controller = new Controller();
+            model = new Recorder(controller, new CoverageModel(), new OneTimeIntervalStub());           
+        }                
         
         public function testNoRecordingAtStartUp():void
         {
@@ -25,39 +38,36 @@ package com.allurent.coverage.model
         
         public function testStartRecording():void
         {
-            expectEvent(model, CoverageEvent.RECORDING_START);
-                  
+            listenForEvent(model, CoverageEvent.RECORDING_START);
+            
             model.record(createCoverageKeyMap());
             
-            assertExpectedEventsOccurred();
+            assertEvents();
             assertTrue("expected recording to start", model.isRecording);
         }
         
-        public function testStartAndStopRecordingWhenEmptyKeyMapIsReceived():void
+        public function testStopRecordingOnTimeout():void
         {
-            testStartRecording();
+        	createFixtureWithOneTimeInterval();
+        	        	
+        	listenForEvent(model, CoverageEvent.RECORDING_END);
             
-            expectEvent(model, CoverageEvent.RECORDING_END);
+            model.record(createCoverageKeyMap());
             
-            var keyMap:Object = new Object();            
-            model.record(keyMap);
-            
-            assertExpectedEventsOccurred();
+            assertEvents();
             assertFalse("expected recording to have stopped", model.isRecording);
         }
         
         public function testStopAndResumeRecording():void
         {
-            var controller:Controller = new Controller();
-            model = new Recorder(controller, new CoverageModel(), new EmptyOneTimeIntervalStub());            
-            
-            testStartAndStopRecordingWhenEmptyKeyMapIsReceived();
+            testStopRecordingOnTimeout();            
+            createFixtureWithEmptyOneTimeInterval();
             testStartRecording();
         }
         
         public function testComputeStatusMessage():void
         {
-            testStartAndStopRecordingWhenEmptyKeyMapIsReceived();
+            testStopRecordingOnTimeout();
             
             assertEquals("3 elements. ~1.0 seconds.", model.currentStatusMessage);
         }   
@@ -66,11 +76,12 @@ package com.allurent.coverage.model
         {
         	model.currentStatusMessage = "some status";
         	
-        	expectEvents(model, CoverageEvent.PARSING_START, CoverageEvent.PARSING_END);
+        	listenForEvent(model, CoverageEvent.PARSING_START);
+        	listenForEvent(model, CoverageEvent.PARSING_END);
         	
         	model.applyCoverageData();
         	
-        	assertExpectedEventsOccurred();
+        	assertEvents();
         	assertEquals("expected currentStatusMessage to be cleared", "", model.currentStatusMessage);
         }
         

@@ -1,5 +1,5 @@
 /* 
- * Copyright (c) 2008 Adobe Systems Incorporated.
+ * Copyright (c) 2008 Allurent, Inc.
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -20,20 +20,30 @@
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
  * OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package com.adobe.ac.util
+package com.allurent.coverage.service
 {
-    public class EmptyOneTimeIntervalStub implements IOneTimeInterval
-    {
-        public function delay( time : Number, 
-                              callback : Function, 
-                              ... rest ) : void
-        {
+	import com.adobe.ac.util.service.IReceivingLocalConnection;
+	import com.adobe.ac.util.service.ISendingLocalConnection;
+	import com.allurent.coverage.model.IRecorder;
 
-        }
-          
-        public function clear() : void
+	public class CoverageCommunicatorTestSubclass extends CoverageCommunicator
+	{
+		public var coverageDataConnection:IReceivingLocalConnection;
+		public var ackConnection:ISendingLocalConnection;
+		
+        public function CoverageCommunicatorTestSubclass(recorder:IRecorder)
         {
-       
+        	super(recorder);
         }
-    }
+		
+		override protected function createCoverageDataConnection():IReceivingLocalConnection
+		{
+			return coverageDataConnection;
+		}
+		
+        override protected function createAckConnection():ISendingLocalConnection
+        {
+            return ackConnection;
+        }
+	}
 }
