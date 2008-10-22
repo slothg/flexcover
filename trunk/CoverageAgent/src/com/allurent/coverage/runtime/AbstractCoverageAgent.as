@@ -47,7 +47,6 @@ package com.allurent.coverage.runtime
          */
         public function recordCoverage(key:String):void
         {
-        	trace("AbstractCoverageAgent.recordCoverage. " + key);
             if (isNaN(coverageMap[key]++))
             {
                 // The map must not have contained this key yet, so enter an
@@ -168,7 +167,7 @@ package com.allurent.coverage.runtime
         ////////////////////        
         private function handleFlushTimer():void
         {
-        	trace("AbstractCoverageAgent.handleFlushTimer ");
+        	//trace("AbstractCoverageAgent.handleFlushTimer ");
             flushCoverageData();
             flushTimer.delay(flushDelay, handleFlushTimer);
         }
