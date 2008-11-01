@@ -23,7 +23,7 @@ package com.allurent.coverage
         
         function processCommandLineArguments(arguments:Array):void
         function processFileArgument(files:Array):void;
-        function writeReport(f:File):void;
+        function writeReport(file:File):void;
         
         function applyCoverageData():void;
         function clearCoverageData():void;        
