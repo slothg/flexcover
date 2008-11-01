@@ -23,6 +23,9 @@
 package allurent.coverage.runtime
 {
 	import com.adobe.ac.util.service.LocalConnectionMock;
+	import com.adobe.ac.util.service.LocalConnectionMock;
+	
+	import flash.events.SecurityErrorEvent;
 	
 	import flexunit.framework.TestCase;
 	
@@ -34,73 +37,72 @@ package allurent.coverage.runtime
 		{
 			agent = new LocalConnectionCoverageAgentTestSubclass("_flexcover");
 		}
-		
+        
         public function testRecordCoverageKeys():void
         {
             //setup mock
-            var lc:LocalConnectionMock = new LocalConnectionMock("coverageDataConnection");
-            lc.expectedConnectionName = "_flexcover";
-            lc.expectedMethodName = "coverageData";
-            agent.coverageDataConnection = lc;        	
-            var ackLc:LocalConnectionMock = new LocalConnectionMock("ackConnection");
-            ackLc.expectedConnectionName = "_flexcover_ack1";
-            agent.ackConnection = ackLc;        	
-        	
-        	agent.recordCoverage("com.adobe.net:URI/getQueryByMap@+1130.20");
-        	agent.recordCoverage("com.adobe.net:URI/setQueryByMap@1204");
-        	agent.recordCoverage("com.adobe.net:URI/getQueryByMap@+1130.20");
-        	
-        	agent.flushCoverageData();
-        	
-        	//currently we don't test the lc payload.
-        	lc.expectedParameter1 = lc.actualParameter1; 
-        	
-        	lc.verify();
-        }
-        				
-        public function testRegistration():void
-        {
-        	var coverageData:Object = createCoverageKeyMap();
-        	//setup mock
-        	var lc:LocalConnectionMock = new LocalConnectionMock("coverageDataConnection");
-        	lc.expectedConnectionName = "_flexcover";
-        	lc.expectedMethodName = "coverageData";
-        	lc.expectedParameter1 = null;
-        	agent.coverageDataConnection = lc;
-        	
-            var ackLc:LocalConnectionMock = new LocalConnectionMock("ackConnection");
-            ackLc.expectedConnectionName = "_flexcover_ack1";
+            var lc:LocalConnectionMock = new LocalConnectionMock(true);
+            lc.mock.method("addEventListener").withAnyArgs.times(3);
+            lc.mock.method("send").withAnyArgs.anyNumberOfTimes;
+            agent.coverageDataConnection = lc;
+            
+            var ackLc:LocalConnectionMock = new LocalConnectionMock(true);
+            //bug in mock-as3 with ..rest operator?
+            //workaround: use withAnyArgs
+            //ackLc.mock.method("allowDomain").withArgs("*").once;
+            ackLc.mock.method("allowDomain").withAnyArgs.once;
+            ackLc.mock.property("client").withArgs(agent).once;
+            ackLc.mock.method("connect").withArgs("_flexcover_ack1").once;
             agent.ackConnection = ackLc;
             
-        	//exersice
-        	agent.initializeAgent();
+            agent.recordCoverage("com.adobe.net:URI/getQueryByMap@+1130.20");
+            agent.recordCoverage("com.adobe.net:URI/setQueryByMap@1204");
+            agent.recordCoverage("com.adobe.net:URI/getQueryByMap@+1130.20");
             
-            lc.verify();
-            ackLc.verify();
+            agent.flushCoverageData();
+            
+            lc.mock.verify();
+            ackLc.mock.verify();
+        }
+        
+        public function testRegistration():void
+        {
+            var coverageData:Object = createCoverageKeyMap();
+            //setup mock
+            var lc:LocalConnectionMock = new LocalConnectionMock();
+            lc.mock.method("addEventListener").withAnyArgs.times(3);
+            lc.mock.method("send").withAnyArgs.anyNumberOfTimes;
+            agent.coverageDataConnection = lc;
+            
+            var ackLc:LocalConnectionMock = new LocalConnectionMock();
+            ackLc.mock.method("connect").withArgs("_flexcover_ack1").once;
+            agent.ackConnection = ackLc;
+            
+            //exersice
+            agent.initializeAgent();
+            
+            lc.mock.verify();
+            ackLc.mock.verify();
         }
         
         public function testSendCoverageDataOnAck():void
         {
             var coverageData:Object = createCoverageKeyMap();
             //setup mock
-            var lc:LocalConnectionMock = new LocalConnectionMock("coverageDataConnection");
-            lc.expectedConnectionName = "_flexcover";
-            lc.expectedMethodName = "coverageData";
+            var lc:LocalConnectionMock = new LocalConnectionMock();
+            lc.mock.method("send").withAnyArgs.anyNumberOfTimes;
             agent.coverageDataConnection = lc;
             
-            var ackLc:LocalConnectionMock = new LocalConnectionMock("ackConnection");
-            ackLc.expectedConnectionName = "_flexcover_ack1";
+            var ackLc:LocalConnectionMock = new LocalConnectionMock();
+            ackLc.mock.method("connect").withArgs("_flexcover_ack1").once;
             agent.ackConnection = ackLc;
             
             //exersice
             agent.initializeAgent();
             agent.sendCoverageMap(coverageData);
             
-            //currently we don't test the lc payload.
-            lc.expectedParameter1 = lc.actualParameter1; 
-            
-            lc.verify();
-            ackLc.verify();
+            lc.mock.verify();
+            ackLc.mock.verify();
         }        
         
         private function createCoverageKeyMap():Object
