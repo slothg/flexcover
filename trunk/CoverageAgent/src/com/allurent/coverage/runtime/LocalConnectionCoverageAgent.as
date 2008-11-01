@@ -153,7 +153,6 @@ package com.allurent.coverage.runtime
         {
             pendingMaps.push(map);
             pendingWrites++;
-            send();	
         }
         
         private function traceKeys(map:Object):void
