@@ -42,67 +42,77 @@ package com.allurent.coverage.service
 		public function testAttachConnectionWithDefaultConnectionName():void
 		{
             //setup mock
-            var lc:LocalConnectionMock = new LocalConnectionMock("coverageDataConnection");
-            lc.expectedConnectionName = "_flexcover";
+            var lc:LocalConnectionMock = new LocalConnectionMock();
+            lc.mock.method("allowDomain").withAnyArgs.once;
+            lc.mock.property("client").withArgs(model).once;
+            lc.mock.method("connect").withArgs("_flexcover").once;          
 			model.coverageDataConnection = lc;
             
 			//exercise
 			model.attachConnection();
 			
-			lc.verify();
+			lc.mock.verify();
 		}
-		
+
         public function testAttachConnectionWithCustomConnectionName():void
         {
             //setup mock
-            var lc:LocalConnectionMock = new LocalConnectionMock("coverageDataConnection");
-            lc.expectedConnectionName = "foo";
+            var lc:LocalConnectionMock = new LocalConnectionMock();
+            lc.mock.method("allowDomain").withAnyArgs.once;
+            lc.mock.property("client").withArgs(model).once;
+            lc.mock.method("connect").withArgs("foo").once;  
             model.coverageDataConnection = lc;
             
             //exercise
             model.coverageDataConnectionName = "foo";
             model.attachConnection();
             
-            lc.verify();
+            lc.mock.verify();
         }
         
         public function testRegistrationOfSingleAgent():void
         {
             var recorder:RecorderMock = new RecorderMock();            
+            recorder.mock.method("record").never;
+            
             model = new CoverageCommunicatorTestSubclass(recorder);        	
-
+            
         	//setup mock
-        	var lc:LocalConnectionMock = new LocalConnectionMock("ackConnection");
-        	lc.expectedConnectionName = "_flexcover_ack1";
-        	lc.expectedMethodName = "coverageReceived";
-        	model.ackConnection = lc;        	
+        	var lc:LocalConnectionMock = new LocalConnectionMock();
+            lc.mock.method("addEventListener").withAnyArgs.times(3);
+            lc.mock.method("send").withAnyArgs.anyNumberOfTimes;       	
+        	//lc.expectedConnectionName = "_flexcover_ack1";
+        	//lc.expectedMethodName = "coverageReceived";
+        	
+        	model.ackConnection = lc;
         	model.coverageDataConnection = new LocalConnectionMock();
         	
         	//exercise
         	model.attachConnection();
         	model.coverageData(null);
         	
-        	lc.verify();
-        	assertFalse("isRecordCalled", recorder.isRecordCalled);
+        	lc.mock.verify();
+        	recorder.mock.verify();
         }
-        
+       
         public function testRecordCoverageDataFromSingleAgent():void
         {
         	var coverageData:Object = createCoverageKeyMap();        	
             var recorder:RecorderMock = new RecorderMock();
-            
-            recorder.expectedKeyMap = coverageData;         
+            recorder.mock.method("record").withArgs(null).never;
+            recorder.mock.method("record").withArgs(coverageData).once;
             
             model = new CoverageCommunicatorTestSubclass(recorder);         
             
             //setup mock
-            var lc:LocalConnectionMock = new LocalConnectionMock("ackConnection");
-            lc.expectedConnectionName = "_flexcover_ack1";
-            lc.expectedMethodName = "coverageReceived";
+            var lc:LocalConnectionMock = new LocalConnectionMock();
+            lc.mock.method("addEventListener").withAnyArgs.times(3);
+            lc.mock.method("send").withAnyArgs.anyNumberOfTimes;             
+            //lc.expectedConnectionName = "_flexcover_ack1";
+            //lc.expectedMethodName = "coverageReceived";
             model.ackConnection = lc;
             
-            var lc2:LocalConnectionMock = new LocalConnectionMock("coverageDataConnection");
-            lc2.expectedConnectionName = "_flexcover";
+            var lc2:LocalConnectionMock = new LocalConnectionMock();
             model.coverageDataConnection = lc2;
             
             //exercise
@@ -110,21 +120,22 @@ package com.allurent.coverage.service
             model.coverageData(null);
             model.coverageData(coverageData);
             
-            lc.verify();
-            lc2.verify();
-            assertTrue("isRecordCalled", recorder.isRecordCalled);
-            recorder.verify();
+            lc.mock.verify();
+            recorder.mock.verify();
         }
-        
+       
         public function testRegistrationOfSecondAgent():void
         {
             var recorder:RecorderMock = new RecorderMock();            
+            recorder.mock.method("record").never;
             model = new CoverageCommunicatorTestSubclass(recorder);         
 
             //setup mock
-            var lc:LocalConnectionMock = new LocalConnectionMock("ackConnection");
-            lc.expectedConnectionName = "_flexcover_ack2";
-            lc.expectedMethodName = "coverageReceived";
+            var lc:LocalConnectionMock = new LocalConnectionMock();
+            lc.mock.method("addEventListener").withAnyArgs.times(3);
+            lc.mock.method("send").withAnyArgs.anyNumberOfTimes;          
+            //lc.expectedConnectionName = "_flexcover_ack2";
+            //lc.expectedMethodName = "coverageReceived";
             model.ackConnection = lc;
             model.coverageDataConnection = new LocalConnectionMock();
             
@@ -133,27 +144,28 @@ package com.allurent.coverage.service
             model.coverageData(null);
             model.coverageData(null);
             
-            lc.verify();
-            assertFalse("isRecordCalled", recorder.isRecordCalled);
+            lc.mock.verify();
+            recorder.mock.verify();
         } 
         
         public function testRecordCoverageDataFromSecondAgent():void
         {
             var coverageData:Object = createCoverageKeyMap();           
             var recorder:RecorderMock = new RecorderMock();
-            
-            recorder.expectedKeyMap = coverageData;         
-            
+            recorder.mock.method("record").withArgs(null).never;
+            recorder.mock.method("record").withArgs(coverageData).twice;
+
             model = new CoverageCommunicatorTestSubclass(recorder);         
             
             //setup mock
-            var lc:LocalConnectionMock = new LocalConnectionMock("ackConnection");
-            lc.expectedConnectionName = "_flexcover_ack2";
-            lc.expectedMethodName = "coverageReceived";
+            var lc:LocalConnectionMock = new LocalConnectionMock();
+            lc.mock.method("addEventListener").withAnyArgs.times(3);
+            lc.mock.method("send").withAnyArgs.anyNumberOfTimes;             
+            //lc.expectedConnectionName = "_flexcover_ack2";
+            //lc.expectedMethodName = "coverageReceived";
             model.ackConnection = lc;
             
-            var lc2:LocalConnectionMock = new LocalConnectionMock("coverageDataConnection");
-            lc2.expectedConnectionName = "_flexcover";
+            var lc2:LocalConnectionMock = new LocalConnectionMock();
             model.coverageDataConnection = lc2;
             
             //exercise
@@ -163,52 +175,51 @@ package com.allurent.coverage.service
             model.coverageData(coverageData);
             model.coverageData(coverageData);
             
-            lc.verify();
-            lc2.verify();            
-            assertTrue("isRecordCalled", recorder.isRecordCalled);
-            recorder.verify();
+            lc.mock.verify();
+            recorder.mock.verify();
         }  
         
         public function testStopRecordingWhenRecorderStartsParsing():void
         {
             var coverageData:Object = createCoverageKeyMap();           
             var recorder:RecorderMock = new RecorderMock();
-            
-            recorder.expectedKeyMap = coverageData;         
+            recorder.mock.method("record").withArgs(coverageData).once;
             
             model = new CoverageCommunicatorTestSubclass(recorder);         
             
             //setup mock
-            var lc:LocalConnectionMock = new LocalConnectionMock("ackConnection");
+            var lc:LocalConnectionMock = new LocalConnectionMock();
             model.ackConnection = lc;
            
-            model.coverageDataConnection = new LocalConnectionMock("coverageDataConnection");
+            model.coverageDataConnection = new LocalConnectionMock();
             
             //exercise
             model.attachConnection();
+            model.coverageData(null);
             recorder.dispatchEvent(new CoverageEvent(CoverageEvent.RECORDING_END));
             model.coverageData(coverageData);
             
-            lc.verify();
-            assertTrue("isRecordCalled", recorder.isRecordCalled);
+            lc.mock.verify();
+            recorder.mock.verify();
         }
         
         public function testResumeRecordingWhenRecorderStopsParsing():void
         {
             var coverageData:Object = createCoverageKeyMap();           
             var recorder:RecorderMock = new RecorderMock();
-            
-            recorder.expectedKeyMap = coverageData;         
+            recorder.mock.method("record").withArgs(coverageData).once;  
             
             model = new CoverageCommunicatorTestSubclass(recorder);         
             
             //setup mock
-            var lc:LocalConnectionMock = new LocalConnectionMock("ackConnection");
-            lc.expectedConnectionName = "_flexcover_ack1";
-            lc.expectedMethodName = "coverageReceived";            
+            var lc:LocalConnectionMock = new LocalConnectionMock();
+            lc.mock.method("addEventListener").withAnyArgs.times(3);
+            lc.mock.method("send").withAnyArgs.anyNumberOfTimes;                 
+            //lc.expectedConnectionName = "_flexcover_ack1";
+            //lc.expectedMethodName = "coverageReceived";            
             model.ackConnection = lc;
             
-            model.coverageDataConnection = new LocalConnectionMock("coverageDataConnection");
+            model.coverageDataConnection = new LocalConnectionMock();
             
             //exercise
             model.attachConnection();
@@ -216,9 +227,9 @@ package com.allurent.coverage.service
             recorder.dispatchEvent(new CoverageEvent(CoverageEvent.RECORDING_END));
             model.coverageData(coverageData);     
             recorder.dispatchEvent(new CoverageEvent(CoverageEvent.PARSING_END));
-
-            lc.verify();
-            assertTrue("isRecordCalled", recorder.isRecordCalled);   	
+            
+            lc.mock.verify();
+            recorder.mock.verify();	
         }        
         
         private function createCoverageKeyMap():Object

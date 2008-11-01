@@ -41,8 +41,9 @@ package com.allurent.coverage.view.model
 		
         public function testClearCoverageData():void
         {
+        	controllerMock.mock.method("clearCoverageData").once;
             model.clearCoverageData();
-            assertTrue("isWriteReportCalled", controllerMock.isClearCoverageDataCalled);
+            controllerMock.mock.verify();
         }
 		
 		public function testCanClearCoverageData():void
@@ -64,8 +65,9 @@ package com.allurent.coverage.view.model
 		
         public function testSaveReport():void
         {
+        	controllerMock.mock.method("writeReport").withAnyArgs.once;
             model.saveOutput();
-            assertTrue("isWriteReportCalled", controllerMock.isWriteReportCalled);
+            controllerMock.mock.verify();
         }		
 	}
 }

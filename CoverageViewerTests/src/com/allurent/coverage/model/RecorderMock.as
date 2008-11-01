@@ -44,42 +44,61 @@
  */
 package com.allurent.coverage.model
 {
-	import flash.events.EventDispatcher;
+	import com.anywebcam.mock.Mock;
 	
-	import flexunit.framework.Assert;
+	import flash.events.Event;
 
-	public class RecorderMock extends EventDispatcher implements IRecorder
+	public class RecorderMock implements IRecorder
 	{
-		public var isRecordCalled:Boolean;
-		public var expectedKeyMap:Object;
-		public var actualKeyMap:Object;
+		public var mock:Mock;
 		
 		public function get currentRecording():String
 		{
-			return "";
+			return mock.currentRecording;
 		}
 		public function get isRecording():Boolean
 		{
-			return false;
+			return mock.isRecording;;
 		}
 		
-		public function RecorderMock()
-		{
-		}
-		
-		public function verify():void
-		{
-			Assert.assertEquals(expectedKeyMap, actualKeyMap);
-		}
+        public function RecorderMock(ignoreMissing:Boolean=true)
+        {
+            mock = new Mock(this, ignoreMissing);
+        }		
         
 		public function record(keyMap:Object):void
 		{
-			isRecordCalled = true;
-			actualKeyMap = keyMap;
+			mock.record(keyMap);
 		}
 		
         public function applyCoverageData():void
         {
-        }	
+        	mock.applyCoverageData();
+        }
+        
+        public function addEventListener(type:String, listener:Function, useCapture:Boolean=false, priority:int=0, useWeakReference:Boolean=false):void
+        {
+           mock.addEventListener(type, listener, useCapture, priority, useWeakReference);
+        }
+        
+        public function removeEventListener(type:String, listener:Function, useCapture:Boolean=false):void
+        {
+            mock.removeEventListener(type, listener, useCapture);
+        }
+        
+        public function dispatchEvent(event:Event):Boolean
+        {
+            return mock.dispatchEvent(event);
+        }
+        
+        public function hasEventListener(type:String):Boolean
+        {
+            return mock.hasEventListener(type);
+        }
+        
+        public function willTrigger(type:String):Boolean
+        {
+            return mock.willTrigger(type);
+        }        
 	}
 }
