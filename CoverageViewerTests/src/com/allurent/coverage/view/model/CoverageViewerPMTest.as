@@ -24,7 +24,7 @@ package com.allurent.coverage.view.model
 {
 	import com.adobe.ac.util.EmptyOneTimeIntervalStub;
 	import com.adobe.ac.util.OneTimeIntervalStub;
-	import com.allurent.coverage.Controller;
+	import com.allurent.coverage.ControllerMock;
 	import com.allurent.coverage.CoverageModelData;
 	import com.allurent.coverage.event.CoverageEvent;
 	import com.allurent.coverage.model.CoverageModel;
@@ -37,12 +37,14 @@ package com.allurent.coverage.view.model
 	public class CoverageViewerPMTest extends EventfulTestCase
 	{
 		private var model:CoverageViewerPM;
+		private var controllerMock:ControllerMock;
         
 		override public function setUp():void
 		{
-			model = new CoverageViewerPM(new Controller(), 
+			controllerMock = new ControllerMock();
+			model = new CoverageViewerPM(controllerMock, 
 			                             new OneTimeIntervalStub());
-			model.setup();                             
+			model.setup();                 
 		}
 		
         public function testIfHeaderGetsEnabled():void
@@ -67,8 +69,12 @@ package com.allurent.coverage.view.model
         	                               CoverageModelData.createCoverageModel()
         	                               );
         	
+        	//controllerMock.mock.expect().dispatchesEvent( event ).once;        	
         	model.controller.dispatchEvent(event);
+        	
+        	//controllerMock.mock.verify();
         	assertNotNull("expected coverageModels", model.coverageModels);
+        	assertFalse("showMessageOverlay", model.showMessageOverlay);
         }
         
         public function testHandleCoverageModelChangeWithEmptyModel():void
@@ -105,23 +111,27 @@ package com.allurent.coverage.view.model
                 
         public function testShowMessageOverlayOnHandlingRecordingEnd():void
         {
-            model = new CoverageViewerPM(new Controller(), 
-                                         new EmptyOneTimeIntervalStub());        	
-        	
-            model.setup();
-            
+        	var controller:ControllerMock = new ControllerMock(true);
             var event:CoverageEvent = new CoverageEvent(
                                            CoverageEvent.RECORDING_END
                                            );
+            //controller.mock.method("dispatchEvent").withArgs(event).once.dispatchesEvent(event).once;
+        	controller.mock.method("applyCoverageData").withNoArgs.once;
             
+            model = new CoverageViewerPM(controller, 
+                                         new OneTimeIntervalStub());        	
+        	
+            model.setup();
             model.controller.dispatchEvent(event);
             
-            assertTrue("expected showMessageOverlay", model.showMessageOverlay);
+            controller.mock.verify();
+            
+            assertFalse("expected showMessageOverlay", model.showMessageOverlay);
         }	
         
         public function testBlockScreenWhileCommandlineOptionsAreProcessed():void
         {
-            model = new CoverageViewerPM(new Controller(),
+            model = new CoverageViewerPM(new ControllerMock(),
                                          new EmptyOneTimeIntervalStub());        	
 
         	//The entry level MXML will dispatch this event.
@@ -132,7 +142,7 @@ package com.allurent.coverage.view.model
         
         public function testIfMessageOverlayIsShownOnFileDragDrop():void
         {
-            model = new CoverageViewerPM(new Controller(), 
+            model = new CoverageViewerPM(new ControllerMock(), 
                                          new EmptyOneTimeIntervalStub());         	
         	
             var event:InvokeEvent = new InvokeEvent(InvokeEvent.INVOKE);
@@ -142,25 +152,15 @@ package com.allurent.coverage.view.model
         
         public function testIfParsingStartsOnFileDragDrop():void
         {
-            model = new CoverageViewerPM(new Controller(), 
+        	var controller:ControllerMock = new ControllerMock();
+            model = new CoverageViewerPM(controller, 
                                          new OneTimeIntervalStub());           
             
-            var event:InvokeEvent = new InvokeEvent(InvokeEvent.INVOKE);
             
-            //in the real world we would drop one or more File types.
-            //Here, we test if the expected error has been thrown on the 
-            //underlying parser. This tells us that the parser has been invoked.          
-            var dropSource:Array = new Array(null);
-            try
-            {
-            	model.handleDragDrop(dropSource);
-            	fail("parser is expected to throw a runtime for a null argument");
-            }
-            catch(error:ArgumentError)
-            {
-            	
-            }    
-        }
-      
+            var dropSource:Array = new Array(new File());            
+            
+            controller.mock.method("processFileArgument").withArgs(dropSource).once;            
+            model.handleDragDrop(dropSource);
+        }      
 	}
 }

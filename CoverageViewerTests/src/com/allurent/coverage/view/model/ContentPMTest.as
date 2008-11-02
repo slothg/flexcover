@@ -28,7 +28,7 @@ package com.allurent.coverage.view.model
 	import com.allurent.coverage.model.CoverageModel;
 	import com.allurent.coverage.model.FunctionModel;
 	import com.allurent.coverage.model.PackageModel;
-	import com.allurent.coverage.model.ProjectModel;
+	import com.allurent.coverage.model.application.ProjectModel;
 	
 	import flexunit.framework.TestCase;
 	

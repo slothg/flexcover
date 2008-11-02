@@ -22,6 +22,11 @@
  */
 package com.allurent.coverage
 {
+	import com.allurent.coverage.model.CoverageModel;
+	import com.allurent.coverage.model.RecorderMock;
+	import com.allurent.coverage.model.application.ProjectModel;
+	import com.allurent.coverage.service.CoverageCommunicatorMock;
+	
 	import flash.filesystem.File;
 	
 	import flexunit.framework.EventfulTestCase;
@@ -32,8 +37,10 @@ package com.allurent.coverage
 		
 		override public function setUp():void
 		{
-			model = new Controller();
-			model.setup();
+			model = new Controller(new ProjectModel());
+			model.setup(new CoverageModel(), 
+                        new RecorderMock(), 
+                        new CoverageCommunicatorMock());                       
 		}
         
         public function testIfParsingStartsOnFileDragDrop():void
