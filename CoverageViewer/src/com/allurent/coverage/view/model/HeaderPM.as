@@ -94,8 +94,8 @@ package com.allurent.coverage.view.model
         private function onSearch(searchInput:String):void
         {
             searchPM.search(searchInput);
-        }        
-            
+        }
+        
         private function handleInputFilesSelected(event:FileListEvent):void
         {
             dispatchEvent(new HeavyOperationEvent(controller.processFileArgument, 

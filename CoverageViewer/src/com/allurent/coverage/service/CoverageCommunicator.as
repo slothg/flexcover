@@ -26,7 +26,7 @@ package com.allurent.coverage.service
 	import com.adobe.ac.util.service.ISendingLocalConnection;
 	import com.adobe.ac.util.service.LocalConnectionWrapper;
 	import com.allurent.coverage.event.CoverageEvent;
-	import com.allurent.coverage.model.IRecorder;
+	import com.allurent.coverage.model.application.IRecorder;
 	
 	import flash.events.AsyncErrorEvent;
 	import flash.events.ErrorEvent;
@@ -153,7 +153,6 @@ package com.allurent.coverage.service
 	            
 	            if(!isTooBusyToReceiveMore)
 	            {
-	                //sendACK(keyMap.ackConnectionName);
 	                sendACK(rotateConnection());
 	            }                  	
             }

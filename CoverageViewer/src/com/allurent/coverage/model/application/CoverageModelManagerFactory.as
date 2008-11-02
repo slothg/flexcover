@@ -20,25 +20,26 @@
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
  * OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package com.allurent.coverage.view.model
+package com.allurent.coverage.model.application
 {
-	import com.allurent.coverage.model.application.CoverageModelManager;
-    
-	public class BrowserPM
+	import com.allurent.coverage.model.CoverageModelFactory;
+	
+	public class CoverageModelManagerFactory
 	{
-		[Bindable]
-		public var enabled:Boolean;
-        [Bindable]
-        public var coverageModels:CoverageModelManager;
-		
-        public function setup(coverageModels:CoverageModelManager):void
+        private static var _instance:CoverageModelManager;
+        
+        public static function get instance():CoverageModelManager
         {
-        	this.coverageModels = coverageModels;
+            if(_instance == null)
+            {
+                _instance = new CoverageModelManager(CoverageModelFactory.instance);
+            }
+            return _instance;
         }
-		
-        public function changeCoverageMeasure(index:int):void
+        
+        public static function set instance(value:CoverageModelManager):void
         {
-            coverageModels.changeCoverageMeasure(index);
+            _instance = value;
         }
 	}
 }

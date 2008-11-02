@@ -22,7 +22,7 @@
  */
 package com.allurent.coverage.view.model
 {
-	import com.allurent.coverage.model.CoverageModelManager;
+	import com.allurent.coverage.model.application.CoverageModelManager;
 	import com.allurent.coverage.model.search.ISearchable;
 	
 	import mx.collections.IHierarchicalCollectionView;

@@ -27,8 +27,12 @@ package com.allurent.coverage.view.model
 	import com.allurent.coverage.IController;
 	import com.allurent.coverage.event.CoverageEvent;
 	import com.allurent.coverage.event.HeavyOperationEvent;
-	import com.allurent.coverage.model.CoverageModel;
-	import com.allurent.coverage.model.CoverageModelManager;
+	import com.allurent.coverage.model.CoverageModelFactory;
+	import com.allurent.coverage.model.ICoverageModel;
+	import com.allurent.coverage.model.application.CoverageModelManager;
+	import com.allurent.coverage.model.application.CoverageModelManagerFactory;
+	import com.allurent.coverage.model.application.RecorderFactory;
+	import com.allurent.coverage.service.CoverageCommunicatorFactory;
 	
 	import flash.desktop.ClipboardFormats;
 	import flash.events.InvokeEvent;
@@ -49,22 +53,25 @@ package com.allurent.coverage.view.model
         [Bindable]
         public var coverageModels:CoverageModelManager;        
         
-        private var _coverageModel:CoverageModel;
+        private var _coverageModel:ICoverageModel;
         [Bindable]
-        public function get coverageModel():CoverageModel
+        public function get coverageModel():ICoverageModel
         {
         	return _coverageModel;
         }
-        public function set coverageModel(value:CoverageModel):void
-        { 
+        public function set coverageModel(value:ICoverageModel):void
+        {
     		if(value == null) return;    		
             if(value.isEmpty()) return;
             
             enabled = true;           
             
             _coverageModel = value;
+            CoverageModelFactory.instance = value;
             
-            coverageModels = new CoverageModelManager(coverageModel);            
+            CoverageModelManagerFactory.instance = null;
+            coverageModels = CoverageModelManagerFactory.instance;
+            
             browserPM.setup(coverageModels);
             headerPM.searchPM.setup(coverageModels);
         }
@@ -96,7 +103,9 @@ package com.allurent.coverage.view.model
 		
 		public function setup():void
 		{
-            controller.setup();
+            controller.setup(CoverageModelFactory.instance, 
+                             RecorderFactory.instance, 
+                             CoverageCommunicatorFactory.instance);			
             controller.addEventListener(CoverageEvent.COVERAGE_MODEL_CHANGE, 
                                       handleCoverageModelChange);           
             controller.addEventListener(CoverageEvent.RECORDING_END, 
@@ -164,6 +173,7 @@ package com.allurent.coverage.view.model
         
         private function parseCoverageData():void
         {
+        	trace("CoverageViewerPM.parseCoverageData ");
             controller.applyCoverageData();
             showMessageOverlay = false;
         }	

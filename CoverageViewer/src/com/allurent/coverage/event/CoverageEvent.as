@@ -22,7 +22,7 @@
  */
 package com.allurent.coverage.event
 {
-    import com.allurent.coverage.model.CoverageModel;
+    import com.allurent.coverage.model.ICoverageModel;
     
     import flash.events.Event;
 
@@ -34,12 +34,16 @@ package com.allurent.coverage.event
         public static const PARSING_START:String = "parsingStart";
         public static const PARSING_END:String = "parsingEnd";
         
-        public var coverageModel:CoverageModel;
+        public var coverageModel:ICoverageModel;
+        public var hasParsed:Boolean;
         
-        public function CoverageEvent(type:String, coverageModel:CoverageModel=null)
+        public function CoverageEvent(type:String, 
+                                      coverageModel:ICoverageModel=null, 
+                                      hasParsed:Boolean=false)
         {
             super(type, true);
             this.coverageModel = coverageModel;
+            this.hasParsed = hasParsed;
         }
         
         override public function clone():Event

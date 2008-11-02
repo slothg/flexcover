@@ -24,7 +24,7 @@ package com.allurent.coverage.parse
 {
 	import com.allurent.coverage.Controller;
 	import com.allurent.coverage.event.CoverageEvent;
-	import com.allurent.coverage.model.CoverageModel;
+	import com.allurent.coverage.model.ICoverageModel;
 	
 	import flash.events.EventDispatcher;
 	import flash.filesystem.File;
@@ -63,7 +63,7 @@ package com.allurent.coverage.parse
             }
         }
         
-        private function dispatchCoverageModelChange(model:CoverageModel):void
+        private function dispatchCoverageModelChange(model:ICoverageModel):void
         {
             dispatchEvent(new CoverageEvent(
             						CoverageEvent.COVERAGE_MODEL_CHANGE, 

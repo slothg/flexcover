@@ -20,8 +20,10 @@
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
  * OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package com.allurent.coverage.model
+package com.allurent.coverage.model.application
 {
+    import com.allurent.coverage.model.ClassModel;
+    
     import flash.filesystem.File;
     
     import mx.collections.ArrayCollection;

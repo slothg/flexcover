@@ -25,10 +25,10 @@ package com.allurent.coverage.view.model
 	import com.allurent.coverage.event.BrowserItemEvent;
 	import com.allurent.coverage.model.ClassModel;
 	import com.allurent.coverage.model.CoverageModel;
-	import com.allurent.coverage.model.CoverageModelManager;
 	import com.allurent.coverage.model.FunctionModel;
 	import com.allurent.coverage.model.PackageModel;
-	import com.allurent.coverage.model.ProjectModel;
+	import com.allurent.coverage.model.application.CoverageModelManager;
+	import com.allurent.coverage.model.application.ProjectModel;
 	
 	import mx.collections.ICollectionView;
 	import mx.collections.IHierarchicalCollectionView;

@@ -26,7 +26,7 @@
     import com.allurent.coverage.model.ClassModel;
     import com.allurent.coverage.model.ElementModel;
     import com.allurent.coverage.model.LineModel;
-    import com.allurent.coverage.model.ProjectModel;
+    import com.allurent.coverage.model.application.ProjectModel;
     
     import flash.events.Event;
     import flash.filesystem.File;

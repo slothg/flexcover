@@ -27,7 +27,7 @@ package com.allurent.coverage.model
 
     public class CoverageData extends HierarchicalData
     {
-        public function CoverageData(model:SegmentModel)
+        public function CoverageData(model:ISegmentModel)
         {
             super(new ArrayCollection([model]));
         }
