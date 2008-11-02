@@ -103,7 +103,29 @@ package allurent.coverage.runtime
             
             lc.mock.verify();
             ackLc.mock.verify();
-        }        
+        }
+        
+        //TODO: potential mock-as3 bug
+        public function testCannotSendWithoutViewerPermission():void
+        {
+            var coverageData:Object = createCoverageKeyMap();
+            //setup mock
+            var lc:LocalConnectionMock = new LocalConnectionMock();
+            agent.coverageDataConnection = lc;
+            
+            var ackLc:LocalConnectionMock = new LocalConnectionMock();
+            agent.ackConnection = ackLc;
+            
+            //exersice
+            agent.initializeAgent();
+            agent.sendCoverageMap(coverageData);
+            
+            lc.mock.method("ssend").withAnyArgs.never;
+            
+            agent.sendCoverageMap(coverageData);
+            
+            lc.mock.verify();
+        }  
         
         private function createCoverageKeyMap():Object
         {
