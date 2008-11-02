@@ -24,8 +24,8 @@ package com.allurent.coverage.service
 {
 	import com.adobe.ac.util.service.LocalConnectionMock;
 	import com.allurent.coverage.event.CoverageEvent;
-	import com.allurent.coverage.model.IRecorder;
 	import com.allurent.coverage.model.RecorderMock;
+	import com.allurent.coverage.model.application.IRecorder;
 	
 	import flexunit.framework.TestCase;
 

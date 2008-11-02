@@ -2,8 +2,8 @@ package com.allurent.coverage.model
 {
 	import com.adobe.ac.util.EmptyOneTimeIntervalStub;
 	import com.adobe.ac.util.OneTimeIntervalStub;
-	import com.allurent.coverage.Controller;
 	import com.allurent.coverage.event.CoverageEvent;
+	import com.allurent.coverage.model.application.Recorder;
 	
 	import flexunit.framework.EventfulTestCase;
 
@@ -19,15 +19,13 @@ package com.allurent.coverage.model
         private function createFixtureWithEmptyOneTimeInterval():void
         {
         	//this fixture will prevent a timeout.
-            var controller:Controller = new Controller();
-            model = new Recorder(controller, new CoverageModel(), new EmptyOneTimeIntervalStub());           
+            model = new Recorder(new CoverageModel(), new EmptyOneTimeIntervalStub());           
         }
         
         private function createFixtureWithOneTimeInterval():void
         {
         	//this fixture will force a timeout.
-            var controller:Controller = new Controller();
-            model = new Recorder(controller, new CoverageModel(), new OneTimeIntervalStub());           
+            model = new Recorder( new CoverageModel(), new OneTimeIntervalStub());           
         }                
         
         public function testNoRecordingAtStartUp():void

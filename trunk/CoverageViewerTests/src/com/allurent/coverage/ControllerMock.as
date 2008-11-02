@@ -1,13 +1,37 @@
+/* 
+ * Copyright (c) 2008 Allurent, Inc.
+ *
+ * Permission is hereby granted, free of charge, to any person
+ * obtaining a copy of this software and associated documentation
+ * files (the "Software"), to deal in the Software without restriction,
+ * including without limitation the rights to use, copy, modify,
+ * merge, publish, distribute, sublicense, and/or sell copies of the
+ * Software, and to permit persons to whom the Software is furnished
+ * to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+ * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+ * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+ * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+ * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
+ * OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
 package com.allurent.coverage
 {
-	import com.allurent.coverage.model.IRecorder;
-	import com.allurent.coverage.model.ProjectModel;
+	import com.allurent.coverage.model.ICoverageModel;
+	import com.allurent.coverage.model.application.IRecorder;
+	import com.allurent.coverage.model.application.ProjectModel;
+	import com.allurent.coverage.service.ICoverageCommunicator;
 	import com.anywebcam.mock.Mock;
 	
-	import flash.events.Event;
+	import flash.events.EventDispatcher;
 	import flash.filesystem.File;
 
-	public class ControllerMock implements IController
+	public class ControllerMock extends EventDispatcher implements IController
 	{
         public var mock:Mock;
         
@@ -31,15 +55,22 @@ package com.allurent.coverage
 			return mock.isCoverageDataCleared;
 		}
 		
+        public function set isCoverageDataCleared(value:Boolean):void
+        {
+            mock.isCoverageDataCleared = value;
+        }		
+		
 		public function ControllerMock(ignoreMissing:Boolean=true)
 		{
 			mock = new Mock(this, ignoreMissing);
 		}
 		
-		public function setup():void
-		{
-			mock.setup();
-		}
+        public function setup(coverageModel:ICoverageModel, 
+                              recorder:IRecorder, 
+                              communicator:ICoverageCommunicator):void
+        {
+        	mock.setup(coverageModel, recorder, communicator);
+        }
 		
 		public function close():void
 		{
@@ -70,7 +101,7 @@ package com.allurent.coverage
 		{
 			mock.clearCoverageData();
 		}
-		
+		/*
         public function addEventListener(type:String, listener:Function, useCapture:Boolean=false, priority:int=0, useWeakReference:Boolean=false):void
         {
            mock.addEventListener(type, listener, useCapture, priority, useWeakReference);
@@ -94,6 +125,7 @@ package com.allurent.coverage
         public function willTrigger(type:String):Boolean
         {
             return mock.willTrigger(type);
-        }		
+        }
+        */		
 	}
 }

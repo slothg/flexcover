@@ -24,7 +24,7 @@ package com.allurent.coverage.model.search
 {
 	import com.allurent.coverage.CoverageModelData;
 	import com.allurent.coverage.model.CoverageModel;
-	import com.allurent.coverage.model.CoverageModelManager;
+	import com.allurent.coverage.model.application.CoverageModelManager;
 	
 	import flexunit.framework.TestCase;
 	

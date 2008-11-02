@@ -24,10 +24,10 @@ package com.allurent.coverage
 {
 	import com.allurent.coverage.model.ClassModel;
 	import com.allurent.coverage.model.CoverageModel;
-	import com.allurent.coverage.model.CoverageModelManager;
 	import com.allurent.coverage.model.FunctionModel;
 	import com.allurent.coverage.model.PackageModel;
 	import com.allurent.coverage.model.SegmentModel;
+	import com.allurent.coverage.model.application.CoverageModelManager;
 	
 	import mx.collections.ArrayCollection;
 	import mx.collections.IList;

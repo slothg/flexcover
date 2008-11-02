@@ -24,7 +24,7 @@ package com.allurent.coverage.service
 {
 	import com.adobe.ac.util.service.IReceivingLocalConnection;
 	import com.adobe.ac.util.service.ISendingLocalConnection;
-	import com.allurent.coverage.model.IRecorder;
+	import com.allurent.coverage.model.application.IRecorder;
 
 	public class CoverageCommunicatorTestSubclass extends CoverageCommunicator
 	{

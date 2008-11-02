@@ -23,6 +23,7 @@
 package com.allurent.coverage.model
 {
 	import com.allurent.coverage.CoverageModelData;
+	import com.allurent.coverage.model.application.CoverageModelManager;
 	import com.allurent.coverage.model.search.ISearchable;
 	
 	import flexunit.framework.EventfulTestCase;
