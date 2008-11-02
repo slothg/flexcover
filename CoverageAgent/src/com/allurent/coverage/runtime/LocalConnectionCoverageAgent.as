@@ -1,3 +1,25 @@
+/* 
+ * Copyright (c) 2008 Allurent, Inc.
+ *
+ * Permission is hereby granted, free of charge, to any person
+ * obtaining a copy of this software and associated documentation
+ * files (the "Software"), to deal in the Software without restriction,
+ * including without limitation the rights to use, copy, modify,
+ * merge, publish, distribute, sublicense, and/or sell copies of the
+ * Software, and to permit persons to whom the Software is furnished
+ * to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+ * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+ * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+ * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+ * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
+ * OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
 package com.allurent.coverage.runtime
 {
     import com.adobe.ac.util.service.IReceivingLocalConnection;
@@ -61,6 +83,8 @@ package com.allurent.coverage.runtime
         private var pendingMaps:Array = new Array();
         private var noPendingMaps:Boolean;            
         private var hasRegistrationBeenSent:Boolean; 
+        //is allowed to send coverage data. Flag set from viewer in coverageReceived.
+        private var canSend:Boolean;
         
         /**
          * Create a LocalConnectionCoverageAgent.
@@ -97,6 +121,8 @@ package com.allurent.coverage.runtime
          */
         override public function sendCoverageMap(map:Object):void
         {
+        	//trace("LocalConnectionCoverageAgent.sendCoverageMap: " + map);
+        	
             // Repeatedly accumulate MAX_SEND_LENGTH worth of coverage key/value
             // pairs in tempMap, sending over the LocalConnection as this limit
             // is reached.  This is a crude attempt to avoid exceeding the data size limit
@@ -131,11 +157,12 @@ package com.allurent.coverage.runtime
         {
             coverageDataConnection.send(coverageDataConnectionName, EXIT_HANDLER);
             pendingWrites++;
-        }        
+        }
         
         public function coverageReceived():void
         {
-            //trace("LocalConnectionCoverageAgent.coverageReceived");
+            trace("LocalConnectionCoverageAgent.coverageReceived");
+            canSend = true;
             send();
         }
         
@@ -147,12 +174,18 @@ package com.allurent.coverage.runtime
         protected function createAckConnection():IReceivingLocalConnection
         {
             return new LocalConnectionWrapper();
-        }        
+        }
         
         private function addPendingMapAndAttempSend(map:Object):void
         {
             pendingMaps.push(map);
+            trace("LocalConnectionCoverageAgent.addPendingMapAndAttempSend: " + pendingMaps.length);
             pendingWrites++;
+            
+            if(canSend)
+            {
+            	send();
+            }
         }
         
         private function traceKeys(map:Object):void
@@ -217,18 +250,19 @@ package com.allurent.coverage.runtime
         {
            if(pendingMaps.length > 0)
            {
-             sendMaps(pendingMaps);      
+             sendMaps(pendingMaps);
+             canSend = false;
            }
            else
            {
-             trace("LocalConnectionCoverageAgent.sendMaps: Nothing to send ");             
+             trace("LocalConnectionCoverageAgent.sendMaps: Nothing to send ");
            }
         }
         
         private function sendMaps(maps:Array):void
         {
             var map:Object = maps.shift();
-            traceKeys(map);
+            //traceKeys(map);
             trace("LocalConnectionCoverageAgent.sendMaps: Left to send " + pendingMaps.length);
             attemptLCSend(map);
         }
