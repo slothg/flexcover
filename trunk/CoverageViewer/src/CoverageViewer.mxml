@@ -39,6 +39,7 @@
     
     <mx:Script>
         <![CDATA[
+        	import com.allurent.coverage.ControllerFactory;
         	import com.allurent.coverage.IController;
         	import com.adobe.ac.util.OneTimeInterval;
         	import mx.events.FlexEvent;
@@ -48,10 +49,10 @@
             
             [Bindable]
             private var coverageViewerPM:CoverageViewerPM;
-
+            
             private function preinitializeApplication():void
             {
-            	var controller:IController = new Controller();
+            	var controller:IController = ControllerFactory.instance;
                 coverageViewerPM = new CoverageViewerPM(controller, 
                                                         new OneTimeInterval());                 	
             }

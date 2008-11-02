@@ -29,7 +29,6 @@
 	<mx:Script>
 		<![CDATA[
 			import com.allurent.coverage.view.model.ContentPM;
-			import com.allurent.coverage.model.ProjectModel;
             
             [Bindable]
             public var contentPM:ContentPM;			

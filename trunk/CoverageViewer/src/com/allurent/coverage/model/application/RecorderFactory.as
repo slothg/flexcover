@@ -20,18 +20,23 @@
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
  * OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package com.allurent.coverage.model
+package com.allurent.coverage.model.application
 {
-	import flash.events.IEventDispatcher;
-
-	public interface IRecorder extends IEventDispatcher
-	{
-	    [Bindable("propertyChange")]
-		function get isRecording():Boolean;
-        [Bindable("propertyChange")]
-        function get currentRecording():String;
-		
-		function record(keyMap:Object):void;
-		function applyCoverageData():void;
-	}
+	import com.adobe.ac.util.OneTimeInterval;
+	import com.allurent.coverage.model.CoverageModelFactory;
+	
+    public class RecorderFactory
+    {
+        private static var _instance:IRecorder;
+        
+        public static function get instance():IRecorder
+        {
+            if(_instance == null)
+            {
+                _instance = new Recorder(CoverageModelFactory.instance, 
+                                         new OneTimeInterval());
+            }
+            return _instance;
+        }
+    }
 }

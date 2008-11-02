@@ -27,7 +27,7 @@ package com.allurent.coverage.model
     /**
      * Coverage model for an entire application. 
      */
-    public class CoverageModel extends SegmentModel
+    public class CoverageModel extends SegmentModel implements ICoverageModel
     {    	
         /**
          * Construct a new CoverageModel. 

@@ -22,8 +22,8 @@
  */
 package com.allurent.coverage.parse
 {
-    import com.allurent.coverage.model.CoverageModel;
-    import com.allurent.coverage.model.ProjectModel;
+    import com.allurent.coverage.model.ICoverageModel;
+    import com.allurent.coverage.model.application.ProjectModel;
     
     import flash.filesystem.File;
     import flash.filesystem.FileMode;
@@ -34,10 +34,10 @@ package com.allurent.coverage.parse
      */
     public class Parser
     {
-        protected var coverageModel:CoverageModel;
+        protected var coverageModel:ICoverageModel;
         protected var project:ProjectModel;
 
-        public function Parser(model:CoverageModel, project:ProjectModel)
+        public function Parser(model:ICoverageModel, project:ProjectModel)
         {
             this.coverageModel = model;
             this.project = project;

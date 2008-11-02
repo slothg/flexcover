@@ -20,11 +20,14 @@
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
  * OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package com.allurent.coverage.model
+package com.allurent.coverage.model.application
 {
 	import com.adobe.ac.util.IOneTimeInterval;
-	import com.allurent.coverage.Controller;
 	import com.allurent.coverage.event.CoverageEvent;
+	import com.allurent.coverage.model.CoverageElement;
+	import com.allurent.coverage.model.CoverageElementContainer;
+	import com.allurent.coverage.model.ElementModel;
+	import com.allurent.coverage.model.ICoverageModel;
 	
 	import flash.events.EventDispatcher;
 	
@@ -57,16 +60,13 @@ package com.allurent.coverage.model
         public var constrainToModel:Boolean;
 		
 		private var recordingTimeout:Number;
-		private var controller:Controller;
-        private var coverageModel:CoverageModel;		
+        private var coverageModel:ICoverageModel;		
         private var coverageElementsContainer:Array;		
 		private var timer:IOneTimeInterval;
 		
-		public function Recorder(controller:Controller, 
-		                          coverageModel:CoverageModel, 
+		public function Recorder(coverageModel:ICoverageModel, 
 		                          timer:IOneTimeInterval)
 		{
-			this.controller = controller;
 			this.coverageModel = coverageModel;
             constrainToModel = true;		
 			this.timer = timer;
@@ -99,10 +99,12 @@ package com.allurent.coverage.model
             if(hasReceivedDataAndHasNotStartedYet)
             {
                 startCoverageRecording();
+                trace("Recorder.record startCoverageRecording: ");
             }
             
             if(!isEmpty)
             {
+            	trace("Recorder.record recordingTimeout: " + recordingTimeout);
             	timer.delay(recordingTimeout, handleRecordingTimeout);
             }          
 		}
@@ -118,14 +120,11 @@ package com.allurent.coverage.model
                 coverageModel.addExecutionCount(item.element, item.count);
             }
             
-            if(numberOfContainers > 0)
-            {
-                controller.isCoverageDataCleared = false;
-            }
-            
+            var hasParsed:Boolean = (numberOfContainers > 0) ? true : false;
+            trace("Recorder.applyCoverageData ");
             coverageElementsContainer = new Array();
             currentStatusMessage = "";
-            dispatchEvent(new CoverageEvent(CoverageEvent.PARSING_END));
+            dispatchEvent(new CoverageEvent(CoverageEvent.PARSING_END, null, hasParsed));
         }
 		
         private function startCoverageRecording():void
@@ -135,11 +134,12 @@ package com.allurent.coverage.model
         }
         
         private function endCoverageRecording():void
-        {
+        {        	
             this.isRecording = false;
             currentRecording = "";
             timer.clear();
             createStatusMessage();
+            trace("Recorder.endCoverageRecording recordingTimeout ");
             dispatchEvent(new CoverageEvent(CoverageEvent.RECORDING_END));
         }
         

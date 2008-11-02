@@ -36,7 +36,7 @@ package com.allurent.coverage.model
      *  
      * @author joeb
      */
-    public class SegmentModel extends EventDispatcher
+    public class SegmentModel extends EventDispatcher implements ISegmentModel
     {
         /** Number of individual lines that are direct or indirect descendants of this one. */
         public var numLines:Number = 0;

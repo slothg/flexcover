@@ -23,8 +23,8 @@
 package com.allurent.coverage.parse
 {
     import com.allurent.coverage.model.CoverageElement;
-    import com.allurent.coverage.model.CoverageModel;
-    import com.allurent.coverage.model.ProjectModel;
+    import com.allurent.coverage.model.ICoverageModel;
+    import com.allurent.coverage.model.application.ProjectModel;
     
     /**
      * This parser processes a runtime-generated trace log file that contains
@@ -34,7 +34,8 @@ package com.allurent.coverage.parse
     {
     	public static const COVERAGE_TRACE_PREFIX:String = "__coverage__";
     	
-        public function TraceLogParser(coverageModel:CoverageModel, project:ProjectModel)
+        public function TraceLogParser(coverageModel:ICoverageModel, 
+                                       project:ProjectModel)
         {
             super(coverageModel, project);
         }

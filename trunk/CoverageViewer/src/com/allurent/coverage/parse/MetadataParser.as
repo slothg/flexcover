@@ -23,8 +23,8 @@
 package com.allurent.coverage.parse
 {
     import com.allurent.coverage.model.CoverageElement;
-    import com.allurent.coverage.model.CoverageModel;
-    import com.allurent.coverage.model.ProjectModel;
+    import com.allurent.coverage.model.ICoverageModel;
+    import com.allurent.coverage.model.application.ProjectModel;
     
     /**
      * This parser processes a compiler-generated metadata file that contains
@@ -33,7 +33,8 @@ package com.allurent.coverage.parse
      */
     public class MetadataParser extends Parser
     {
-        public function MetadataParser(coverageModel:CoverageModel, project:ProjectModel)
+        public function MetadataParser(coverageModel:ICoverageModel, 
+                                       project:ProjectModel)
         {
             super(coverageModel, project);
         }

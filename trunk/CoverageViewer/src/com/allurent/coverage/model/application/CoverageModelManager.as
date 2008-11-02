@@ -20,8 +20,11 @@
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
  * OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package com.allurent.coverage.model
+package com.allurent.coverage.model.application
 {
+	import com.allurent.coverage.model.CoverageData;
+	import com.allurent.coverage.model.ICoverageModel;
+	import com.allurent.coverage.model.ISegmentModel;
 	import com.allurent.coverage.model.search.FullSearch;
 	import com.allurent.coverage.model.search.ISearchable;
 	
@@ -38,7 +41,7 @@ package com.allurent.coverage.model
         public static const LINE_MEASURE:int = 1;      		
 		
         [Bindable]
-        public var coverageModel:CoverageModel;  
+        public var coverageModel:ICoverageModel;  
 		
         [Bindable]
         public var branchModel:IHierarchicalCollectionView;
@@ -75,7 +78,7 @@ package com.allurent.coverage.model
             return _lineSearch;   
         }
 		
-        public static function createContentModel(segmentModel:SegmentModel):IHierarchicalCollectionView
+        public static function createContentModel(segmentModel:ISegmentModel):IHierarchicalCollectionView
         {
             var hierarchicalData:CoverageData = new CoverageData(segmentModel);
             var model:IHierarchicalCollectionView = new HierarchicalCollectionView(hierarchicalData);
@@ -83,7 +86,7 @@ package com.allurent.coverage.model
             return model;
         }	
         
-		public function CoverageModelManager(coverageModel:CoverageModel)
+		public function CoverageModelManager(coverageModel:ICoverageModel)
 		{
 			this.coverageModel = coverageModel;
             

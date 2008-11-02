@@ -20,14 +20,16 @@
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
  * OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
+ 
+//TODO: way too many responsiblities. Needs refactoring.
 package com.allurent.coverage
 {
-    import com.adobe.ac.util.OneTimeInterval;
     import com.allurent.coverage.event.CoverageEvent;
     import com.allurent.coverage.model.CoverageModel;
-    import com.allurent.coverage.model.IRecorder;
-    import com.allurent.coverage.model.ProjectModel;
-    import com.allurent.coverage.model.Recorder;
+    import com.allurent.coverage.model.ICoverageModel;
+    import com.allurent.coverage.model.application.IRecorder;
+    import com.allurent.coverage.model.application.ProjectModel;
+    import com.allurent.coverage.model.application.Recorder;
     import com.allurent.coverage.parse.CommandLineOptionsParser;
     import com.allurent.coverage.parse.CoverageReportParser;
     import com.allurent.coverage.parse.FileParser;
@@ -64,7 +66,7 @@ package com.allurent.coverage
         public var communicator:ICoverageCommunicator;
         
         [Bindable]
-        public var coverageModel:CoverageModel;
+        public var coverageModel:ICoverageModel;
         [Bindable]
         public var isCoverageDataCleared:Boolean;
         
@@ -82,24 +84,27 @@ package com.allurent.coverage
          */
         public var coverageOutputFile:File;        
         
-        public function Controller()
+        public function Controller(project:ProjectModel)
         {
         	currentStatusMessage = "";
         	isCoverageDataCleared = true;
+        	
+            this.project = project;
         }
         
-        public function setup():void
+        public function setup(coverageModel:ICoverageModel, 
+                              recorder:IRecorder, 
+                              communicator:ICoverageCommunicator):void
         {
-            project = new ProjectModel();
-            coverageModel = new CoverageModel();
+            this.coverageModel = coverageModel;        
+            this.recorder = recorder;
+            this.recorder.addEventListener(CoverageEvent.RECORDING_END, handleRecorderEvents);
+            this.recorder.addEventListener(CoverageEvent.PARSING_END, handleRecorderEvents);            
             
-            recorder = new Recorder(this, coverageModel, new OneTimeInterval());
-            recorder.addEventListener(CoverageEvent.RECORDING_END, handleRecorderEvents);
-            recorder.addEventListener(CoverageEvent.PARSING_END, handleRecorderEvents);
-             
-            communicator = new CoverageCommunicator(recorder);
-            communicator.addEventListener(CoverageCommunicator.COVERAGE_END_EVENT, onCoverageEnd);      	
-        }        
+            this.communicator = communicator;
+            this.communicator.addEventListener(CoverageCommunicator.COVERAGE_END_EVENT, 
+                                               onCoverageEnd);                  	
+        }
         
         public function processCommandLineArguments(arguments:Array):void
         {
@@ -236,6 +241,10 @@ package com.allurent.coverage
         
         private function handleRecorderEvents(event:CoverageEvent):void
         {
+        	if(event.type == CoverageEvent.PARSING_END && event.hasParsed)
+        	{
+        		isCoverageDataCleared = false;
+        	}
             currentStatusMessage = Recorder(event.currentTarget).currentStatusMessage;
             dispatchEvent(event);
         }

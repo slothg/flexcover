@@ -22,16 +22,16 @@
  */
 package com.allurent.coverage.parse
 {
-    import com.allurent.coverage.model.CoverageElement;
     import com.allurent.coverage.model.CoverageModel;
-    import com.allurent.coverage.model.ProjectModel;
+    import com.allurent.coverage.model.application.ProjectModel;
     
     /**
      * This parser processes a coverage report XML file.
      */
     public class CoverageReportParser extends Parser
     {
-        public function CoverageReportParser(coverageModel:CoverageModel, project:ProjectModel)
+        public function CoverageReportParser(coverageModel:CoverageModel, 
+                                             project:ProjectModel)
         {
             super(coverageModel, project);
         }
