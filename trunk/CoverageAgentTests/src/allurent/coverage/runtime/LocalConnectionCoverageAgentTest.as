@@ -42,12 +42,12 @@ package allurent.coverage.runtime
         {
             //setup mock
             var lc:LocalConnectionMock = new LocalConnectionMock(true);
-            lc.mock.method("addEventListener").withAnyArgs.times(3);
-            lc.mock.method("send").withAnyArgs.anyNumberOfTimes;
+            //lc.mock.method("addEventListener").withAnyArgs.times(3);
+            lc.mock.method("send").withAnyArgs.once;
             agent.coverageDataConnection = lc;
             
             var ackLc:LocalConnectionMock = new LocalConnectionMock(true);
-            //bug in mock-as3 with ..rest operator?
+            //bug in mock-as3 with ..rest operator
             //workaround: use withAnyArgs
             //ackLc.mock.method("allowDomain").withArgs("*").once;
             ackLc.mock.method("allowDomain").withAnyArgs.once;
@@ -70,8 +70,8 @@ package allurent.coverage.runtime
             var coverageData:Object = createCoverageKeyMap();
             //setup mock
             var lc:LocalConnectionMock = new LocalConnectionMock();
-            lc.mock.method("addEventListener").withAnyArgs.times(3);
-            lc.mock.method("send").withAnyArgs.anyNumberOfTimes;
+            //lc.mock.method("addEventListener").withAnyArgs.times(3);
+            lc.mock.method("send").withAnyArgs.once;
             agent.coverageDataConnection = lc;
             
             var ackLc:LocalConnectionMock = new LocalConnectionMock();
@@ -90,7 +90,7 @@ package allurent.coverage.runtime
             var coverageData:Object = createCoverageKeyMap();
             //setup mock
             var lc:LocalConnectionMock = new LocalConnectionMock();
-            lc.mock.method("send").withAnyArgs.anyNumberOfTimes;
+            lc.mock.method("send").withAnyArgs.once;
             agent.coverageDataConnection = lc;
             
             var ackLc:LocalConnectionMock = new LocalConnectionMock();
@@ -120,7 +120,7 @@ package allurent.coverage.runtime
             agent.initializeAgent();
             agent.sendCoverageMap(coverageData);
             
-            lc.mock.method("ssend").withAnyArgs.never;
+            lc.mock.method("send").withAnyArgs.never;
             
             agent.sendCoverageMap(coverageData);
             
