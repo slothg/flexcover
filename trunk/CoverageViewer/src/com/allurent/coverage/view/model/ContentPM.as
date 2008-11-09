@@ -24,8 +24,8 @@ package com.allurent.coverage.view.model
 {
 	import com.allurent.coverage.event.BrowserItemEvent;
 	import com.allurent.coverage.model.ClassModel;
-	import com.allurent.coverage.model.CoverageModel;
 	import com.allurent.coverage.model.FunctionModel;
+	import com.allurent.coverage.model.ICoverageModel;
 	import com.allurent.coverage.model.PackageModel;
 	import com.allurent.coverage.model.application.CoverageModelManager;
 	import com.allurent.coverage.model.application.ProjectModel;
@@ -64,7 +64,7 @@ package com.allurent.coverage.view.model
 		
 		public function handleContentChange(event:BrowserItemEvent):void
 		{
-        	if(event.segmentModel is CoverageModel)
+        	if(event.segmentModel is ICoverageModel)
         	{
         		currentIndex = EMPTY_VIEW;
         		return;

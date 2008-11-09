@@ -22,7 +22,7 @@
  */
 package com.allurent.coverage.parse
 {
-    import com.allurent.coverage.model.CoverageModel;
+    import com.allurent.coverage.model.ICoverageModel;
     import com.allurent.coverage.model.application.ProjectModel;
     
     /**
@@ -30,7 +30,7 @@ package com.allurent.coverage.parse
      */
     public class CoverageReportParser extends Parser
     {
-        public function CoverageReportParser(coverageModel:CoverageModel, 
+        public function CoverageReportParser(coverageModel:ICoverageModel, 
                                              project:ProjectModel)
         {
             super(coverageModel, project);
