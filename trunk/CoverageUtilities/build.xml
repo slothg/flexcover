@@ -1,0 +1,15 @@
+<project name="CoverageUtilities" default="build">
+
+    <!-- Project specific overrides -->
+    <property name="flex.compc.options" value="-coverage=false"/>
+
+    <!-- Common properties and targets -->
+    <import file="../build-imports.xml"/>
+
+    <!-- Build path -->
+    <path id="flex.lib.path">
+    </path>
+
+    <!-- Project specific targets -->
+    <target name="build" depends="init,air-library"/>
+</project>
