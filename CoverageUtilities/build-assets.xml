@@ -1,0 +1,6 @@
+<project name="CoverageUtilities.assets">
+
+    <dirname property="CoverageUtilities.dir" file="${ant.file.CoverageUtilities.assets}"/>
+    <property name="CoverageUtilities.swc" location="${CoverageUtilities.dir}/bin/CoverageUtilities.swc"/>
+
+</project>

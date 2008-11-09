@@ -13,6 +13,7 @@
     <!-- Set of subdirectories cleaned and built from here.       -->
     <!-- ======================================================== -->
     <filelist id="children.filelist" dir=".">
+        <file name="CoverageUtilities"/>
         <file name="CoverageViewer"/>
         <file name="CoverageExample1"/>
         <file name="CoverageExample2"/>
