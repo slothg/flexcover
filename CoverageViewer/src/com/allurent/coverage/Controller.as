@@ -25,7 +25,6 @@
 package com.allurent.coverage
 {
     import com.allurent.coverage.event.CoverageEvent;
-    import com.allurent.coverage.model.CoverageModel;
     import com.allurent.coverage.model.ICoverageModel;
     import com.allurent.coverage.model.application.IRecorder;
     import com.allurent.coverage.model.application.ProjectModel;
@@ -182,7 +181,7 @@ package com.allurent.coverage
          */
         public function loadCoverageReport(report:File):void
         {
-            new CoverageReportParser(CoverageModel(coverageModel), project).parseFile(report);
+            new CoverageReportParser(coverageModel, project).parseFile(report);
             isCoverageDataCleared = false;
             dispatchCoverageModelChangeEvent();
         }
