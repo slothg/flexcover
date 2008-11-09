@@ -1,5 +1,5 @@
 /* 
- * Copyright (c) 2008 Adobe Systems Incorporated.
+ * Copyright (c) 2008 Allurent, Inc.
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -22,85 +22,68 @@
  */
 package com.adobe.ac.util.service
 {
-	import flash.events.Event;
-	
-	import flexunit.framework.Assert;
+    import com.anywebcam.mock.Mock;
+    
+    import flash.events.Event;
 
-	public class LocalConnectionMock implements ILocalConnection
-	{
-		//used in send and connect
-        public var expectedConnectionName:String;
-        public var actualConnectionName:String;
-		
-		//used in send
-        public var expectedMethodName:String;
-        public var actualMethodName:String;        
-        public var expectedParameter1:Object;
-        public var actualParameter1:Object;        
+    public class LocalConnectionMock implements ILocalConnection
+    {
+        public var mock:Mock;
         
-        private var localConnectionName:String;
-        
-        public function LocalConnectionMock(localConnectionName:String=null)
+        public function LocalConnectionMock(ignoreMissing:Boolean=true)
         {
-        	this.localConnectionName = localConnectionName;
+            mock = new Mock(this, ignoreMissing);
+        }
+
+        public function set client(value:Object):void
+        {
+            mock.client = value;
         }
         
-		public function verify():void
-		{
-			Assert.assertEquals("differnt connectionName in "+localConnectionName, 
-			                     expectedConnectionName, actualConnectionName);
-			Assert.assertEquals("differnt methodName in "+localConnectionName, 
-			                     expectedMethodName, actualMethodName);
-			Assert.assertEquals("differnt parameter 1 in "+localConnectionName, 
-			                     expectedParameter1, actualParameter1);
-		}
+        public function send(connectionName:String, methodName:String, ...parameters):void
+        {
+            mock.send(connectionName, methodName, parameters);
+        }
         
-		public function send(connectionName:String, methodName:String, ...parameters):void
-		{
-			actualConnectionName = connectionName;
-			actualMethodName = methodName;
-			actualParameter1 = (parameters.length > 0) ? parameters[0] : null;
-		}
-		
-		public function set client(value:Object):void
-		{
-		}
-		
-		public function allowDomain(...domains):void
-		{
-		}
-		
-		public function connect(connectionName:String):void
-		{
-			actualConnectionName = connectionName;
-		}
-		
-		public function close():void
-		{
-		}
-		
-		public function addEventListener(type:String, listener:Function, useCapture:Boolean=false, priority:int=0, useWeakReference:Boolean=false):void
-		{
-		}
-		
-		public function removeEventListener(type:String, listener:Function, useCapture:Boolean=false):void
-		{
-		}
-		
-		public function dispatchEvent(event:Event):Boolean
-		{
-			return false;
-		}
-		
-		public function hasEventListener(type:String):Boolean
-		{
-			return false;
-		}
-		
-		public function willTrigger(type:String):Boolean
-		{
-			return false;
-		}
-		
-	}
+        public function allowDomain(...domains):void
+        {
+            mock.allowDomain(domains);
+        }
+        
+        public function connect(connectionName:String):void
+        {
+            mock.connect(connectionName);
+        }
+        
+        public function close():void
+        {
+            mock.close();
+        }
+        
+        public function addEventListener(type:String, listener:Function, useCapture:Boolean=false, priority:int=0, useWeakReference:Boolean=false):void
+        {
+           mock.addEventListener(type, listener, useCapture, priority, useWeakReference);
+        }
+        
+        public function removeEventListener(type:String, listener:Function, useCapture:Boolean=false):void
+        {
+            mock.removeEventListener(type, listener, useCapture);
+        }
+        
+        public function dispatchEvent(event:Event):Boolean
+        {
+            return mock.dispatchEvent(event);
+        }
+        
+        public function hasEventListener(type:String):Boolean
+        {
+            return mock.hasEventListener(type);
+        }
+        
+        public function willTrigger(type:String):Boolean
+        {
+            return mock.willTrigger(type);
+        }
+        
+    }
 }
