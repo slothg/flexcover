@@ -355,17 +355,32 @@ package com.allurent.coverage.model
             {
                 for each (var childXml:XML in xml.children())
                 {
-                    var model:SegmentModel = createChildFromXml(childXml);
-                    if (model == null)
-                    {
-                        continue;
-                    }
-                    model.name = childXml.@name;
-                    addChild(model); 
-                    model.fromXML(childXml);
+                   // see if there is a model matching this child XML element
+                   var model:SegmentModel = childMap[childXml.@name];
+                   if (model == null)
+                   {
+                       // there isn't, so make one...
+                       model = createChildFromXml(childXml);
+                       if (model == null)
+                       {
+                           // could not make child element from XML spec
+                           continue;
+                       }
+                       // add new child to this model and initialize it
+                       model.name = childXml.@name;
+                       addChild(model);
+                       model.fromXML(childXml);
+                       model.initialize();
+                   }
+                   else
+                   {
+                       // We do not initialize the child model here, because it would redundantly count branches
+                       // and lines.
+                       //
+                       model.fromXML(childXml);
+                   }
                 }
             }
-            initialize();
         }
 
         protected function createXmlElement():XML

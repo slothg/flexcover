@@ -41,7 +41,6 @@ package com.allurent.coverage.parse
          */
         override public function parseXML(xml:XML):void
         {
-            coverageModel.clear();
             coverageModel.fromXML(xml);
         }
     }

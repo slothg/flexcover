@@ -182,9 +182,7 @@ package com.allurent.coverage
          */
         public function loadCoverageReport(report:File):void
         {
-            var newCoverageModel:CoverageModel = new CoverageModel();
-            new CoverageReportParser(newCoverageModel, project).parseFile(report);
-            coverageModel = newCoverageModel;
+            new CoverageReportParser(CoverageModel(coverageModel), project).parseFile(report);
             isCoverageDataCleared = false;
             dispatchCoverageModelChangeEvent();
         }
