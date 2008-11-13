@@ -45,7 +45,7 @@ package com.allurent.coverage.runtime
         
         // handler function names on client end of LocalConnection
         private static const DATA_HANDLER:String = "coverageData";
-        private static const EXIT_HANDLER:String = "coverageEnd";
+        private static const DATA_EXIT_HANDLER:String = "coverageDataAndExit";
         
         // Maximum total key length allowed before forced LC send packet
         private static const MAX_SEND_LENGTH:uint = 10000;
@@ -148,15 +148,6 @@ package com.allurent.coverage.runtime
             {
                 addPendingMapAndAttempSend(tempMap);
             }
-        }
-        
-        /**
-         * Request the destination of this agent to terminate its execution. 
-         */
-        override public function requestExit():void
-        {
-            coverageDataConnection.send(coverageDataConnectionName, EXIT_HANDLER);
-            pendingWrites++;
         }
         
         public function coverageReceived():void
@@ -278,7 +269,9 @@ package com.allurent.coverage.runtime
         {
 	        try
 	        {
-                coverageDataConnection.send(coverageDataConnectionName, DATA_HANDLER, map);
+	            var method:String = (stopped && pendingWrites == 1) ? DATA_EXIT_HANDLER : DATA_HANDLER;
+	            trace("Using method", method);
+                coverageDataConnection.send(coverageDataConnectionName, method, map);
                 pendingWrites--;
 	        }
 	        catch (error:Error)

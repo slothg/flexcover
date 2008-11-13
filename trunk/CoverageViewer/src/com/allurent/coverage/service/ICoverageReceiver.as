@@ -25,6 +25,6 @@ package com.allurent.coverage.service
 	public interface ICoverageReceiver
 	{
 		function coverageData(keyMap:Object):void;
-		function coverageEnd():void
+		function coverageDataAndExit(keyMap:Object):void
 	}
 }

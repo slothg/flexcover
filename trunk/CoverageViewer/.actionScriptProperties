@@ -15,6 +15,7 @@
 </libraryPathEntry>
 <libraryPathEntry kind="3" linkType="1" path="${PROJECT_FRAMEWORKS}/libs/datavisualization.swc" useDefaultLinkType="false"/>
 <libraryPathEntry kind="3" linkType="1" path="/CoverageUtilities/bin/CoverageUtilities.swc" useDefaultLinkType="false"/>
+<libraryPathEntry kind="3" linkType="1" path="/CoverageAgent/bin/CoverageAgent.swc" useDefaultLinkType="false"/>
 </libraryPath>
 <sourceAttachmentPath/>
 </compiler>

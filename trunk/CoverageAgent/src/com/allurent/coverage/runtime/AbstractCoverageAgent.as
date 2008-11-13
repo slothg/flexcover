@@ -44,15 +44,15 @@ package com.allurent.coverage.runtime
         // should fall back to trace logging or nothing at all.
         public var broken:Boolean = false;
         
+        // flag indicating that a call to exit() was made.
+        public var stopped:Boolean = false;
+
         // Accumulated coverage information since the last flush.  Keys
         // are coverage keys, and values are execution counts.
         private var coverageMap:Object = {};
         
         // flag indicating attempted setup of connection
         private var initialized:Boolean = false;
-
-        // flag indicating that a call to exit() was made.
-        private var stopped:Boolean = false;
 
         private var flushTimer:IOneTimeInterval;
         
