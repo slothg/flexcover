@@ -40,13 +40,13 @@
     <id>CoverageViewer</id>
 
     <!-- Used as the filename for the application. Required. -->
-    <filename>FlexCoverBrowser</filename>
+    <filename>CoverageViewer</filename>
 
     <!-- The name that is displayed in the AIR application installer. Optional. -->
-    <name>FlexCoverBrowser</name>
+    <name>CoverageViewer</name>
     
     <!-- An application version designator (such as "v1", "2.5", or "Alpha 1"). Required. -->
-    <version>0.6 alpha 2</version>
+    <version>0.80</version>
     
     <!-- Description, displayed in the AIR application installer. Optional. -->
     <!-- <description></description> -->

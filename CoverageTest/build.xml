@@ -10,7 +10,6 @@
 
     <!-- Build path -->
     <path id="flex.lib.path">
-        <pathelement location="/Users/joeb/Work/flexcover/CoverageAgent/bin/CoverageAgent.swc"/>
     </path>
 
     <!-- Project specific targets -->
