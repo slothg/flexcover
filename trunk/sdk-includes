@@ -1,6 +1,3 @@
-frameworks/libs/utilities.swc
-frameworks/projects/utilities/src/coverage.as
-frameworks/projects/utilities/src/com/allurent/coverage/**
 lib/asc.jar
 lib/asdoc.jar
 lib/commons-logging.properties
