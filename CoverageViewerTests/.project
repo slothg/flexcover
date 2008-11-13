@@ -26,7 +26,7 @@
 		<link>
 			<name>[source path] src</name>
 			<type>2</type>
-			<locationURI>DOCUMENTS/CoverageViewer/src</locationURI>
+			<locationURI>FLEXCOVER_DIR/CoverageViewer/src</locationURI>
 		</link>
 	</linkedResources>
 </projectDescription>

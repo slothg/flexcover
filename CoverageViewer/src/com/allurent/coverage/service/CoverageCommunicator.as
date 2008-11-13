@@ -159,10 +159,11 @@ package com.allurent.coverage.service
         }
         
         /**
-         * Handler called by instrumented program when coverage ends. 
+         * Handler called by instrumented program on last send when coverage ends. 
          */
-        public function coverageEnd():void
+        public function coverageDataAndExit(keyMap:Object):void
         {
+            coverageData(keyMap);
             dispatchEvent(new Event(COVERAGE_END_EVENT));
         }
                 
