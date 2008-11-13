@@ -47,7 +47,7 @@
     <!-- ======================================================== -->
     <!-- dist: Create a new distribution.                         -->
     <!-- ======================================================== -->
-    <target name="dist" depends="build,build-viewer,stage-sdk-3_0,copy-dist,zip-dist"/>
+    <target name="dist" depends="build,build-viewer,stage-sdk-3_0,stage-sdk-3_2,copy-dist,zip-dist"/>
 
     <!-- ======================================================== -->
     <!-- copy-dist: copy distribution to a new distribution dir.  -->
