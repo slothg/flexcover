@@ -3,7 +3,7 @@
     <property name="project.dir" location="."/>
 
     <!-- Project specific overrides -->
-    <property name="flex.mxmlc.options" value="-coverage=true"/>
+    <property name="flex.mxmlc.options" value="-coverage=true -target-player=9"/>
 
     <!-- Common properties and targets -->
     <import file="../build-imports.xml"/>
