@@ -1,7 +1,7 @@
 <project name="InstrumentationTest" default="build">
 
     <!-- Project specific overrides -->
-    <property name="flex.mxmlc.options" value="-coverage=false"/>
+    <property name="flex.mxmlc.options" value="-coverage=false -target-player=9"/>
     <property name="testlib.dir" value="testlib"/>
     <property name="runtest.dir" location="stage"/>
     <property name="project.dir" location="."/>
