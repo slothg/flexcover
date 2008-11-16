@@ -28,7 +28,10 @@
 	<mx:Script>
 		<![CDATA[
 			import com.allurent.coverage.model.search.ISearchable;
-			import com.allurent.coverage.view.model.HeaderPM;
+            import com.allurent.coverage.view.model.HeaderPM;
+            import com.allurent.coverage.Controller;
+            import com.allurent.coverage.service.CoverageCommunicator
+            
 			import com.adobe.ac.util.OneTimeInterval;
 			import com.adobe.ac.util.IOneTimeInterval;
             
@@ -54,7 +57,7 @@
         source="{model.searchPM.currentSearch}" 
         handler="{setFocusOnSearch}" 
         />
-	
+		
     <mx:Button 
         label="Show details" 
         enabled="{model.enabled}" 
@@ -62,6 +65,19 @@
         selected="{model.searchPM.currentSearch.showDetail}" 
         click="model.searchPM.toggleDetail()"/>
 	
+	<mx:VBox verticalGap="0">
+        <mx:Button
+            label="Update"
+            enabled="{model.controller.recorder.isRecording}" 
+            click="model.refreshCoverageData()"/>
+        
+        <mx:CheckBox
+            id="autoUpdateCheckBox"
+            label="Auto"
+            selected="{model.controller.recorder.autoUpdate}"
+            click="model.controller.recorder.autoUpdate = autoUpdateCheckBox.selected"/>
+	</mx:VBox>
+    
 	<mx:Label text="Search By:"/>
     
 	<mx:TextInput 

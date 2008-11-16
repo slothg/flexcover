@@ -54,6 +54,7 @@ package com.allurent.coverage
         function writeReport(file:File):void;
         
         function applyCoverageData():void;
-        function clearCoverageData():void;        
+        function clearCoverageData():void;  
+        function endCoverageRecording():void;      
 	}
 }

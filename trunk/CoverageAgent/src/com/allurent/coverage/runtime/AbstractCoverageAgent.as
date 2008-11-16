@@ -92,9 +92,10 @@ package com.allurent.coverage.runtime
                 initialized = true;
             }
             
-            sendCoverageMap(coverageMap);
-            
-            coverageMap = {};
+            if (sendCoverageMap(coverageMap))
+            {
+                coverageMap = {};
+            }
         }
         
         /**
@@ -104,12 +105,12 @@ package com.allurent.coverage.runtime
          */
         public function exit():void
         {
+            stopped = true;
             flushCoverageData();
             if (!broken)
             {
                 requestExit();
             }
-            stopped = true;
             checkForExit();
         }
 
@@ -159,9 +160,11 @@ package com.allurent.coverage.runtime
         /**
          * Send a map of coverage keys and execution counts to this agent's destination.
          * @param map an Object whose keys are coverage elements and values are execution counts.
+         * @return true if the map was actually sent
          */
-        public function sendCoverageMap(map:Object):void
+        public function sendCoverageMap(map:Object):Boolean
         {
+            return false;
         }
         
         /**

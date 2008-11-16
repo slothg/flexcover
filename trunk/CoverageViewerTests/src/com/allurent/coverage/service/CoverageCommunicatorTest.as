@@ -90,7 +90,7 @@ package com.allurent.coverage.service
         	
         	//exercise
         	model.attachConnection();
-        	model.coverageData(null);
+        	model.coverageData(null, 0);
         	
         	lc.mock.verify();
         	recorder.mock.verify();
@@ -118,8 +118,8 @@ package com.allurent.coverage.service
             
             //exercise
             model.attachConnection();
-            model.coverageData(null);
-            model.coverageData(coverageData);
+            model.coverageData(null, 0);
+            model.coverageData(coverageData, 1);
             
             lc.mock.verify();
             recorder.mock.verify();
@@ -142,8 +142,8 @@ package com.allurent.coverage.service
             
             //exercise
             model.attachConnection();
-            model.coverageData(null);
-            model.coverageData(null);
+            model.coverageData(null, 0);
+            model.coverageData(null, 0);
             
             lc.mock.verify();
             recorder.mock.verify();
@@ -171,10 +171,10 @@ package com.allurent.coverage.service
             
             //exercise
             model.attachConnection();
-            model.coverageData(null);
-            model.coverageData(null);
-            model.coverageData(coverageData);
-            model.coverageData(coverageData);
+            model.coverageData(null, 0);
+            model.coverageData(null, 0);
+            model.coverageData(coverageData, 1);
+            model.coverageData(coverageData, 2);
             
             lc.mock.verify();
             recorder.mock.verify();
@@ -196,9 +196,9 @@ package com.allurent.coverage.service
             
             //exercise
             model.attachConnection();
-            model.coverageData(null);
+            model.coverageData(null, 0);
             recorder.dispatchEvent(new CoverageEvent(CoverageEvent.RECORDING_END));
-            model.coverageData(coverageData);
+            model.coverageData(coverageData, 1);
             
             lc.mock.verify();
             recorder.mock.verify();
@@ -224,9 +224,9 @@ package com.allurent.coverage.service
             
             //exercise
             model.attachConnection();
-            model.coverageData(null);
+            model.coverageData(null, 0);
             recorder.dispatchEvent(new CoverageEvent(CoverageEvent.RECORDING_END));
-            model.coverageData(coverageData);     
+            model.coverageData(coverageData, 1);     
             recorder.dispatchEvent(new CoverageEvent(CoverageEvent.PARSING_END));
             
             lc.mock.verify();

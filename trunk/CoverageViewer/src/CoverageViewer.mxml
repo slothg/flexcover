@@ -123,7 +123,7 @@
     
     <mx:Label 
     	left="150" 
-    	top="32" 
+    	top="56" 
         text="Recording" 
         fontWeight="bold" 
     	visible="{coverageViewerPM.controller.recorder.isRecording}" />
@@ -132,7 +132,7 @@
     	horizontalScrollPolicy="off">
 	    <mx:Label 
 	        left="230" 
-	        top="32" 
+	        top="56" 
 	        fontWeight="bold" 
 	        text="{coverageViewerPM.controller.recorder.currentRecording}" 
 	        visible="{coverageViewerPM.controller.recorder.isRecording}" />

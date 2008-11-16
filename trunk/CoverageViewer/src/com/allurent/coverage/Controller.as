@@ -186,6 +186,11 @@ package com.allurent.coverage
             dispatchCoverageModelChangeEvent();
         }
         
+        public function endCoverageRecording():void
+        {
+            recorder.endCoverageRecording();
+        }
+
         public function applyCoverageData():void
         {
         	recorder.applyCoverageData();

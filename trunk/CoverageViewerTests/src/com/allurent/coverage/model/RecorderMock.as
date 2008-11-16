@@ -67,14 +67,29 @@ package com.allurent.coverage.model
             mock = new Mock(this, ignoreMissing);
         }		
         
-		public function record(keyMap:Object):void
-		{
-			mock.record(keyMap);
-		}
-		
+        public function record(keyMap:Object):void
+        {
+            mock.record(keyMap);
+        }
+        
+        public function get autoUpdate():Boolean
+        {
+            return mock.autoUpdate;
+        }
+        
+        public function set autoUpdate(f:Boolean):void
+        {
+            mock.autoUpdate = f;
+        }
+        
         public function applyCoverageData():void
         {
-        	mock.applyCoverageData();
+            mock.applyCoverageData();
+        }
+        
+        public function endCoverageRecording():void
+        {
+            mock.endCoverageRecording();
         }
         
         public function addEventListener(type:String, listener:Function, useCapture:Boolean=false, priority:int=0, useWeakReference:Boolean=false):void

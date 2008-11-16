@@ -30,8 +30,12 @@ package com.allurent.coverage.model.application
 		function get isRecording():Boolean;
         [Bindable("propertyChange")]
         function get currentRecording():String;
+        [Bindable("propertyChange")]
+        function get autoUpdate():Boolean;
+        function set autoUpdate(f:Boolean):void;
 		
 		function record(keyMap:Object):void;
 		function applyCoverageData():void;
+		function endCoverageRecording():void;
 	}
 }
