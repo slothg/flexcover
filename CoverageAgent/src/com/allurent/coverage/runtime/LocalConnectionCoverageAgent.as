@@ -30,7 +30,8 @@ package com.allurent.coverage.runtime
     import flash.events.ErrorEvent;
     import flash.events.SecurityErrorEvent;
     import flash.events.StatusEvent;
-    import flash.utils.ByteArray;
+    import flash.events.TimerEvent;
+    import flash.utils.Timer;
     
     /**
      * This class provides overall coverage recording support for an instrumented application
@@ -49,6 +50,12 @@ package com.allurent.coverage.runtime
         
         // Maximum total key length allowed before forced LC send packet
         private static const MAX_SEND_LENGTH:uint = 10000;
+        
+        // Number of milliseconds after which an ACK should be assumed, if none arrives
+        private var _assumeAck:uint = 100;
+        
+        // Timer which, if present, fires to simulate an ACK
+        private var _assumeAckTimer:Timer;
         
         /**
          * Obtain a flag indicating whether there are any outstanding send or exit operations. 
@@ -86,6 +93,8 @@ package com.allurent.coverage.runtime
         //is allowed to send coverage data. Flag set from viewer in coverageReceived.
         private var canSend:Boolean;
         
+        private var sequenceNumber:uint = 0;
+        
         /**
          * Create a LocalConnectionCoverageAgent.
          * 
@@ -111,7 +120,8 @@ package com.allurent.coverage.runtime
             
             if(!hasRegistrationBeenSent)
             {
-               sendRegistration();                 
+               sendRegistration();
+               canSend = true;                 
             }
         }
 
@@ -119,7 +129,7 @@ package com.allurent.coverage.runtime
          * Send a map of coverage keys and execution counts to this agent's destination.
          * @param map an Object whose keys are coverage elements and values are execution counts.
          */
-        override public function sendCoverageMap(map:Object):void
+        override public function sendCoverageMap(map:Object):Boolean
         {
         	//trace("LocalConnectionCoverageAgent.sendCoverageMap: " + map);
         	
@@ -127,6 +137,12 @@ package com.allurent.coverage.runtime
             // pairs in tempMap, sending over the LocalConnection as this limit
             // is reached.  This is a crude attempt to avoid exceeding the data size limit
             // inherent in LocalConnection.
+
+            if (!canSend && !stopped)
+            {
+                return false;
+            }
+
             var i:uint = 0;            
             var tempMap:Object = {};
             var foundSomething:Boolean;
@@ -137,7 +153,7 @@ package com.allurent.coverage.runtime
                 
                 if ((i += key.length) > MAX_SEND_LENGTH)
                 {
-                    addPendingMapAndAttempSend(tempMap);
+                    addPendingMapAndAttemptSend(tempMap);
                     tempMap = {};
                     i = 0;
                 }
@@ -146,13 +162,31 @@ package com.allurent.coverage.runtime
             // We might have some keys left over that didn't hit the max limit.
             if(foundSomething)
             {
-                addPendingMapAndAttempSend(tempMap);
+                addPendingMapAndAttemptSend(tempMap);
             }
+            
+            return true;
         }
         
-        public function coverageReceived():void
+        public function coverageReceived(mapNumber:int):void
         {
-            trace("LocalConnectionCoverageAgent.coverageReceived");
+            trace("LocalConnectionCoverageAgent.coverageReceived", mapNumber);
+            resume();
+        }
+
+        private function handleAssumeAck(e:TimerEvent):void
+        {
+            trace("LocalConnectionCoverageAgent.assumeAck");
+            resume();
+        }        
+        
+        private function resume():void
+        {
+            if (_assumeAckTimer != null)
+            {
+                _assumeAckTimer.stop();
+                _assumeAckTimer = null;
+            }
             canSend = true;
             send();
         }
@@ -167,11 +201,12 @@ package com.allurent.coverage.runtime
             return new LocalConnectionWrapper();
         }
         
-        private function addPendingMapAndAttempSend(map:Object):void
+        private function addPendingMapAndAttemptSend(map:Object):void
         {
             pendingMaps.push(map);
             trace("LocalConnectionCoverageAgent.addPendingMapAndAttempSend: " + pendingMaps.length);
             pendingWrites++;
+            sequenceNumber++;
             
             if(canSend)
             {
@@ -253,93 +288,44 @@ package com.allurent.coverage.runtime
         private function sendMaps(maps:Array):void
         {
             var map:Object = maps.shift();
+            var mapNumber:int = sequenceNumber - pendingMaps.length;
             //traceKeys(map);
-            trace("LocalConnectionCoverageAgent.sendMaps: Left to send " + pendingMaps.length);
-            attemptLCSend(map);
+            trace("LocalConnectionCoverageAgent.sendMaps: sent:", mapNumber, "remaining:" + pendingMaps.length);
+            attemptLCSend(map, mapNumber);
         }
         
         private function sendRegistration():void
         {
         	initializeACKConnection();
-            coverageDataConnection.send(coverageDataConnectionName, DATA_HANDLER, null);
+            coverageDataConnection.send(coverageDataConnectionName, DATA_HANDLER, null, 0);
             hasRegistrationBeenSent = true;
         }
         
-        private function attemptLCSend(map:Object):void
+        private function attemptLCSend(map:Object, mapNumber:int):void
         {
 	        try
 	        {
 	            var method:String = (stopped && pendingWrites == 1) ? DATA_EXIT_HANDLER : DATA_HANDLER;
 	            trace("Using method", method);
-                coverageDataConnection.send(coverageDataConnectionName, method, map);
+                coverageDataConnection.send(coverageDataConnectionName, method, map, mapNumber);
+                if (_assumeAckTimer != null)
+                {
+                    _assumeAckTimer.stop();
+                }
+                if (_assumeAck > 0)
+                {
+                    _assumeAckTimer = new Timer(_assumeAck, 1);
+                    _assumeAckTimer.addEventListener(TimerEvent.TIMER, handleAssumeAck);
+                    _assumeAckTimer.start();
+                }
                 pendingWrites--;
 	        }
 	        catch (error:Error)
 	        {
 	        	pendingWrites++;
-	            if (error.errorID == 2084)
-	            {
-	                var byteArray:ByteArray = new ByteArray();
-	                byteArray.writeObject(map);
-	                var kb:Number = byteArray.length / 1024;                
-	                trace("LocalConnectionCoverageAgent - Coverage Recording Error. " + error.message + " Was: " + kb);
-	                
-	                splitSendRequests(map, kb);                 
-	            }
-	            else
-	            {
-	                trace("LocalConnectionCoverageAgent - Coverage Recording Error. " + error.message);
-	            }
+                trace("LocalConnectionCoverageAgent - Coverage Recording Error. " + error.message);
 	        }	
         }
-        
-        private function splitSendRequests(map:Object, kb:Number):void
-        {
-        	//limit would be 40, not 20 kb but let's be carefull.
-            var sendRequests:Number = Math.ceil(kb / 20);
-            var mapLengthPerRequest:int = getMapLength(map) / sendRequests;           
-            trace("LocalConnectionCoverageAgent.splitSendRequests sendRequests " + sendRequests )
-            trace("LocalConnectionCoverageAgent.splitSendRequests mapLengthPerRequest " + mapLengthPerRequest )
-            
-            var i:int = 0;
-            var tempMap:Object = {};
-            var foundSomething:Boolean;
-            for (var key:String in map)
-            {
-                i++;
-                foundSomething = true;
-                if(i < mapLengthPerRequest)
-                {
-                    tempMap[key] = map[key];
-                }
-                else
-                {
-                    trace("LocalConnectionCoverageAgent.splitSendRequests splitSendRequests " + i );
-                    //attemptLCSend(tempMap);                    
-                    addPendingMapAndAttempSend(tempMap);
-                    
-                    tempMap = {};
-                    i = 0;           
-                }
-            }
-            
-            if(foundSomething)
-            {
-            	trace("LocalConnectionCoverageAgent.splitSendRequests foundSomething " + i );
-                addPendingMapAndAttempSend(tempMap);
-            }
-        }
-        
-        private function getMapLength(map:Object):int
-        {
-            var i:int = 0;
-            for (var key:String in map)
-            {
-                i++;
-            }
-            trace("LocalConnectionCoverageAgent.getMapLength " + i)
-            return i;           
-        }             
         
         private function handleConnectionError(e:ErrorEvent):void
         {

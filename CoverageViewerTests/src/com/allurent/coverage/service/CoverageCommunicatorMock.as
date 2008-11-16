@@ -35,14 +35,14 @@ package com.allurent.coverage.service
 			mock = new Mock(this, ignoreMissing);
 		}
 
-        public function coverageData(keyMap:Object):void
+        public function coverageData(keyMap:Object, mapNumber:int):void
         {
-            mock.coverageData(keyMap);
+            mock.coverageData(keyMap, mapNumber);
         }
         
-        public function coverageDataAndExit(keyMap:Object):void
+        public function coverageDataAndExit(keyMap:Object, mapNumber:int):void
         {
-            mock.coverageDataAndExit(keyMap);
+            mock.coverageDataAndExit(keyMap, mapNumber);
         }
         
 		public function set coverageDataConnectionName(value:String):void

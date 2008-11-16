@@ -34,12 +34,13 @@ package com.allurent.coverage.runtime
          * Send a map of coverage keys and execution counts to this agent's destination.
          * @param map an Object whose keys are coverage elements and values are execution counts.
          */
-        override public function sendCoverageMap(map:Object):void
+        override public function sendCoverageMap(map:Object):Boolean
         {
             for (var key:String in map)
             {
                 trace(COVERAGE_TRACE_PREFIX, key, map[key]);
             }
+            return true;
         }
     }
 }

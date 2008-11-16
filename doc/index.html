@@ -7,9 +7,9 @@
 </head>
 <body>
 <h1>Flexcover: A Code Coverage Tool for Flex and AS3</h1>
-<p>Version 0.50</p>
-<p><b>Joe Berkovitz<br>
-Allurent, Inc.</b></p>
+<p>Version 0.81</p>
+<p><b>Joe Berkovitz (Noteflight, LLC) and Alex Uhlmann (Adobe Consulting)<br>
+</b></p>
 
 
 <h2>Introduction</h2>
@@ -21,9 +21,16 @@ install it, and then walks through a quick tour of its features.  A
 concluding reference section describes the command options, file
 formats and APIs.</p>
 
-<p>If you played with the previous experimental release of Flexcover 0.11,
-then we hope you'll be pleased with the many improvements and simplifications.
-A lot has changed!</p>
+<p>New features introduced since Flexcover 0.50 include:</p>
+<ul>
+  <li>Support for Flex 3.2 SDK and Flex Builder 3.0.2</li>
+  <li>Ability to interactively filter view by classes whose name matches a substring</li>
+  <li>More efficient processing of coverage data within viewer</li>
+  <li>Much faster sending of coverage data from instrumented application and viewer</li>
+  <li>Ability to combine data from multiple test run reports</li>
+  <li>Support for the instrumentation of top-level global functions</li>
+</ul>
+
            
 <h2>General information</h2>
 
@@ -102,31 +109,32 @@ applications, including Flex Builder.</p>
 <p>The installation directory structure looks like this:
 
 <pre>
-       sdk-modifications/            (customized files for 3.0 SDK)
-
+       sdk-modifications-3_0/            (customized files for 3.0 SDK)
            lib/
                [...mxmlc/compc compiler libraries...]
-
            framework/
                air-config.xml
                flex-config.xml
 
                libs/
-                   utilities.swc
+                   CoverageAgent.swc
 
-               projects/utilities/src/
-                   [...Source code for modifications to framework...]
+       sdk-modifications-3_2/            (customized files for 3.2 SDK)
+           lib/                          (structure same as 3.0)
+           framework/
 
        CoverageViewer.air            (AIR app to collect and view code coverage)
 
        CoverageExample1/             (pre-compiled, instrumented sample application)
-
            bin/
                CoverageExample.cvm
                CoverageExample.swf
-
            src/
                [...example source code...]
+
+       CoverageAgent/                (coverage agent source for reference purposes)
+           bin/
+           src/
 
        doc/                          (documentation)
 </pre>
@@ -145,13 +153,14 @@ be too large to be hosted on Google Code as a download.)  Once you
 have created this modified SDK, you can freely copy the SDK to other
 machines without repeating the initial creation process.</p>
 
-<p>To create the modified SDK, unzip a copy of the Flex 3.0 SDK into a
+<p>To create the modified SDK, unzip a copy of the Flex 3.0 or Flex 3.2 SDKs into a
 directory on your computer that is separate from any existing Flex SDK
 installation you might have.  For simplicity and predictability, we
-recommend that you download <a
+recommend that you download either <a href="http://opensource.adobe.com/wiki/display/flexsdk/download?build=3.2.0.3794&pkgtype=1">Adobe
+Flex SDK 3.2.0.3794</a> or  <a
 href="http://opensource.adobe.com/wiki/display/flexsdk/download?build=3.0.1.1092&pkgtype=1">Adobe
-Flex SDK 3.0.1.1092</a> with this version of Flexcover, because that
-is the exact Flex SDK version that the Flexcover modifications are
+Flex SDK 3.0.1.1092</a> with this version of Flexcover, because these
+are the exact Flex SDK versions that the Flexcover modifications are
 based on.</p> Howvever, you may use other SDKs if you wish.  Other
 Flex 3 SDK distributions are available from the <a
 href="http://opensource.adobe.com/wiki/display/flexsdk/Download+Flex+3">Flex
@@ -164,19 +173,20 @@ descriptive name, for example <tt>flexcover-sdk-3.0</tt>.
 
 <h3>2. Modify this custom SDK to use the Flexcover compilers and libraries.</h3>
 
-<p>The flexcover distribution contains a directory named
-<tt>sdk-modifications</tt>.  Copy the contents of this directory into
-the root directory of the special Flex SDK that you created in the
-previous step.</p>
+<p>The flexcover distribution contains directories named
+<tt>sdk-modifications-3_0</tt> and <tt>sdk-modifications-3_2</tt>.
+Choose the appropriate directory based on the Flex SDK you are using,
+and copy its contents into the root directory of the special Flex SDK
+that you created in the previous step.</p>
 
-<p>Make sure that you are copying <tt>sdk-modifications/lib</tt>,
-<tt>sdk-modifications/frameworks</tt>, etc. directly on top of the
+<p>Make sure that you are copying <tt>sdk-modifications-3_x/lib</tt>,
+<tt>sdk-modifications-3_x/frameworks</tt>, etc. directly on top of the
 corresponding subdirectories in the SDK that are named <tt>lib</tt>,
 <tt>frameworks</tt>, and so on.  Do not make the mistake of copying
-the <tt>sdk-modifications</tt> directory itself into the SDK.  The
-files in the sdk-modifications/ directory are supposed to overwrite
+the <tt>sdk-modifications-3_x</tt> directory itself into the SDK.  The
+files in the sdk-modifications-3_x/ directory are supposed to overwrite
 the corresponding ones in the destination SDK; that's intentional!  In
-a typical OS desktop such as Windows Explorer or the Finder, you
+a typical OS desktop such as Windows Explorer or the MacOS Finder, you
 should open windows for both directories, then drag all items in the
 sdk-modifications window and drop them into the window for the
 destination SDK.</p>
@@ -220,6 +230,11 @@ SDK Version.  Click the radio button labeled "Use a specific SDK", and select
 your custom SDK from the dropdown list: </p>
 
 <p align="center"><img src="images/flex-builder-sdk-choice.png"/></p>
+
+<p>With FlexBuilder 3.0.2, you can make use of the -coverage=false and
+-coverage=true flags in the Project Preferences / Flex Compiler
+options to turn code coverage instrumentation on and off for specific
+projects.</p>
 
 <p><b>Modifying Ant Builds</b>.  You will probably need to selectively
 override a property definition such as <tt>FLEX_HOME</tt> that points to the
@@ -540,7 +555,25 @@ expect.</li>
 default, but clicking in the table headers permits the sort order to be changed.
 A particularly useful option is to sort by ascending code coverage, which allows
 one to methodically work through the areas with the worst coverage first and
-identify testing deficits.
+identify testing deficits.</p>
+
+<h3>Filtering the display</h3>
+
+<p>Type a search string in the Search field, and coverage entries in
+the table will be automatically filtered to include only matching
+classes.  This is very convenient for focusing on parts of large projects.</p>
+
+<h3>Controlling UI updates</h3>
+
+<p>The "Update" button forces the UI to immediately process all
+received coverage data.  The accompanying checkbox labeled "Auto"
+controls whether received coverage data is automatically reflected in
+the UI.  Applications that generate a large amount of coverage
+information may lose their data connection if "Auto" remains checked,
+because the viewer becomes too busy processing the data it has already
+received to keep up with newly arrived data.  For interactive coverage
+measurement of such applications, it is best to uncheck "Auto" and
+manually click "Update" when the view should be refreshed.</p>
 
 <h3>Working with Large Projects</h3>
 
@@ -549,7 +582,8 @@ and Flex Modules, you may be building multiple SWCs and SWFs.  Each of
 these files can have its own coverage metadata (CVM) file generated
 when the SWC or SWF was built.  If you want to collect data on all of
 code contained in these files, you will have to load all of the CVM
-files into the CoverageViewer before running the instrumented application. </p>
+files into the CoverageViewer before running the instrumented
+application.</p>
 
 <p>It's perfectly fine to load as many CVM files into the
 CoverageViewer as you like.  Once you have done so, you will be
@@ -560,6 +594,10 @@ yet) and can later reload it and work with it again instead of having
 to bring in the individual CVM files.  However, note that if you work
 with old metadata and are running a later version of the application,
 your coverage numbers will be meaningless.</p>
+
+<p>Additionally, CVM files are just line-oriented text files.  You can
+concatenate them together into a single file using shell scripts, if
+that's convenient.</p>
 
 <p>Coverage Reports are in fact a superset of coverage metadata --
 they are the union of metadata with recorded coverage information.
@@ -582,7 +620,7 @@ concludes.</p>
 
 <p>This section provides reference information on various aspects of
 Flexcover.  It's somewhat incomplete right now, but at least you've
-got the source code.
+got the source code.</p>
 
 <h3>Coverage compiler reference</h3>
 
@@ -627,8 +665,8 @@ line.  They are distinguished solely by their extensions.
 
 <table border="1">
 <tr>
-<td valign="top" width="200"><tt>-output <i>report-filename.xml</i></tt></td>
-<td valign="top">The name of an XML report file to be written immediately when the instrumented application calls <tt>CoverageManager.exit()</tt>.  The viewer will exit as soon as the report is written.</td>
+<td valign="top" width="200"><tt>-output <i>report-filename.cvr</i></tt></td>
+<td valign="top">The name of an CVR report file to be written immediately when the instrumented application calls <tt>CoverageManager.exit()</tt>.  The viewer will exit as soon as the report is written.</td>
 </tr>
 
 <tr>
@@ -637,13 +675,18 @@ line.  They are distinguished solely by their extensions.
 </tr>
 
 <tr>
+<td valign="top" width="200"><tt>-no-auto-update</i></tt></td>
+<td valign="top">Prevents the UI from automatically updating whenever coverage information is received.  This option is helpful in keeping the application/viewer data connection alive in cases where there is heavy data volume.  This option is automatically enabled when the <tt>-output</tt> option is given.</td>
+</tr>
+
+<tr>
 <td valign="top" width="200"><tt>-connection-name <i>conn</i></tt></td>
 <td valign="top">The name to be used for the LocalConnection between the viewer and the application; defaults to <tt>_flexcover</tt>.</td>
 </tr>
 
 <tr>
-<td valign="top" width="200"><tt><i>report-filename.xml</i></tt></td>
-<td valign="top">The name of an XML report file to be loaded..</td>
+<td valign="top" width="200"><tt><i>report-filename.cvr</i></tt></td>
+<td valign="top">The name of a CVR report file to be loaded..</td>
 </tr>
 
 <tr>
@@ -658,10 +701,10 @@ line.  They are distinguished solely by their extensions.
 <p>Instrumented applications may make explicit calls to the
 <tt>com.allurent.coverage.runtime.CoverageManager</tt> class to
 control various instrumentation options.  See the source code in
-<tt>sdk/frameworks/projects/utilities/src</tt> for more details.
+the <tt>CoverageAgent/src</tt> directory for more details.
 
 <p>The <tt>CoverageManager</tt> class and the global function
-<tt>coverage()</tt> are linked from the <tt>utilities.swc</tt> file in
+<tt>coverage()</tt> are linked from the <tt>CoverageAgent.swc</tt> file in
 the modified SDK.
 
 <p>The <tt>ICoverageAgent</tt> interface allows developers to build
@@ -770,6 +813,15 @@ for non-leaf nodes.  Here is an example:</p>
   &lt;/package&gt;
 &lt;/applicationCoverage&gt;
 </pre>
+
+<h2>About the Flexcover SDK Modifications</h2>
+
+<p>The Flexcover SDK modifications are maintained in a separate Google
+Code project
+called <a href="http://code.google.com/p/flexcover-sdk/">flexcover-sdk</a>.
+You can check them out in source form.  Understanding and building
+these modifications requires in-depth knowledge of the Flex
+ActionScript 3 compiler and associated development tools.</p>
 
 <h2>Known issues and future development</h2>
 

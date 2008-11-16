@@ -65,6 +65,11 @@ package com.allurent.coverage.view.model
             searchDelay.delay(500, onSearch, searchInput);
         }
         
+        public function refreshCoverageData():void
+        {
+            controller.endCoverageRecording();
+        }
+        
         public function clearCoverageData():void
         {
             controller.clearCoverageData();

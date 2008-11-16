@@ -51,6 +51,9 @@ package com.allurent.coverage.model.application
         public var isRecording:Boolean;
         [Bindable]
         public var currentRecording:String;
+        [Bindable]
+        public var autoUpdate:Boolean = true;
+        
         public var currentStatusMessage:String;
         
         /**
@@ -61,7 +64,8 @@ package com.allurent.coverage.model.application
 		
 		private var recordingTimeout:Number;
         private var coverageModel:ICoverageModel;		
-        private var coverageElementsContainer:Array;		
+        private var coverageElementsMap:Object;
+        private var numCoverageElements:uint = 0;		
 		private var timer:IOneTimeInterval;
 		
 		public function Recorder(coverageModel:ICoverageModel, 
@@ -71,29 +75,46 @@ package com.allurent.coverage.model.application
             constrainToModel = true;		
 			this.timer = timer;
 			currentRecording = "";
-			coverageElementsContainer = new Array();
+			coverageElementsMap = {};
 			recordingTimeout = 2000;
 		}
 
 		public function record(keyMap:Object):void	
 		{
             var isEmpty:Boolean = true;
-            
+            var element:CoverageElement = null;
+            var container:CoverageElementContainer = null;
+
             for (var key:String in keyMap)
             {
                 isEmpty = false;
-                var element:CoverageElement = CoverageElement.fromString(key);
-                if (element != null)
+                var count:uint = keyMap[key];
+                container = coverageElementsMap[key];
+                if (container == null)
                 {
-                    var count:uint = keyMap[key];
-                    currentRecording = element.packageName + "." + element.className;
-                    
-                    coverageElementsContainer.push(
-                        new CoverageElementContainer(
-                            ElementModel(coverageModel.resolveCoverageElement(element, !constrainToModel)), 
-                            count));                     
+                    element = CoverageElement.fromString(key);
+                    if (element != null)
+                    {
+                        var model:ElementModel = ElementModel(coverageModel.resolveCoverageElement(element, !constrainToModel));
+                        container = new CoverageElementContainer(model, count);
+                        numCoverageElements++;
+                    }
+                    else
+                    {
+                        container = new CoverageElementContainer(null, count);
+                    }
+                    coverageElementsMap[key] = container;
                 }
+                else
+                {
+                    container.count += count;
+                }                     
             }
+
+            if (container != null && container.element != null)
+            {
+                currentRecording = container.element.classModel.name;
+            } 
             
             var hasReceivedDataAndHasNotStartedYet : Boolean = (!isEmpty && !isRecording);
             if(hasReceivedDataAndHasNotStartedYet)
@@ -102,7 +123,7 @@ package com.allurent.coverage.model.application
                 trace("Recorder.record startCoverageRecording: ");
             }
             
-            if(!isEmpty)
+            if(autoUpdate && !isEmpty)
             {
             	trace("Recorder.record recordingTimeout: " + recordingTimeout);
             	timer.delay(recordingTimeout, handleRecordingTimeout);
@@ -111,18 +132,19 @@ package com.allurent.coverage.model.application
 		
         public function applyCoverageData():void
         {
-            dispatchEvent(new CoverageEvent(CoverageEvent.PARSING_START));          
-            var container:Array = coverageElementsContainer;
-            var numberOfContainers:int = container.length;
-            for(var i:int; i < numberOfContainers; i++)
+            dispatchEvent(new CoverageEvent(CoverageEvent.PARSING_START));
+            for each (var container:CoverageElementContainer in coverageElementsMap)
             {
-                var item:CoverageElementContainer = CoverageElementContainer(container[i]);
-                coverageModel.addExecutionCount(item.element, item.count);
+                if (container.element != null)
+                {
+                    coverageModel.addExecutionCount(container.element, container.count);
+                }
             }
             
-            var hasParsed:Boolean = (numberOfContainers > 0) ? true : false;
+            var hasParsed:Boolean = (numCoverageElements > 0);
             trace("Recorder.applyCoverageData ");
-            coverageElementsContainer = new Array();
+            coverageElementsMap = {};
+            numCoverageElements = 0;
             currentStatusMessage = "";
             dispatchEvent(new CoverageEvent(CoverageEvent.PARSING_END, null, hasParsed));
         }
@@ -133,8 +155,13 @@ package com.allurent.coverage.model.application
             this.isRecording = true;            
         }
         
-        private function endCoverageRecording():void
-        {        	
+        public function endCoverageRecording():void
+        {
+            if (!isRecording)
+            {
+                return;
+            }   	
+            
             this.isRecording = false;
             currentRecording = "";
             timer.clear();
@@ -145,12 +172,11 @@ package com.allurent.coverage.model.application
         
         private function createStatusMessage():void
         {
-            var numberOfElements:int = coverageElementsContainer.length;
             var formatter:NumberFormatter = new NumberFormatter();
-            var formattedNumber:String = formatter.format(numberOfElements);
+            var formattedNumber:String = formatter.format(numCoverageElements);
             
             var timeMessage:String;
-            var expectedSeconds:Number = (numberOfElements / 220000 * 15) + 1;
+            var expectedSeconds:Number = (numCoverageElements / 220000 * 15) + 1;
             if(expectedSeconds < 60)
             {
                 timeMessage =  "~" + expectedSeconds.toFixed(1) + " seconds.";

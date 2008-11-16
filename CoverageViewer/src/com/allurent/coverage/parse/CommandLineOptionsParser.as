@@ -93,6 +93,7 @@ package com.allurent.coverage.parse
                 case "output":
                     controller.coverageOutputFile = new File(arg);
                     controller.autoExit = true;
+                    controller.recorder.autoUpdate = false;
                     break;
                     
                 case "coverage-metadata":
@@ -113,6 +114,10 @@ package com.allurent.coverage.parse
                     
                 case "connection-name":
                     controller.communicator.coverageDataConnectionName = arg;
+                    break;
+                    
+                case "no-auto-update":
+                    controller.recorder.autoUpdate = false;
                     break;
                     
                 case "quit":

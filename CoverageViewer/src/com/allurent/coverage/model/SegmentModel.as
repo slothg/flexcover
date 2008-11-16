@@ -65,7 +65,7 @@ package com.allurent.coverage.model
         public static const COVERAGE_CHANGE:String = "coverageChange";
         
         /** map from names to child elements. */
-        protected var childMap:Object = {};
+        private var childMap:Object = {};
         
         
         /**
@@ -356,7 +356,7 @@ package com.allurent.coverage.model
                 for each (var childXml:XML in xml.children())
                 {
                    // see if there is a model matching this child XML element
-                   var model:SegmentModel = childMap[childXml.@name];
+                   var model:SegmentModel = childMap[childXml.@name] as SegmentModel;
                    if (model == null)
                    {
                        // there isn't, so make one...

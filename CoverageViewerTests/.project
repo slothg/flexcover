@@ -28,5 +28,10 @@
 			<type>2</type>
 			<locationURI>FLEXCOVER_DIR/CoverageViewer/src</locationURI>
 		</link>
+		<link>
+			<name>[source path] test</name>
+			<type>2</type>
+			<locationURI>FLEXCOVER_DIR/CoverageUtilities/test</locationURI>
+		</link>
 	</linkedResources>
 </projectDescription>

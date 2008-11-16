@@ -67,9 +67,9 @@ package com.allurent.coverage.service
         private var ackConnections:Dictionary;
 		private var ackConnectionCounter:int;
 		private var currentAckConnection:int;
+        private var lastMapNumber:int;
 		
         private var recorder:IRecorder;
-        
 		private var isTooBusyToReceiveMore:Boolean;
 		
 	    public function CoverageCommunicator(recorder:IRecorder)
@@ -133,9 +133,10 @@ package com.allurent.coverage.service
          * are incremental execution counts for those same keys since the last transmission from
          * the instrumented app.
          */
-        public function coverageData(keyMap:Object):void
+        public function coverageData(keyMap:Object, mapNumber:int):void
         {
-        	//traceKeys(keyMap); 
+        	trace("Received keyMap ", mapNumber);
+        	lastMapNumber = mapNumber; 
         	
             if(keyMap == null)
             {
@@ -153,7 +154,7 @@ package com.allurent.coverage.service
 	            
 	            if(!isTooBusyToReceiveMore)
 	            {
-	                sendACK(rotateConnection());
+	                sendACK(rotateConnection(), lastMapNumber);
 	            }                  	
             }
         }
@@ -161,9 +162,9 @@ package com.allurent.coverage.service
         /**
          * Handler called by instrumented program on last send when coverage ends. 
          */
-        public function coverageDataAndExit(keyMap:Object):void
+        public function coverageDataAndExit(keyMap:Object, mapNumber:int):void
         {
-            coverageData(keyMap);
+            coverageData(keyMap, mapNumber);
             dispatchEvent(new Event(COVERAGE_END_EVENT));
         }
                 
@@ -198,7 +199,7 @@ package com.allurent.coverage.service
         private function onParsingEnd(event:Event):void
         {
             isTooBusyToReceiveMore = false;
-            sendACK(rotateConnection());
+            //sendACK(rotateConnection(), lastMapNumber);
         }
         
         private function sendRegistration():void
@@ -210,7 +211,7 @@ package com.allurent.coverage.service
         	registerAckConnection(name, ackConnection);
             
             trace("sendRegistration ackConnection " + ackConnection);
-            sendACK(name);
+            sendACK(name, lastMapNumber);
         }
         
         private function registerAckConnection(name:String, ackConnection:ISendingLocalConnection):void
@@ -223,13 +224,19 @@ package com.allurent.coverage.service
             return DEFAULT_ACK_CONNECTION_NAME + index;
         }    
         
-        private function sendACK(ackConnectionName:String):void
+        public function forceACK():void
+        {
+            sendACK(rotateConnection(), 0);
+        }
+        
+        private function sendACK(ackConnectionName:String, mapNumber:int):void
         {
             try
             {
                 //send ack of received message
+                trace("Sending ACK of " + mapNumber + " via ", ackConnectionName);
                 var ackConnection:ISendingLocalConnection = ISendingLocalConnection(ackConnections[ackConnectionName]);
-                ackConnection.send(ackConnectionName, ACK_HANDLER);
+                ackConnection.send(ackConnectionName, ACK_HANDLER, mapNumber);
             }
             catch (error:Error)
             {

@@ -97,10 +97,16 @@ package com.allurent.coverage
 			mock.applyCoverageData();
 		}
 		
-		public function clearCoverageData():void
-		{
-			mock.clearCoverageData();
-		}
+        public function clearCoverageData():void
+        {
+            mock.clearCoverageData();
+        }
+
+        public function endCoverageRecording():void
+        {
+            mock.endCoverageRecording();
+        }
+        
 		/*
         public function addEventListener(type:String, listener:Function, useCapture:Boolean=false, priority:int=0, useWeakReference:Boolean=false):void
         {
