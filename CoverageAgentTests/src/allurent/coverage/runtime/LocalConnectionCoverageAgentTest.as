@@ -41,16 +41,14 @@ package allurent.coverage.runtime
         public function testRecordCoverageKeys():void
         {
             //setup mock
-            var lc:LocalConnectionMock = new LocalConnectionMock(true);
-            //lc.mock.method("addEventListener").withAnyArgs.times(3);
+            var lc:LocalConnectionMock = new LocalConnectionMock(false);
+            lc.mock.method("addEventListener").withAnyArgs.times(3);
+            lc.mock.method("send").withArgs("_flexcover", "coverageData", null, 0).once;
             lc.mock.method("send").withAnyArgs.once;
             agent.coverageDataConnection = lc;
             
             var ackLc:LocalConnectionMock = new LocalConnectionMock(true);
-            //bug in mock-as3 with ..rest operator
-            //workaround: use withAnyArgs
-            //ackLc.mock.method("allowDomain").withArgs("*").once;
-            ackLc.mock.method("allowDomain").withAnyArgs.once;
+            ackLc.mock.method("allowDomain").withArgs("*").once;
             ackLc.mock.property("client").withArgs(agent).once;
             ackLc.mock.method("connect").withArgs("_flexcover_ack1").once;
             agent.ackConnection = ackLc;
@@ -69,10 +67,10 @@ package allurent.coverage.runtime
         {
             var coverageData:Object = createCoverageKeyMap();
             //setup mock
-            var lc:LocalConnectionMock = new LocalConnectionMock();
-            //lc.mock.method("addEventListener").withAnyArgs.times(3);
-            lc.mock.method("send").withAnyArgs.once;
-            agent.coverageDataConnection = lc;
+            var lc:LocalConnectionMock = new LocalConnectionMock(false);
+            lc.mock.method("addEventListener").withAnyArgs.times(3);
+            lc.mock.method("send").withArgs("_flexcover", "coverageData", null, 0).once;
+            agent.coverageDataConnection = lc;            
             
             var ackLc:LocalConnectionMock = new LocalConnectionMock();
             ackLc.mock.method("connect").withArgs("_flexcover_ack1").once;
@@ -105,7 +103,6 @@ package allurent.coverage.runtime
             ackLc.mock.verify();
         }
         
-        //TODO: potential mock-as3 bug
         public function testCannotSendWithoutViewerPermission():void
         {
             var coverageData:Object = createCoverageKeyMap();

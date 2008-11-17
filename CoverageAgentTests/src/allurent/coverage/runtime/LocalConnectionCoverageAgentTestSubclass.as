@@ -33,16 +33,24 @@ package allurent.coverage.runtime
         public var coverageDataConnection:ISendingLocalConnection;
         public var ackConnection:IReceivingLocalConnection;
         public var flushTimer:IOneTimeInterval;
+        public var assumeAckTimer:IOneTimeInterval;
         
         public function LocalConnectionCoverageAgentTestSubclass(connectionName:String = null)
         {
         	flushTimer = new EmptyOneTimeIntervalStub();
+        	assumeAckTimer = new EmptyOneTimeIntervalStub();
+            
             super(connectionName);            
         }
         
         override protected function createFlushTimer():IOneTimeInterval
         {
             return flushTimer;
+        }
+        
+        override protected function createAssumeAckTimer():IOneTimeInterval
+        {
+        	return assumeAckTimer;
         }
         
         override protected function createCoverageDataConnection():ISendingLocalConnection
