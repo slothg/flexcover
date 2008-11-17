@@ -43,7 +43,7 @@ package com.allurent.coverage.service
 		{
             //setup mock
             var lc:LocalConnectionMock = new LocalConnectionMock();
-            lc.mock.method("allowDomain").withAnyArgs.once;
+            lc.mock.method("allowDomain").withArgs("*").once;
             lc.mock.property("client").withArgs(model).once;
             lc.mock.method("connect").withArgs("_flexcover").once;          
 			model.coverageDataConnection = lc;
@@ -58,7 +58,7 @@ package com.allurent.coverage.service
         {
             //setup mock
             var lc:LocalConnectionMock = new LocalConnectionMock();
-            lc.mock.method("allowDomain").withAnyArgs.once;
+            lc.mock.method("allowDomain").withArgs("*").once;
             lc.mock.property("client").withArgs(model).once;
             lc.mock.method("connect").withArgs("foo").once;  
             model.coverageDataConnection = lc;
@@ -78,12 +78,9 @@ package com.allurent.coverage.service
             model = new CoverageCommunicatorTestSubclass(recorder);        	
             
         	//setup mock
-        	var lc:LocalConnectionMock = new LocalConnectionMock();
-            //lc.mock.method("addEventListener").withAnyArgs.times(3);
-            //lc.mock.method("send").withArgs("_flexcover_ack1", "coverageReceived").once;
-            lc.mock.method("send").withAnyArgs.once;
-        	//lc.expectedConnectionName = "_flexcover_ack1";
-        	//lc.expectedMethodName = "coverageReceived";
+        	var lc:LocalConnectionMock = new LocalConnectionMock(false);
+            lc.mock.method("addEventListener").withAnyArgs.times(3);
+            lc.mock.method("send").withArgs("_flexcover_ack1", "coverageReceived", 0).once;
         	
         	model.ackConnection = lc;
         	model.coverageDataConnection = new LocalConnectionMock();
@@ -106,11 +103,10 @@ package com.allurent.coverage.service
             model = new CoverageCommunicatorTestSubclass(recorder);         
             
             //setup mock
-            var lc:LocalConnectionMock = new LocalConnectionMock();
-            //lc.mock.method("addEventListener").withAnyArgs.times(3);
-            lc.mock.method("send").withAnyArgs.once;             
-            //lc.expectedConnectionName = "_flexcover_ack1";
-            //lc.expectedMethodName = "coverageReceived";
+            var lc:LocalConnectionMock = new LocalConnectionMock(false);
+            lc.mock.method("addEventListener").withAnyArgs.times(3);
+            lc.mock.method("send").withArgs("_flexcover_ack1", "coverageReceived", 0).once;
+            lc.mock.method("send").withArgs("_flexcover_ack1", "coverageReceived", 1).once;
             model.ackConnection = lc;
             
             var lc2:LocalConnectionMock = new LocalConnectionMock();
@@ -132,11 +128,10 @@ package com.allurent.coverage.service
             model = new CoverageCommunicatorTestSubclass(recorder);         
 
             //setup mock
-            var lc:LocalConnectionMock = new LocalConnectionMock();
-            //lc.mock.method("addEventListener").withAnyArgs.times(3);
-            lc.mock.method("send").withAnyArgs.once;          
-            //lc.expectedConnectionName = "_flexcover_ack2";
-            //lc.expectedMethodName = "coverageReceived";
+            var lc:LocalConnectionMock = new LocalConnectionMock(false);
+            lc.mock.method("addEventListener").withAnyArgs.times(6);
+            lc.mock.method("send").withArgs("_flexcover_ack1", "coverageReceived", 0).once;
+            lc.mock.method("send").withArgs("_flexcover_ack2", "coverageReceived", 0).once;
             model.ackConnection = lc;
             model.coverageDataConnection = new LocalConnectionMock();
             
@@ -159,11 +154,12 @@ package com.allurent.coverage.service
             model = new CoverageCommunicatorTestSubclass(recorder);         
             
             //setup mock
-            var lc:LocalConnectionMock = new LocalConnectionMock();
-            //lc.mock.method("addEventListener").withAnyArgs.times(3);
-            lc.mock.method("send").withAnyArgs.once;             
-            //lc.expectedConnectionName = "_flexcover_ack2";
-            //lc.expectedMethodName = "coverageReceived";
+            var lc:LocalConnectionMock = new LocalConnectionMock(false);
+            lc.mock.method("addEventListener").withAnyArgs.times(6);
+            lc.mock.method("send").withArgs("_flexcover_ack1", "coverageReceived", 0).once;
+            lc.mock.method("send").withArgs("_flexcover_ack2", "coverageReceived", 0).once;
+            lc.mock.method("send").withArgs("_flexcover_ack1", "coverageReceived", 1).once;
+            lc.mock.method("send").withArgs("_flexcover_ack2", "coverageReceived", 2).once;
             model.ackConnection = lc;
             
             var lc2:LocalConnectionMock = new LocalConnectionMock();
@@ -213,11 +209,9 @@ package com.allurent.coverage.service
             model = new CoverageCommunicatorTestSubclass(recorder);         
             
             //setup mock
-            var lc:LocalConnectionMock = new LocalConnectionMock();
-            //lc.mock.method("addEventListener").withAnyArgs.times(3);
-            lc.mock.method("send").withAnyArgs.once;                 
-            //lc.expectedConnectionName = "_flexcover_ack1";
-            //lc.expectedMethodName = "coverageReceived";            
+            var lc:LocalConnectionMock = new LocalConnectionMock(false);
+            lc.mock.method("addEventListener").withAnyArgs.times(3);
+            lc.mock.method("send").withArgs("_flexcover_ack1", "coverageReceived", 0).once;
             model.ackConnection = lc;
             
             model.coverageDataConnection = new LocalConnectionMock();

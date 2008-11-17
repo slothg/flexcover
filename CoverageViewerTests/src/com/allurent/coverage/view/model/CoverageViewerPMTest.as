@@ -69,7 +69,7 @@ package com.allurent.coverage.view.model
         	                               CoverageModelData.createCoverageModel()
         	                               );
         	
-        	//controllerMock.mock.expect().dispatchesEvent( event ).once;        	
+        	//controllerMock.mock.method("dispatchEvent").dispatchesEvent( event ).once;        	
         	model.controller.dispatchEvent(event);
         	
         	//controllerMock.mock.verify();
