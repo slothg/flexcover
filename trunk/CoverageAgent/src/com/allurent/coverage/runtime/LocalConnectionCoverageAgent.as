@@ -22,6 +22,8 @@
  */
 package com.allurent.coverage.runtime
 {
+    import com.adobe.ac.util.IOneTimeInterval;
+    import com.adobe.ac.util.OneTimeInterval;
     import com.adobe.ac.util.service.IReceivingLocalConnection;
     import com.adobe.ac.util.service.ISendingLocalConnection;
     import com.adobe.ac.util.service.LocalConnectionWrapper;
@@ -55,7 +57,7 @@ package com.allurent.coverage.runtime
         private var _assumeAck:uint = 100;
         
         // Timer which, if present, fires to simulate an ACK
-        private var _assumeAckTimer:Timer;
+        private var _assumeAckTimer:IOneTimeInterval;
         
         /**
          * Obtain a flag indicating whether there are any outstanding send or exit operations. 
@@ -174,7 +176,7 @@ package com.allurent.coverage.runtime
             resume();
         }
 
-        private function handleAssumeAck(e:TimerEvent):void
+        private function handleAssumeAck():void
         {
             trace("LocalConnectionCoverageAgent.assumeAck");
             resume();
@@ -184,9 +186,9 @@ package com.allurent.coverage.runtime
         {
             if (_assumeAckTimer != null)
             {
-                _assumeAckTimer.stop();
-                _assumeAckTimer = null;
+                _assumeAckTimer.clear();
             }
+            
             canSend = true;
             send();
         }
@@ -199,6 +201,11 @@ package com.allurent.coverage.runtime
         protected function createAckConnection():IReceivingLocalConnection
         {
             return new LocalConnectionWrapper();
+        }
+        
+        protected function createAssumeAckTimer():IOneTimeInterval
+        {
+        	return new OneTimeInterval();
         }
         
         private function addPendingMapAndAttemptSend(map:Object):void
@@ -297,7 +304,8 @@ package com.allurent.coverage.runtime
         private function sendRegistration():void
         {
         	initializeACKConnection();
-            coverageDataConnection.send(coverageDataConnectionName, DATA_HANDLER, null, 0);
+            //coverageDataConnection.send(coverageDataConnectionName, DATA_HANDLER, null, 0);
+            coverageDataConnection.send.apply(coverageDataConnection, [coverageDataConnectionName, DATA_HANDLER, null, 0]);
             hasRegistrationBeenSent = true;
         }
         
@@ -308,16 +316,13 @@ package com.allurent.coverage.runtime
 	            var method:String = (stopped && pendingWrites == 1) ? DATA_EXIT_HANDLER : DATA_HANDLER;
 	            trace("Using method", method);
                 coverageDataConnection.send(coverageDataConnectionName, method, map, mapNumber);
-                if (_assumeAckTimer != null)
-                {
-                    _assumeAckTimer.stop();
-                }
+                
+                _assumeAckTimer = createAssumeAckTimer();                
                 if (_assumeAck > 0)
                 {
-                    _assumeAckTimer = new Timer(_assumeAck, 1);
-                    _assumeAckTimer.addEventListener(TimerEvent.TIMER, handleAssumeAck);
-                    _assumeAckTimer.start();
-                }
+                	_assumeAckTimer.delay(_assumeAck, handleAssumeAck);
+                }            
+                
                 pendingWrites--;
 	        }
 	        catch (error:Error)
