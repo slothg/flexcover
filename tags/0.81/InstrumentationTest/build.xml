@@ -1,0 +1,54 @@
+<project name="InstrumentationTest" default="build">
+
+    <!-- Project specific overrides -->
+    <property name="flex.mxmlc.options" value="-coverage=false -target-player=9"/>
+    <property name="testlib.dir" value="testlib"/>
+    <property name="runtest.dir" location="stage"/>
+    <property name="project.dir" location="."/>
+
+    <!-- Common properties and targets -->
+    <import file="../build-imports.xml"/>
+
+    <!-- Build paths -->
+    <path id="flex.lib.path">
+        <pathelement location="${testlib.dir}/bin/testlib.swc"/>
+    </path>
+
+    <path id="testlib.lib.path">
+    </path>
+
+    <!-- Project specific targets -->
+    <target name="build" depends="init,air-application-stage"/>
+
+    <target name="build-testlib">
+        <mkdir dir="${testlib.dir}/bin"/>
+        <compc src.dir="${testlib.dir}/src" dest="${testlib.dir}/bin/testlib.swc"
+               lib.path.id="testlib.lib.path"
+               options="-coverage=true"/>
+    </target>
+
+    <target name="launch-test">
+        <exec executable="${air.adl}" dir="stage">
+            <arg value="InstrumentationTest-app.xml"/>
+            <arg value="--" />
+            <arg value="${runtest.dir}/log.out"/>
+        </exec>
+    </target>
+
+    <target name="compare-baseline">
+        <condition property="InstrumentationTest.log.ok">
+            <filesmatch file1="stage/log.out" file2="baseline/log.out"/>
+        </condition>
+        <fail message="Instrumentation report failed to match baseline!" unless="InstrumentationTest.log.ok"/>
+
+        <replace file="testlib/bin/testlib.cvm" token="${project.dir}" value="[project.dir]"/>
+        <replace file="testlib/bin/testlib.cvm" token="\" value="/"/>
+        <condition property="InstrumentationTest.cvm.ok">
+            <filesmatch file1="testlib/bin/testlib.cvm" file2="baseline/testlib.cvm"/>
+        </condition>
+        <fail message="Coverage metadata failed to match baseline!" unless="InstrumentationTest.cvm.ok"/>
+    </target>
+
+    <target name="test" depends="build-testlib,air-application-stage,launch-test,compare-baseline"/>
+
+</project>

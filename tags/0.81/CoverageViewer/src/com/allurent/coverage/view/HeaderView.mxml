@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 
+ * Copyright (c) 2008 Allurent, Inc.
+ *
+ * Permission is hereby granted, free of charge, to any person
+ * obtaining a copy of this software and associated documentation
+ * files (the "Software"), to deal in the Software without restriction,
+ * including without limitation the rights to use, copy, modify,
+ * merge, publish, distribute, sublicense, and/or sell copies of the
+ * Software, and to permit persons to whom the Software is furnished
+ * to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+ * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+ * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+ * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+ * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
+ * OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ -->
+<mx:HBox 
+	xmlns:mx="http://www.adobe.com/2006/mxml" 
+	xmlns:ac="com.adobe.ac.*">
+	
+	<mx:Script>
+		<![CDATA[
+			import com.allurent.coverage.model.search.ISearchable;
+            import com.allurent.coverage.view.model.HeaderPM;
+            import com.allurent.coverage.Controller;
+            import com.allurent.coverage.service.CoverageCommunicator
+            
+			import com.adobe.ac.util.OneTimeInterval;
+			import com.adobe.ac.util.IOneTimeInterval;
+            
+            [Bindable]
+            public var model:HeaderPM;
+			[Bindable]
+			private var timer:IOneTimeInterval = new OneTimeInterval();            
+			
+			private function setFocusOnSearch(currentSearch:ISearchable):void
+			{
+				if(!model.enabled) return;
+                searchInput.setFocus();
+                searchInput.setSelection(0, currentSearch.currentSearchInput.length);				
+			}
+		]]>
+	</mx:Script>
+
+    <ac:Observe 
+        source="{timer}" 
+        handler="{model.setSearchDelay}" 
+        />    	
+    <ac:Observe 
+        source="{model.searchPM.currentSearch}" 
+        handler="{setFocusOnSearch}" 
+        />
+		
+    <mx:Button 
+        label="Show details" 
+        enabled="{model.enabled}" 
+        toggle="true" 
+        selected="{model.searchPM.currentSearch.showDetail}" 
+        click="model.searchPM.toggleDetail()"/>
+	
+	<mx:VBox verticalGap="0">
+        <mx:Button
+            label="Update"
+            enabled="{model.controller.recorder.isRecording}" 
+            click="model.refreshCoverageData()"/>
+        
+        <mx:CheckBox
+            id="autoUpdateCheckBox"
+            label="Auto"
+            selected="{model.controller.recorder.autoUpdate}"
+            click="model.controller.recorder.autoUpdate = autoUpdateCheckBox.selected"/>
+	</mx:VBox>
+    
+	<mx:Label text="Search By:"/>
+    
+	<mx:TextInput 
+		id="searchInput" 
+		width="100%" 
+		text="{model.searchPM.currentSearchInput}" 
+		enabled="{model.enabled}"
+		change="model.search(searchInput.text);" />
+	
+    <mx:Button 
+    	label="Load Files..." 
+    	enabled="{!model.controller.recorder.isRecording}" 
+    	click="model.openInput()"/>
+    <mx:Button 
+    	label="Save Report..." 
+    	enabled="{model.enabled}" 
+    	click="model.saveOutput()"/>
+    <mx:Button 
+    	label="Reset Recording" 
+    	enabled="{model.canClearCoverageData(
+    	                   model.enabled, 
+    	                   model.controller.isCoverageDataCleared )}" 
+    	click="model.clearCoverageData()"/>
+
+</mx:HBox>

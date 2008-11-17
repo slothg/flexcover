@@ -1,0 +1,28 @@
+<project name="CoverageTest" default="build">
+
+    <property name="project.dir" location="."/>
+
+    <!-- Project specific overrides -->
+    <property name="flex.mxmlc.options" value="-coverage=true -target-player=9"/>
+
+    <!-- Common properties and targets -->
+    <import file="../build-imports.xml"/>
+
+    <!-- Build path -->
+    <path id="flex.lib.path">
+    </path>
+
+    <!-- Project specific targets -->
+    <target name="build" depends="init,air-application-stage"/>
+
+    <target name="test" depends="build,air-report">
+        <replace file="bin/coverage-report.cvr" token="${project.dir}" value="[project.dir]"/>
+        <replace file="bin/coverage-report.cvr" token="\" value="/"/>
+
+        <condition property="CoverageTest.ok">
+            <filesmatch file1="bin/coverage-report.cvr" file2="baseline/coverage-report.cvr"/>
+        </condition>
+        <fail message="Coverage report failed to match baseline!" unless="CoverageTest.ok"/>
+    </target>
+
+</project>

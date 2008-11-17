@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 
+ * Copyright (c) 2008 Allurent, Inc.
+ *
+ * Permission is hereby granted, free of charge, to any person
+ * obtaining a copy of this software and associated documentation
+ * files (the "Software"), to deal in the Software without restriction,
+ * including without limitation the rights to use, copy, modify,
+ * merge, publish, distribute, sublicense, and/or sell copies of the
+ * Software, and to permit persons to whom the Software is furnished
+ * to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+ * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+ * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+ * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+ * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
+ * OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ -->
+<mx:WindowedApplication 
+	xmlns:mx="http://www.adobe.com/2006/mxml" 
+	xmlns:view="com.allurent.coverage.view.*" 
+	viewSourceURL="srcview/index.html"
+	layout="absolute" 
+    width="950" height="700"  
+    preinitialize="preinitializeApplication()"
+    applicationComplete="initializeApplication()"
+    close="coverageViewerPM.onClose()"
+    nativeDragEnter="handleDragIn(event)"
+    nativeDragOver="handleDragIn(event)"
+    nativeDragDrop="handleDragDrop(event)" 
+    >
+    
+    <!-- Main CoverageViewer MXML Application View -->
+    
+    <mx:Script>
+        <![CDATA[
+        	import com.allurent.coverage.ControllerFactory;
+        	import com.allurent.coverage.IController;
+        	import com.adobe.ac.util.OneTimeInterval;
+        	import mx.events.FlexEvent;
+        	import com.allurent.coverage.view.MessageOverlay;
+        	import com.allurent.coverage.Controller;
+        	import com.allurent.coverage.view.model.CoverageViewerPM;
+            
+            [Bindable]
+            private var coverageViewerPM:CoverageViewerPM;
+            
+            private function preinitializeApplication():void
+            {
+            	var controller:IController = ControllerFactory.instance;
+                coverageViewerPM = new CoverageViewerPM(controller, 
+                                                        new OneTimeInterval());                 	
+            }
+            
+            /**
+             * Initialize the application by listening for an Invoke event that will communicate
+             * command line options.  Also attach the LocalConnection to receive live coverage
+             * data.  
+             */
+            private function initializeApplication():void
+            {
+            	coverageViewerPM.setup();
+            	
+                nativeApplication.addEventListener(InvokeEvent.INVOKE, 
+                									coverageViewerPM.handleInvoke);
+                addEventListener(Event.SELECT, 
+                					coverageViewerPM.contentPM.handleContentChange);
+            }
+            
+            private function handleDragIn(e:NativeDragEvent):void
+            {
+                if (coverageViewerPM.hasValidDragInFormat(e))
+                {
+                    NativeDragManager.acceptDragDrop(this);
+                }
+            }
+            
+            private function handleDragDrop(e:NativeDragEvent):void
+            {
+	            if (coverageViewerPM.hasValidDragInFormat(e))
+	            {  
+	                var files:Array = e.clipboard.getData(ClipboardFormats.FILE_LIST_FORMAT) as Array;
+	                coverageViewerPM.handleDragDrop(files);
+	            }
+            }
+        ]]>
+    </mx:Script>
+	
+	<mx:VBox 
+		id="contentContainer" 
+		width="100%" height="100%" 
+    	paddingLeft="3" paddingRight="3" 
+    	paddingTop="3" paddingBottom="3"		
+		enabled="{!coverageViewerPM.showMessageOverlay}" 
+		>
+		
+	    <view:HeaderView 
+	    	width="100%" 
+	    	model="{coverageViewerPM.headerPM}"
+	    	/>
+	    
+	    <!-- View of the coverage stats for the entire application -->
+	    <mx:HDividedBox 
+	    	width="100%" height="100%">
+	        
+	        <view:BrowserView 
+	        	id="coverageMeasureTabNavigator" 
+	        	model="{coverageViewerPM.browserPM}"
+	        	width="500" height="100%" 
+	        	/>
+	        <view:ContentView 
+	        	id="contentView" 
+	        	contentPM="{coverageViewerPM.contentPM}" 
+	        	width="100%" height="100%"/>
+	           	
+	    </mx:HDividedBox>
+	</mx:VBox>
+    
+    <mx:Label 
+    	left="150" 
+    	top="56" 
+        text="Recording" 
+        fontWeight="bold" 
+    	visible="{coverageViewerPM.controller.recorder.isRecording}" />
+    <mx:Canvas 
+    	width="100%" 
+    	horizontalScrollPolicy="off">
+	    <mx:Label 
+	        left="230" 
+	        top="56" 
+	        fontWeight="bold" 
+	        text="{coverageViewerPM.controller.recorder.currentRecording}" 
+	        visible="{coverageViewerPM.controller.recorder.isRecording}" />
+    </mx:Canvas>
+	 
+	<view:MessageOverlay 
+		id="messageOverlayView"  
+		verticalCenter="0" 
+		horizontalCenter="0" 
+		message="{coverageViewerPM.controller.currentStatusMessage}" 
+		visible="{coverageViewerPM.showMessageOverlay}" />
+				
+</mx:WindowedApplication>

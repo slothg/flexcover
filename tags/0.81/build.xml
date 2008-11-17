@@ -1,0 +1,152 @@
+<project name="flexcover" default="build" basedir=".">
+
+    <!-- ======================================================== -->
+    <!-- Properties relating to distribution creation             -->
+    <!-- ======================================================== -->
+    <property name="version" value="0.81"/>
+    <property name="dist.dir" value="flexcover-${version}"/>
+
+    <import file="buildtools/build-master-targets.xml" />
+    <import file="build-imports.xml" />
+
+    <!-- ======================================================== -->
+    <!-- Set of subdirectories cleaned and built from here.       -->
+    <!-- ======================================================== -->
+    <filelist id="children.filelist" dir=".">
+        <file name="CoverageAgent"/>
+        <file name="CoverageUtilities"/>
+        <file name="CoverageViewer"/>
+        <file name="CoverageExample1"/>
+        <file name="CoverageExample2"/>
+    </filelist>
+
+    <!-- ======================================================== -->
+    <!-- Set of subdirectories run from the main 'test' target.   -->
+    <!-- ======================================================== -->
+    <filelist id="testChildren.filelist" dir=".">
+        <file name="CoverageTest"/>
+        <file name="InstrumentationTest"/>
+    </filelist>
+
+    <!-- ======================================================== -->
+    <!-- build-viewer: build just the CoverageViewer application. -->
+    <!-- ======================================================== -->
+    <target name="build-viewer">
+        <subant target="build" verbose="true">
+            <filelist dir=".">
+                <file name="CoverageViewer"/>
+            </filelist>
+        </subant>
+        <subant target="air-package" verbose="true">
+            <filelist dir=".">
+                <file name="CoverageViewer"/>
+            </filelist>
+        </subant>
+    </target>
+
+    <!-- ======================================================== -->
+    <!-- dist: Create a new distribution.                         -->
+    <!-- ======================================================== -->
+    <target name="dist" depends="build,build-viewer,copy-dist,zip-dist"/>
+
+    <!-- ======================================================== -->
+    <!-- copy-dist: copy distribution to a new distribution dir.  -->
+    <!-- ======================================================== -->
+    <target name="copy-dist">
+        <delete dir="../${dist.dir}"/>
+        <mkdir dir="../${dist.dir}"/>
+
+        <copy todir="../${dist.dir}" file="${CoverageViewer.air}"/>
+        <copy todir="../${dist.dir}" file="README"/>
+        <copy todir="../${dist.dir}" file="RELEASE-NOTES"/>
+
+        <mkdir dir="../${dist.dir}/doc"/>
+        <copy todir="../${dist.dir}/doc">
+            <fileset dir="doc" excludes="**/.svn"/>
+        </copy>
+
+        <mkdir dir="../${dist.dir}/CoverageAgent"/>
+        <copy todir="../${dist.dir}/CoverageAgent" includeEmptyDirs="false">
+            <fileset dir="CoverageAgent" excludes="**/.svn,build.xml"/>
+        </copy>
+
+        <mkdir dir="../${dist.dir}/CoverageExample1"/>
+        <copy todir="../${dist.dir}/CoverageExample1" includeEmptyDirs="false">
+            <fileset dir="CoverageExample1" excludes="**/.svn,build.xml,build-assets.xml,stage"/>
+        </copy>
+
+        <mkdir dir="../${dist.dir}/sdk-modifications-3_0"/>
+        <copy todir="../${dist.dir}/sdk-modifications-3_0">
+            <fileset dir="sdk-modifications-3_0"/>
+        </copy>
+
+        <mkdir dir="../${dist.dir}/sdk-modifications-3_2"/>
+        <copy todir="../${dist.dir}/sdk-modifications-3_2">
+            <fileset dir="sdk-modifications-3_2"/>
+        </copy>
+    </target>
+
+    <!-- ======================================================== -->
+    <!-- zip-dist: create the final distribution ZIP file.        -->
+    <!-- ======================================================== -->
+    <target name="zip-dist">
+        <zip destfile="../flexcover-${version}.zip" basedir=".." includes="${dist.dir}/**"/>
+    </target>
+
+
+    <!-- ======================================================== -->
+    <!-- stage-sdk: stage all elements of the SDK -->
+    <!-- ======================================================== -->
+    <target name="stage-sdk" depends="stage-agent,stage-sdk-3_0,stage-sdk-3_2"/>
+
+    <!-- ======================================================== -->
+    <!-- stage-agent: stage the CoverageAgent SWC for a distro.      -->
+    <!-- ======================================================== -->
+    <target name="stage-agent">
+        <copy tofile="sdk-modifications-3_0/frameworks/libs/CoverageAgent.swc">
+            <fileset file="${CoverageAgent.swc}"/>
+        </copy>
+        <copy tofile="sdk-modifications-3_2/frameworks/libs/CoverageAgent.swc">
+            <fileset file="${CoverageAgent.swc}"/>
+        </copy>
+    </target>
+
+    <!-- ======================================================== -->
+    <!-- stage-sdk-3_0: stage the custom Flex 3.0 SDK files for a distro.      -->
+    <!-- ======================================================== -->
+    <target name="stage-sdk-3_0">
+        <copy todir="sdk-modifications-3_0">
+            <fileset dir="${flexcover.3_0.build.sdk.dir}" includesfile="sdk-includes" excludes="**/.svn"/>
+        </copy>
+        <copy tofile="sdk-modifications-3_0/frameworks/flex-config.xml">
+            <fileset dir="${flexcover.3_0.build.sdk.dir}" includes="frameworks/flex-config-coverage.xml"/>
+        </copy>
+        <copy tofile="sdk-modifications-3_0/frameworks/air-config.xml">
+            <fileset dir="${flexcover.3_0.build.sdk.dir}" includes="frameworks/air-config-coverage.xml"/>
+        </copy>
+    </target>
+
+    <!-- ======================================================== -->
+    <!-- stage-sdk-3_2: stage the custom Flex 3.2 SDK files for a distro.      -->
+    <!-- ======================================================== -->
+    <target name="stage-sdk-3_2">
+        <copy todir="sdk-modifications-3_2">
+            <fileset dir="${flexcover.3_2.build.sdk.dir}" includesfile="sdk-includes" excludes="**/.svn"/>
+        </copy>
+        <copy tofile="sdk-modifications-3_2/frameworks/flex-config.xml">
+            <fileset dir="${flexcover.3_2.build.sdk.dir}" includes="frameworks/flex-config.xml"/>
+        </copy>
+        <copy tofile="sdk-modifications-3_2/frameworks/air-config.xml">
+            <fileset dir="${flexcover.3_2.build.sdk.dir}" includes="frameworks/air-config.xml"/>
+        </copy>
+    </target>
+
+    <!-- ======================================================== -->
+    <!-- modify-sdk: copy the custom SDK files on top of a working SDK -->
+    <!-- ======================================================== -->
+    <target name="modify-sdk">
+        <copy todir="${flex.dir}">
+            <fileset dir="sdk-modifications"/>
+        </copy>
+    </target>
+</project>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+    Display to show while the entire UI is blocked.
+-->
+
+<mx:Box xmlns="*" xmlns:mx="http://www.adobe.com/2006/mxml">
+
+    <mx:Image source="@Embed('allurent_timer.swf')" />
+</mx:Box>

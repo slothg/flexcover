@@ -1,0 +1,17 @@
+lib/asc.jar
+lib/asdoc.jar
+lib/commons-logging.properties
+lib/compc.jar
+lib/copylocale.jar
+lib/digest.jar
+lib/fcsh.jar
+lib/fdb.jar
+lib/flex-compiler-oem.jar
+lib/flexTasks-internal.jar
+lib/flexTasks.jar
+lib/javacc.jar
+lib/mxmlc.jar
+lib/mxmlc_ja.jar
+lib/optimizer.jar
+lib/swfdump.jar
+lib/swfutils.jar

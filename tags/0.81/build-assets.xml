@@ -1,0 +1,5 @@
+<project name="flexcover.assets">
+    <import file="CoverageAgent/build-assets.xml"/>         
+    <import file="CoverageUtilities/build-assets.xml"/>         
+    <import file="CoverageViewer/build-assets.xml"/>         
+</project>
