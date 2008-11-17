@@ -41,13 +41,13 @@ package com.adobe.ac.util.service
         }
         
         public function send(connectionName:String, methodName:String, ...parameters):void
-        {
-            mock.send(connectionName, methodName, parameters);
+        {            
+            mock.invokeMethod("send", [connectionName, methodName].concat(parameters));
         }
         
         public function allowDomain(...domains):void
         {
-            mock.allowDomain(domains);
+            mock.invokeMethod("allowDomain", domains);
         }
         
         public function connect(connectionName:String):void
@@ -62,7 +62,7 @@ package com.adobe.ac.util.service
         
         public function addEventListener(type:String, listener:Function, useCapture:Boolean=false, priority:int=0, useWeakReference:Boolean=false):void
         {
-           mock.addEventListener(type, listener, useCapture, priority, useWeakReference);
+           mock.invokeMethod("addEventListener", [type, listener, useCapture, priority, useWeakReference]);
         }
         
         public function removeEventListener(type:String, listener:Function, useCapture:Boolean=false):void
@@ -73,6 +73,7 @@ package com.adobe.ac.util.service
         public function dispatchEvent(event:Event):Boolean
         {
             return mock.dispatchEvent(event);
+            //return mock.invokeMethod("dispatchEvent", [event]);
         }
         
         public function hasEventListener(type:String):Boolean
