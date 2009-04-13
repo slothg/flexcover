@@ -50,6 +50,11 @@ package com.adobe.ac.util.service
             mock.invokeMethod("allowDomain", domains);
         }
         
+        public function allowInsecureDomain(...domains):void
+        {
+            mock.invokeMethod("allowInsecureDomain", domains);
+        }
+        
         public function connect(connectionName:String):void
         {
             mock.connect(connectionName);
