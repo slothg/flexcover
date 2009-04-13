@@ -28,7 +28,8 @@ package com.adobe.ac.util.service
 	{
         function set client(value:Object):void;        
         function allowDomain(...domains):void;
+        function allowInsecureDomain(...domains):void;
         function connect(connectionName:String):void;
-        function close():void;		
+        function close():void;
 	}
 }
