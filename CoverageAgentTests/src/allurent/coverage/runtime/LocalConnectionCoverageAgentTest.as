@@ -48,7 +48,7 @@ package allurent.coverage.runtime
             agent.coverageDataConnection = lc;
             
             var ackLc:LocalConnectionMock = new LocalConnectionMock(true);
-            ackLc.mock.method("allowDomain").withArgs("*").once;
+            ackLc.mock.method("allowInsecureDomain").withArgs("*").once;
             ackLc.mock.property("client").withArgs(agent).once;
             ackLc.mock.method("connect").withArgs("_flexcover_ack1").once;
             agent.ackConnection = ackLc;
