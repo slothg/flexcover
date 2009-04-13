@@ -251,7 +251,8 @@ package com.allurent.coverage.runtime
             
             // Set up our LocalConnection.  Note that the Controller handles
             ackConnection = createAckConnection();
-            ackConnection.allowDomain("*");
+            //ackConnection.allowDomain("*");
+            ackConnection.allowInsecureDomain("*");
             ackConnection.client = this;
             
             try
